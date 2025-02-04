@@ -1,4 +1,4 @@
-# 🚀 Mihir Patel - Personal Portfolio
+# 🚀 Mihir Patel
 
 Welcome to my personal portfolio website! This is a **single-page portfolio** showcasing my skills, projects, and professional experience. The site is built to highlight my expertise in **Python backend development, data engineering, AI, and full-stack development**. It is hosted on **GitHub Pages** for easy accessibility.
 
