@@ -8,7 +8,7 @@ I am a **Lead/Senior Python Developer** with over **5 years** of experience in *
 
 ## 🔧 Technologies Used
 
-- **Frontend**: HTML, CSS, JavaScript (if applicable)
+- **Frontend**: HTML, CSS, JavaScript
 - **Backend & APIs**: Python, FastAPI, Flask, Django (not used in this project, but expertise areas)
 - **Data & AI**: Kafka, Airflow, PostgreSQL, MongoDB, AWS S3, GenAI (LLMs, RAG, Fine-Tuning)
 - **DevOps & Cloud**: Docker, Kubernetes (EKS/ECS), Jenkins, AWS (EC2, Lambda, S3)
@@ -24,7 +24,6 @@ I am a **Lead/Senior Python Developer** with over **5 years** of experience in *
 ## 🌎 Live Demo
 
 🔗 **[Visit My Portfolio](https://fullstackfusions.com/)**
-*(Replace with your actual GitHub Pages URL)*
 
 ## 📜 How to Run Locally
 
@@ -45,10 +44,10 @@ If you want to run the portfolio locally, follow these steps:
 ## 📧 Contact Me
 
 📩 Email: [fullstackfusions@gmail.com](mailto:fullstackfusions@gmail.com)
-🔗 LinkedIn: [linkedin.com/in/fullstackfusions](https://linkedin.com/in/fullstackfusions)
-💻 GitHub: [github.com/fullstackfusions](https://github.com/fullstackfusions)
-🎥 YouTube: [github.com/fullstackfusions](https://www.youtube.com/@fullstackfusions)
-✍️ Medium: [github.com/fullstackfusions](https://medium.com/@fullstackfusions)
-🛠 Dev.to: [github.com/fullstackfusions](https://dev.to/fullstackfusions)
-🐦 Twitter: [github.com/fullstackfusions](https://x.com/MIHIRZZ)
-📸 Instagram: [github.com/fullstackfusions](https://instagram.com/fullstackfusions)
+ | 🔗 LinkedIn: [linkedin.com/in/fullstackfusions](https://linkedin.com/in/fullstackfusions)
+ | 💻 GitHub: [github.com/fullstackfusions](https://github.com/fullstackfusions)
+ | 🎥 YouTube: [youtube.com/@fullstackfusions](https://www.youtube.com/@fullstackfusions)
+ | ✍️ Medium: [medium.com/@fullstackfusions](https://medium.com/@fullstackfusions)
+ | 🛠 Dev.to: [dev.to/fullstackfusions](https://dev.to/fullstackfusions)
+ | 🐦 Twitter: [x.com/MIHIRZZ](https://x.com/MIHIRZZ)
+ | 📸 Instagram: [instagram.com/fullstackfusions](https://instagram.com/fullstackfusions)
