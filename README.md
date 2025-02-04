@@ -43,11 +43,11 @@ If you want to run the portfolio locally, follow these steps:
 
 ## 📧 Contact Me
 
-📩 Email: [fullstackfusions@gmail.com](mailto:fullstackfusions@gmail.com)
- | 🔗 LinkedIn: [linkedin.com/in/fullstackfusions](https://linkedin.com/in/fullstackfusions)
- | 💻 GitHub: [github.com/fullstackfusions](https://github.com/fullstackfusions)
- | 🎥 YouTube: [youtube.com/@fullstackfusions](https://www.youtube.com/@fullstackfusions)
- | ✍️ Medium: [medium.com/@fullstackfusions](https://medium.com/@fullstackfusions)
- | 🛠 Dev.to: [dev.to/fullstackfusions](https://dev.to/fullstackfusions)
- | 🐦 Twitter: [x.com/MIHIRZZ](https://x.com/MIHIRZZ)
- | 📸 Instagram: [instagram.com/fullstackfusions](https://instagram.com/fullstackfusions)
+- 📩 Email: [fullstackfusions@gmail.com](mailto:fullstackfusions@gmail.com)
+- 🔗 LinkedIn: [linkedin.com/in/fullstackfusions](https://linkedin.com/in/fullstackfusions)
+- 💻 GitHub: [github.com/fullstackfusions](https://github.com/fullstackfusions)
+- 🎥 YouTube: [youtube.com/@fullstackfusions](https://www.youtube.com/@fullstackfusions)
+- ✍️ Medium: [medium.com/@fullstackfusions](https://medium.com/@fullstackfusions)
+- 🛠 Dev.to: [dev.to/fullstackfusions](https://dev.to/fullstackfusions)
+- 🐦 Twitter: [x.com/MIHIRZZ](https://x.com/MIHIRZZ)
+- 📸 Instagram: [instagram.com/fullstackfusions](https://instagram.com/fullstackfusions)
