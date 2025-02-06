@@ -47,5 +47,4 @@ If you want to run the portfolio locally, follow these steps:
 - 🔗 LinkedIn: [linkedin.com/in/fullstackfusions](https://linkedin.com/in/fullstackfusions)
 - 💻 GitHub: [github.com/fullstackfusions](https://github.com/fullstackfusions)
 - 🎥 YouTube: [youtube.com/@fullstackfusions](https://www.youtube.com/@fullstackfusions)
-- ✍️ Medium: [medium.com/@fullstackfusions](https://medium.com/@fullstackfusions)
 - ✍️ SubStack: [fullstackfusions.substack](https://fullstackfusions.substack.com/)
