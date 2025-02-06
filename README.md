@@ -48,6 +48,4 @@ If you want to run the portfolio locally, follow these steps:
 - 💻 GitHub: [github.com/fullstackfusions](https://github.com/fullstackfusions)
 - 🎥 YouTube: [youtube.com/@fullstackfusions](https://www.youtube.com/@fullstackfusions)
 - ✍️ Medium: [medium.com/@fullstackfusions](https://medium.com/@fullstackfusions)
-- 🛠 Dev.to: [dev.to/fullstackfusions](https://dev.to/fullstackfusions)
-- 🐦 Twitter: [x.com/MIHIRZZ](https://x.com/MIHIRZZ)
-- 📸 Instagram: [instagram.com/fullstackfusions](https://instagram.com/fullstackfusions)
+- ✍️ SubStack: [fullstackfusions.substack](https://fullstackfusions.substack.com/)
