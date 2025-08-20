@@ -86,7 +86,7 @@
         <!-- CTA -->
         <div class="mt-6">
           <a
-            href="/data/MIHIR_PATEL_Lead_Software_Developer.pdf"
+            href="/data/MIHIR_PATEL_Senior_Software_Engineer.pdf"
             download
             class="inline-block rounded-lg bg-blue-600 px-5 py-2.5 font-medium hover:bg-blue-500"
             >Download Résumé</a
@@ -109,12 +109,11 @@
           system performance, and leading cross-functional teams to deliver
           enterprise-grade applications. Proven success in building ETL
           pipelines, real-time streaming systems, and cloud-native platforms
-          using Python, Kafka, Airflow, and Kubernetes (EKS/ECS). Adept at
-          integrating LLMs and RAG pipelines into enterprise workflows to
-          accelerate automation and decision-making. Recognized for translating
-          complex technical challenges into high-impact business
-          outcomes—improving scalability, reducing costs, and driving
-          innovation.
+          using Python, Kafka, Airflow, and Kubernetes. Adept at integrating
+          LLMs and RAG pipelines into enterprise workflows to accelerate
+          automation and decision-making. Recognized for translating complex
+          technical challenges into high-impact business outcomes—improving
+          scalability, reducing costs, and driving innovation.
         </p>
       </div>
     </section>
@@ -124,7 +123,9 @@
       id="skills"
       class="py-12 container mx-auto px-4 border-b border-gray-200"
     >
-      <h2 class="text-3xl font-bold text-gray-800 mb-8">Technical Skills</h2>
+      <h2 class="text-3xl font-bold text-gray-800 mb-8">
+        Technical Skills And Expertise
+      </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="bg-white p-6 rounded-lg shadow">
           <h3 class="text-lg font-semibold mb-2">Programming</h3>
@@ -143,8 +144,7 @@
         <div class="bg-white p-6 rounded-lg shadow">
           <h3 class="text-lg font-semibold mb-2">DevOps & Cloud</h3>
           <p class="text-gray-600">
-            Docker, Kubernetes (EKS/ECS), Jenkins, GitHub Actions, OpenShift,
-            AWS
+            Docker, Kubernetes, Jenkins, GitHub Actions, OpenShift, AWS
           </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow">
@@ -164,15 +164,23 @@
           <p class="text-gray-600">Webhooks, WebSocket, REST, GraphQL, gRPC</p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow">
-          <h3 class="text-lg font-semibold mb-2">GenAI</h3>
+          <h3 class="text-lg font-semibold mb-2">GenAI Features</h3>
           <p class="text-gray-600">
-            LLMs (OpenAI/Claude/Meta/open source), RAG, Fine Tuning, Function
-            Calling, LangChain, LangGraph, n8n, MCP, AI Agents
+            Retrieval Augmented Generations (RAG), Fine Tuning, Function (Tool)
+            Calling, AI Agents, Prompt chaining, LLM usage
+          </p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h3 class="text-lg font-semibold mb-2">GenAI Tools</h3>
+          <p class="text-gray-600">
+            LangChain, LangGraph, n8n, MCP servers/clients/hosts
           </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow">
           <h3 class="text-lg font-semibold mb-2">Others</h3>
-          <p class="text-gray-600">Shell scripting, CI/CD pipelines</p>
+          <p class="text-gray-600">
+            Shell scripting, CI/CD pipelines, Setup Automations
+          </p>
         </div>
       </div>
     </section>
@@ -197,16 +205,69 @@
           <div class="md:w-2/3">
             <ul class="list-disc pl-5 space-y-2 text-gray-700">
               <li>
-                Designed a LangGraph-based supervisor + sub-agent architecture
-                to automate monitoring, troubleshooting, and remediation.
+                Engineered a multi-agent architecture with LangGraph, where a
+                supervisor agent orchestrates domain-specific sub-agents to
+                handle monitoring, troubleshooting, and automation tasks.
               </li>
               <li>
-                Dynamic tool invocation reduced manual troubleshooting time by
-                <strong>~40%</strong>.
+                Developed an agentic workflow pipeline that enabled dynamic tool
+                invocation and intelligent decision-making, reducing manual
+                troubleshooting time by 40%.
               </li>
               <li>
-                Delivered a scalable full-stack chatbot (FastAPI, Kafka,
-                MongoDB, React/TS) to accelerate issue resolution.
+                Automated repetitive network operations through AI-driven
+                workflows, improving operational efficiency and reducing human
+                error.
+              </li>
+              <li>
+                Delivered a scalable full-stack chatbot solution (FastAPI,
+                Kafka, MongoDB, React, TypeScript) that streamlined
+                collaboration across teams and accelerated issue resolution.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project: Automated Network Device Certification -->
+      <div
+        class="bg-white p-6 border border-gray-200 rounded-lg mb-6 shadow-sm"
+      >
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="md:w-1/3">
+            <h3 class="text-xl font-semibold">
+              Automated Network Device Certification Platform
+            </h3>
+          </div>
+          <div class="md:w-2/3">
+            <ul class="list-disc pl-5 space-y-2 text-gray-700">
+              <li>
+                Designed and implemented a certification automation system for
+                Cisco IOSXE and other network devices, replacing a manual,
+                weeks-long process with an AI-powered workflow completed in
+                hours.
+              </li>
+              <li>
+                Built a PDF ingestion pipeline to extract test details (devices,
+                configurations, expected commands/results) from multi-page
+                documents, using prompt chaining + RAG techniques to normalize
+                and reformat data into structured markdown.
+              </li>
+              <li>
+                Automated test case generation by dynamically creating pytest
+                scripts with PyShark and corresponding testbed YAML files,
+                enabling scalable and repeatable validation.
+              </li>
+              <li>
+                Integrated Allure-pytest reporting to deliver visual,
+                centralized certification reports, improving traceability and
+                transparency for stakeholders.
+              </li>
+              <li>
+                Achieved significant cost savings by eliminating the need for
+                multiple contract employees and manual onboarding, while
+                ensuring data consistency, faster execution (weeks → hours), and
+                centralized data management.
               </li>
             </ul>
           </div>
@@ -226,16 +287,29 @@
           <div class="md:w-2/3">
             <ul class="list-disc pl-5 space-y-2 text-gray-700">
               <li>
-                Built real-time device interconnection visibility to predict
-                impact zones during changes and incidents.
+                Built a network topology platform to provide real-time
+                visibility of device interconnections, enabling teams to predict
+                impact zones and mitigate risks during change management and
+                troubleshooting.
               </li>
               <li>
-                Scheduled daily ingestion via Airflow; progressive
-                device-by-device mapping improved pipeline efficiency.
+                Designed Airflow DAGs to schedule daily data collection from
+                multiple enterprise sources, ensuring up-to-date visibility into
+                network device states.
               </li>
               <li>
-                Stored relationships in Neo4j for graph visualization and faster
-                dependency analysis.
+                Developed a progressive data collection and mapping workflow
+                (device-by-device ingestion and mapping) to avoid heavy data
+                loads, improving pipeline efficiency and system performance.
+              </li>
+              <li>
+                Integrated Neo4j graph database for storing and visualizing
+                device relationships, empowering operations teams to quickly
+                identify dependency chains and potential points of failure.
+              </li>
+              <li>
+                Improved incident resolution speed and enhanced proactive change
+                verification, reducing downtime risks and operational costs.
               </li>
             </ul>
           </div>
@@ -253,16 +327,24 @@
           <div class="md:w-2/3">
             <ul class="list-disc pl-5 space-y-2 text-gray-700">
               <li>
-                Kafka + Airflow ETL for metrics from Postgres Enterprise
-                Management, Grafana, Dynatrace to AWS S3.
+                Architected and delivered a scalable data platform to empower
+                enterprises with faster, data-driven decision-making.
               </li>
               <li>
-                Grafana dashboards reduced data access latency by
-                <strong>~35%</strong> and enabled proactive insights.
+                Designed and implemented ETL pipelines using Kafka and Airflow
+                to extract and transform metrics from Postgres Enterprise
+                Management, Grafana, and Dynatrace, storing results in AWS S3
+                for downstream analytics.
               </li>
               <li>
-                Improved data reliability and stakeholder visibility for anomaly
-                detection and performance optimization.
+                Built real-time monitoring and visualization dashboards in
+                Grafana, reducing data access latency by 35% and enabling
+                proactive system insights.
+              </li>
+              <li>
+                Improved data reliability and operational visibility, allowing
+                stakeholders to identify anomalies faster and optimize
+                infrastructure performance.
               </li>
             </ul>
           </div>
@@ -282,16 +364,30 @@
           <div class="md:w-2/3">
             <ul class="list-disc pl-5 space-y-2 text-gray-700">
               <li>
-                Modularized a monolith into Kafka-based microservices;
-                introduced MongoDB caching to cut redundant work.
+                Developed a real-time chatbot platform to streamline daily
+                network operations such as executing multi-command SSH tasks,
+                validating system upgrades, and searching devices across tools
+                like Extrahop, MyOps, DataWarehouse, NetBrain, and Cisco ACI.
               </li>
               <li>
-                Integrated Webex & Slack via WebSocket notifications for faster
-                updates during live changes.
+                Refactored a monolithic architecture into modular microservices,
+                introducing Kafka-based event-driven communication to enhance
+                scalability and system reliability.
               </li>
               <li>
-                RAG (LangChain + HF) unified LLM knowledge with enterprise data
-                to speed up troubleshooting.
+                Implemented MongoDB caching to avoid redundant processing and
+                event triggers, cutting operational costs by reducing repeated
+                queries and resource usage.
+              </li>
+              <li>
+                Integrated WebSocket-based notifications across platforms
+                (Webex, Slack), enabling faster updates and improved
+                collaboration during live network changes.
+              </li>
+              <li>
+                Delivered a robust automation framework that reduced manual
+                troubleshooting efforts, accelerated change validation, and
+                improved operational efficiency for network teams.
               </li>
             </ul>
           </div>
@@ -303,7 +399,7 @@
         class="bg-gray-900 p-4 rounded-lg shadow flex items-center justify-center hover:bg-gray-700 transition"
       >
         <a
-          href="https://github.com/fullstackfusions"
+          href="https://github.com/fullstackfusions/MyProjects"
           target="_blank"
           class="w-full text-center text-white font-semibold"
           >View GitHub Projects</a
@@ -341,8 +437,8 @@
                 prep ~40%.
               </li>
               <li>
-                FastAPI microservices on EKS; improved horizontal scaling and
-                uptime.
+                FastAPI microservices on OpenShift; improved horizontal scaling
+                and uptime.
               </li>
               <li>
                 Event-driven Webhooks/WebSocket; ~30% responsiveness gain.
@@ -547,16 +643,7 @@
 
     <!-- Contact Section -->
     <section id="contact" class="py-12 container mx-auto px-4">
-      <h2 class="text-3xl font-bold mb-6">Contact</h2>
       <div class="flex flex-col items-center gap-4">
-        <p class="text-gray-700 text-center">
-          Toronto, GTA · +1 (647) 967-0450 ·
-          <a
-            class="text-blue-600 hover:underline"
-            href="mailto:fullstackfusions@gmail.com"
-            >fullstackfusions@gmail.com</a
-          >
-        </p>
         <div class="flex justify-center gap-3">
           <a
             href="mailto:fullstackfusions@gmail.com"
