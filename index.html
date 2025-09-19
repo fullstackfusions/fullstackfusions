@@ -201,37 +201,36 @@
     >
       <h2 class="text-3xl font-bold mb-6">Key Projects</h2>
 
-      <!-- Project: Multi-Agent Platform -->
+      <!-- Project: Network Validation Platform (Pre/Post Change Automation) -->
       <div
         class="bg-white p-6 border border-gray-200 rounded-lg mb-6 shadow-sm"
       >
         <div class="flex flex-col md:flex-row gap-4">
           <div class="md:w-1/3">
             <h3 class="text-xl font-semibold">
-              AI-Driven Multi-Agent Workflow Platform for Network Operations
+              Network Validation Platform (Pre/Post Change Automation)
             </h3>
           </div>
           <div class="md:w-2/3">
             <ul class="list-disc pl-5 space-y-2 text-gray-700">
               <li>
-                Engineered a multi-agent architecture with LangGraph, where a
-                supervisor agent orchestrates domain-specific sub-agents to
-                handle monitoring, troubleshooting, and automation tasks.
+                Built a pre/post validation automation system to assess change, upgrade, RMA, and refresh activities across Cisco NX-OS, IOS, and IOSXE devices, ensuring network resiliency and service
+                continuity.
               </li>
               <li>
-                Developed an agentic workflow pipeline that enabled dynamic tool
-                invocation and intelligent decision-making, reducing manual
-                troubleshooting time by 40%.
+                Automated collection of canonical device snapshots (routing tables, ARP/ND, STP, interface states, error counters) and implemented subnet reachability checks with fan-out pings.
               </li>
               <li>
-                Automated repetitive network operations through AI-driven
-                workflows, improving operational efficiency and reducing human
-                error.
+                Aggregated utilization metrics (interfaces, CPU, memory) pre and post-change, enabling detection of regression trends at scale.
               </li>
               <li>
-                Delivered a scalable full-stack chatbot solution (FastAPI,
-                Kafka, MongoDB, React, TypeScript) that streamlined
-                collaboration across teams and accelerated issue resolution.
+                Integrated AI-driven summarization to highlight diffs and anomalies (e.g., missing VLANs, neighbor changes, error growth) while preserving full evidence-backed reports.
+              </li>
+              <li>
+                Reduced validation efforts from weeks of manual comparison to a 10-minute automated review, cutting engineering costs and preventing “quiet failures” often missed by manual checks.
+              </li>
+              <li>
+                Expanded coverage beyond upgrades to include switch RMAs and refreshes, normalizing OS/version discrepancies and enabling reliable device-to-device comparisons.
               </li>
             </ul>
           </div>
@@ -250,33 +249,53 @@
           </div>
           <div class="md:w-2/3">
             <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                <li>
+                    Designed and implemented a certification automation system for Cisco NX-OS, IOS, and IOSXE devices, replacing a manual, weeks-long contractor process with a repeatable workflow executed in minutes.
+                </li>
+                <li>
+                    Built a PDF ingestion pipeline to extract test details (devices, configurations, commands, expected results) from multi-page documents, leveraging prompt chaining + RAG techniques to normalize and reformat data into structured markdown.
+                </li>
+                <li>
+                    Automated test case generation by dynamically creating pytest scripts with PyShark and testbed YAML files, enabling scalable and repeatable validation.
+                </li>
+                <li>
+                    Integrated Allure-pytest reporting to deliver visual, versioned certification reports with full traceability, improving transparency and audit readiness for stakeholders.
+                </li>
+                <li>
+                    Collaborated with network teams to gather real-world test data and validate performance at scale, ensuring reliability across enterprise-grade device environments.
+                </li>
+                <li>
+                    Achieved significant operational impact: eliminated contractor costs, standardized certification quality, accelerated onboarding (weeks → minutes), and delivered board-ready compliance reports.
+                </li>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project: Multi-Agent Platform -->
+      <div
+        class="bg-white p-6 border border-gray-200 rounded-lg mb-6 shadow-sm"
+      >
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="md:w-1/3">
+            <h3 class="text-xl font-semibold">
+              AI-Driven Multi-Agent Workflow Platform for Network Operations
+            </h3>
+          </div>
+          <div class="md:w-2/3">
+            <ul class="list-disc pl-5 space-y-2 text-gray-700">
               <li>
-                Designed and implemented a certification automation system for
-                Cisco IOSXE and other network devices, replacing a manual,
-                weeks-long process with an AI-powered workflow completed in
-                hours.
+                Engineered a multi-agent architecture with LangGraph, where a supervisor agent orchestrates domain-specific sub-agents to handle monitoring, troubleshooting, and automation tasks.
               </li>
               <li>
-                Built a PDF ingestion pipeline to extract test details (devices,
-                configurations, expected commands/results) from multi-page
-                documents, using prompt chaining + RAG techniques to normalize
-                and reformat data into structured markdown.
+                Developed an agentic workflow pipeline that enabled dynamic tool invocation and intelligent decision-making, reducing manual troubleshooting time by 40%.
               </li>
               <li>
-                Automated test case generation by dynamically creating pytest
-                scripts with PyShark and corresponding testbed YAML files,
-                enabling scalable and repeatable validation.
+                Automated repetitive network operations through AI-driven workflows, improving operational efficiency and reducing human error.
               </li>
               <li>
-                Integrated Allure-pytest reporting to deliver visual,
-                centralized certification reports, improving traceability and
-                transparency for stakeholders.
-              </li>
-              <li>
-                Achieved significant cost savings by eliminating the need for
-                multiple contract employees and manual onboarding, while
-                ensuring data consistency, faster execution (weeks → hours), and
-                centralized data management.
+                Delivered a scalable full-stack chatbot solution (FastAPI, Kafka, MongoDB, React, TypeScript) that streamlined collaboration across teams and accelerated issue resolution.
               </li>
             </ul>
           </div>
@@ -296,29 +315,19 @@
           <div class="md:w-2/3">
             <ul class="list-disc pl-5 space-y-2 text-gray-700">
               <li>
-                Built a network topology platform to provide real-time
-                visibility of device interconnections, enabling teams to predict
-                impact zones and mitigate risks during change management and
-                troubleshooting.
+                Built a network topology platform to provide real-time visibility of device interconnections, enabling teams to predict impact zones and mitigate risks during change management and troubleshooting.
               </li>
               <li>
-                Designed Airflow DAGs to schedule daily data collection from
-                multiple enterprise sources, ensuring up-to-date visibility into
-                network device states.
+                Designed Airflow DAGs to schedule daily data collection from multiple enterprise sources, ensuring up-to-date visibility into network device states.
               </li>
               <li>
-                Developed a progressive data collection and mapping workflow
-                (device-by-device ingestion and mapping) to avoid heavy data
-                loads, improving pipeline efficiency and system performance.
+                Developed a progressive data collection and mapping workflow (device-by-device ingestion and mapping) to avoid heavy data loads, improving pipeline efficiency and system performance.
               </li>
               <li>
-                Integrated Neo4j graph database for storing and visualizing
-                device relationships, empowering operations teams to quickly
-                identify dependency chains and potential points of failure.
+                Integrated Neo4j graph database for storing and visualizing device relationships, empowering operations teams to quickly identify dependency chains and potential points of failure.
               </li>
               <li>
-                Improved incident resolution speed and enhanced proactive change
-                verification, reducing downtime risks and operational costs.
+                Improved incident resolution speed and enhanced proactive change verification, reducing downtime risks and operational costs.
               </li>
             </ul>
           </div>
@@ -336,24 +345,17 @@
           <div class="md:w-2/3">
             <ul class="list-disc pl-5 space-y-2 text-gray-700">
               <li>
-                Architected and delivered a scalable data platform to empower
-                enterprises with faster, data-driven decision-making.
+                Architected and delivered a scalable data platform to empower enterprises with faster, data-driven decision-making.
               </li>
               <li>
-                Designed and implemented ETL pipelines using Kafka and Airflow
-                to extract and transform metrics from Postgres Enterprise
-                Management, Grafana, and Dynatrace, storing results in AWS S3
+                Designed and implemented ETL pipelines using Kafka and Airflow to extract and transform metrics from Postgres Enterprise Management, Grafana, and Dynatrace, storing results in AWS S3
                 for downstream analytics.
               </li>
               <li>
-                Built real-time monitoring and visualization dashboards in
-                Grafana, reducing data access latency by 35% and enabling
-                proactive system insights.
+                Built real-time monitoring and visualization dashboards in Grafana, reducing data access latency by 35% and enabling proactive system insights.
               </li>
               <li>
-                Improved data reliability and operational visibility, allowing
-                stakeholders to identify anomalies faster and optimize
-                infrastructure performance.
+                Improved data reliability and operational visibility, allowing stakeholders to identify anomalies faster and optimize infrastructure performance.
               </li>
             </ul>
           </div>
@@ -373,30 +375,19 @@
           <div class="md:w-2/3">
             <ul class="list-disc pl-5 space-y-2 text-gray-700">
               <li>
-                Developed a real-time chatbot platform to streamline daily
-                network operations such as executing multi-command SSH tasks,
-                validating system upgrades, and searching devices across tools
-                like Extrahop, MyOps, DataWarehouse, NetBrain, and Cisco ACI.
+                Developed a real-time chatbot platform to streamline daily network operations such as executing multi-command SSH tasks, validating system upgrades, and searching devices across tools like Extrahop, MyOps, DataWarehouse, NetBrain, and Cisco ACI.
               </li>
               <li>
-                Refactored a monolithic architecture into modular microservices,
-                introducing Kafka-based event-driven communication to enhance
-                scalability and system reliability.
+                Refactored a monolithic architecture into modular microservices, introducing Kafka-based event-driven communication to enhance scalability and system reliability.
               </li>
               <li>
-                Implemented MongoDB caching to avoid redundant processing and
-                event triggers, cutting operational costs by reducing repeated
-                queries and resource usage.
+                Implemented MongoDB caching to avoid redundant processing and event triggers, cutting operational costs by reducing repeated queries and resource usage.
               </li>
               <li>
-                Integrated WebSocket-based notifications across platforms
-                (Webex, Slack), enabling faster updates and improved
-                collaboration during live network changes.
+                Integrated WebSocket-based notifications across platforms (Webex, Slack), enabling faster updates and improved collaboration during live network changes.
               </li>
               <li>
-                Delivered a robust automation framework that reduced manual
-                troubleshooting efforts, accelerated change validation, and
-                improved operational efficiency for network teams.
+                Delivered a robust automation framework that reduced manual troubleshooting efforts, accelerated change validation, and improved operational efficiency for network teams.
               </li>
             </ul>
           </div>
@@ -423,7 +414,7 @@
     >
       <h2 class="text-3xl font-bold mb-6">Professional Experience</h2>
 
-      <!-- RBC Senior Developer -->
+      <!-- RBC Senior Developer (Consultant) - Network Automation -->
       <div
         class="bg-white p-6 border border-gray-200 rounded-lg mb-6 shadow-sm"
       >
@@ -432,42 +423,65 @@
             <h3 class="text-2xl font-bold">Senior Developer</h3>
             <p class="text-gray-600">
               RBC <span class="mx-2">|</span>
-              <span class="font-medium">Aug 2024 – Present</span>
+              <span class="font-medium">May 2025 – Present</span>
             </p>
           </div>
           <div class="md:w-2/3">
+            <p class="text-gray-700 mb-3 italic">Leading network automation initiatives to transform manual validation and certification processes into intelligent, scalable platforms.</p>
             <ul class="list-disc pl-5 space-y-2 text-gray-700">
               <li>
-                Led Data Platform MVP; ETL across Grafana, PostgreSQL,
-                Elasticsearch, Dynatrace.
+                <strong>Network Validation Automation:</strong> Spearheaded development of pre/post change validation system for Cisco NX-OS, IOS and IOS-XE devices, reducing validation time from weeks to 10 minutes while preventing "quiet failures" often missed by manual processes.
               </li>
               <li>
-                Automated ingestion with Kafka + Airflow to AWS S3; cut manual
-                prep ~40%.
+                <strong>Device Certification Platform:</strong> Built automated certification workflow that parses PDF requirements documents using RAG techniques, generates pytest suites, and produces versioned Allure reports - eliminating contractor costs and accelerating onboarding from weeks to minutes.
               </li>
               <li>
-                FastAPI microservices on OpenShift; improved horizontal scaling
-                and uptime.
+                <strong>Topology & Impact Analysis:</strong> Extended network visibility capabilities with scheduled data collection and Neo4j graph-backed mapping to support real-time impact analysis during change management and incident response.
               </li>
               <li>
-                Event-driven Webhooks/WebSocket; ~30% responsiveness gain.
-              </li>
-              <li>
-                Grafana dashboards reduced incident detection time by ~25%.
-              </li>
-              <li>
-                Evaluated AWS Glue Data Catalog & Lake Formation for governance.
-              </li>
-              <li>
-                Influenced architecture; mentored devs; enforced code best
-                practices.
+                <strong>Enterprise Integration:</strong> Embedded platforms into change management workflows, collaborated with network engineering teams to drive adoption, and delivered board-ready compliance reports with full audit traceability.
               </li>
             </ul>
           </div>
         </div>
       </div>
 
-      <!-- RBC Software Engineer -->
+      <!-- RBC Senior Developer - Data Platform -->
+      <div
+        class="bg-white p-6 border border-gray-200 rounded-lg mb-6 shadow-sm"
+      >
+        <div class="flex flex-col md:flex-row gap-3">
+          <div class="md:w-1/3">
+            <h3 class="text-2xl font-bold">Senior Developer</h3>
+            <p class="text-gray-600">
+              RBC <span class="mx-2">|</span>
+              <span class="font-medium">Aug 2024 – May 2025</span>
+            </p>
+          </div>
+          <div class="md:w-2/3">
+            <p class="text-gray-700 mb-3 italic">Architected and delivered enterprise data platform MVP, establishing scalable ETL pipelines and real-time analytics capabilities.</p>
+            <ul class="list-disc pl-5 space-y-2 text-gray-700">
+              <li>
+                <strong>Data Platform MVP:</strong> Spearheaded development of comprehensive ETL pipelines extracting and transforming data from Grafana, PostgreSQL, Elasticsearch, and Dynatrace into analytics-friendly S3 data lake, enabling enterprise-wide data insights.
+              </li>
+              <li>
+                <strong>Streaming & Orchestration:</strong> Implemented streaming solutions using Kafka and automated data workflows with Airflow, ensuring timely and reliable data delivery to downstream consumers with 99.9% uptime.
+              </li>
+              <li>
+                <strong>Microservices Architecture:</strong> Designed scalable microservices using FastAPI and deployed on OpenShift/Kubernetes (EKS) with comprehensive observability, monitoring through Grafana dashboards, and operational guardrails.
+              </li>
+              <li>
+                <strong>Real-time Systems:</strong> Developed event-driven systems using webhooks and WebSockets, optimizing responsiveness for enterprise applications and improving user experience across internal tools.
+              </li>
+              <li>
+                <strong>Data Governance & Leadership:</strong> Researched and implemented AWS Glue Data Catalog and Lake Formation for data governance, mentored cross-functional teams, and influenced architecture decisions through code reviews and best practices.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- RBC Software Engineer - Chatbot Platform -->
       <div
         class="bg-white p-6 border border-gray-200 rounded-lg mb-6 shadow-sm"
       >
@@ -480,31 +494,29 @@
             </p>
           </div>
           <div class="md:w-2/3">
+            <p class="text-gray-700 mb-3 italic">Transformed monolithic chatbot architecture into intelligent microservices platform with advanced NLP capabilities and enterprise-grade scalability.</p>
             <ul class="list-disc pl-5 space-y-2 text-gray-700">
               <li>
-                Split a monolith into 3 Kafka-driven microservices; latency ↓
-                ~35%.
+                <strong>AI-Powered NLP Integration:</strong> Spearheaded integration of advanced NLP models to automate chatbot responses, significantly improving response time and accuracy while handling complex domain-specific queries.
               </li>
               <li>
-                Integrated NLP for chatbot automation; manual intervention ↓
-                ~50%.
+                <strong>Microservices Transformation:</strong> Successfully decomposed monolithic chatbot application into 3 scalable microservices, implementing Kafka-backed messaging for reliable communication between multiple frontends and backend services.
               </li>
               <li>
-                RAG (LangChain + HF) combined LLM + internal data for faster
-                answers.
+                <strong>RAG Pipeline Development:</strong> Built sophisticated Retrieval-Augmented Generation pipeline using LangChain framework and Hugging Face models, merging LLM knowledge with internal data sources to create a more versatile and intelligent chatbot.
               </li>
               <li>
-                Deployed Dockerized services to Kubernetes for HA and
-                autoscaling.
+                <strong>Performance Optimization:</strong> Introduced effective MongoDB caching mechanisms, significantly reducing response times by serving cached responses and optimizing overall system performance.
               </li>
-              <li>MongoDB caching cut redundant queries; infra cost ↓ ~20%.</li>
-              <li>Kubernetes CI/CD shrank release cycles from days → hours.</li>
+              <li>
+                <strong>Cloud-Native Deployment:</strong> Containerized applications using Docker, orchestrated on Kubernetes with autoscaling and health-focused rollouts, and streamlined CI/CD pipelines for fast, consistent, low-risk deployments.
+              </li>
             </ul>
           </div>
         </div>
       </div>
 
-      <!-- CPPIB -->
+      <!-- CPPIB Senior Python Developer -->
       <div
         class="bg-white p-6 border border-gray-200 rounded-lg mb-6 shadow-sm"
       >
@@ -517,26 +529,29 @@
             </p>
           </div>
           <div class="md:w-2/3">
+            <p class="text-gray-700 mb-3 italic">Developed complex capital markets backend systems and led cloud migration initiatives to modernize trading infrastructure.</p>
             <ul class="list-disc pl-5 space-y-2 text-gray-700">
               <li>
-                Capital markets backends (Flask/Django/SQLAlchemy); transaction
-                throughput ↑ ~25%.
-              </li>
-              <li>REST APIs & middleware integrated across trading systems.</li>
-              <li>AWS migration using Boto3; query times ↓ ~30%.</li>
-              <li>Automations via Python + JAMS saved ~10 hrs/week.</li>
-              <li>
-                Deployed on AWS ECS/EC2 & Kubernetes; achieved ~99.9% uptime.
+                <strong>Capital Markets Backend:</strong> Developed complex backend systems for capital markets using Python frameworks (Flask, Django, SQLAlchemy), designed RESTful APIs and middleware microservices for seamless integration with trading systems.
               </li>
               <li>
-                Docker + Kubernetes CI/CD reduced deployment failures ~40%.
+                <strong>Cloud Migration Leadership:</strong> Led comprehensive cloud database migration from physical servers to Data Fabric, optimizing performance using AWS SDK tools like Boto3 and modernizing data access patterns for enhanced reliability and performance.
+              </li>
+              <li>
+                <strong>Full-Stack Development:</strong> Implemented complete development lifecycle from code changes to production deployment, including testing, building pipelines, and performance testing on pre-prod environments before client-facing releases.
+              </li>
+              <li>
+                <strong>Enterprise Deployment:</strong> Deployed applications using AWS ECS/EC2 and IBM UrbanCode, managing microservice architectures with focus on high availability, resilience, and smooth rollouts.
+              </li>
+              <li>
+                <strong>Automation & Reporting:</strong> Automated critical workflows using Python and JAMS scheduler tools to generate daily/weekly reports, reducing manual effort and improving operational efficiency.
               </li>
             </ul>
           </div>
         </div>
       </div>
 
-      <!-- CGI -->
+      <!-- CGI Full Stack Developer -->
       <div
         class="bg-white p-6 border border-gray-200 rounded-lg mb-6 shadow-sm"
       >
@@ -549,25 +564,29 @@
             </p>
           </div>
           <div class="md:w-2/3">
+            <p class="text-gray-700 mb-3 italic">Built comprehensive data processing pipelines and full-stack applications while implementing infrastructure as code and cloud-native CI/CD practices.</p>
             <ul class="list-disc pl-5 space-y-2 text-gray-700">
               <li>
-                Automated workflows with Python & shell; manual work ↓ ~35%.
+                <strong>Workflow Automation:</strong> Automated various manual workflows using Python scripts and Unix shell scripting, developed change data capture scripts for processing incremental records between new and existing relational database data.
               </li>
-              <li>CDC scripts for incremental relational data capture.</li>
               <li>
-                Terraform IaC improved release repeatability, fewer misconfigs.
+                <strong>Infrastructure as Code:</strong> Implemented Terraform to map complex dependencies, identify network issues, and leverage key features like Infrastructure as Code, execution plans, resource graphs, and change automation.
               </li>
-              <li>React + Python dashboards for real-time KPIs.</li>
               <li>
-                AWS Glue ETL + Lambda + Step Functions; more reliable pipelines.
+                <strong>Full-Stack Dashboard Development:</strong> Developed and tested comprehensive dashboard features using Python, React, Bootstrap, CSS, JavaScript, and jQuery, with expertise in scientific computing stack (NumPy, SciPy, pandas, matplotlib).
               </li>
-              <li>Kubernetes deployments integrated into CI/CD.</li>
+              <li>
+                <strong>Cloud Data Pipelines:</strong> Built reliable AWS data pipelines using Glue ETL jobs triggered by S3 events, Lambda functions, Step Functions, and scheduled Airflow jobs for data loading and time series manipulation.
+              </li>
+              <li>
+                <strong>DevOps & Reporting:</strong> Implemented CI/CD for microservices deployment in Kubernetes clusters on AWS Cloud, generated capacity planning reports using Python visualization packages, and deployed comprehensive AWS stacks including EC2, S3, RDS, and Load Balancing services.
+              </li>
             </ul>
           </div>
         </div>
       </div>
 
-      <!-- Kroger -->
+      <!-- Kroger Python Developer -->
       <div
         class="bg-white p-6 border border-gray-200 rounded-lg mb-6 shadow-sm"
       >
@@ -580,19 +599,19 @@
             </p>
           </div>
           <div class="md:w-2/3">
+            <p class="text-gray-700 mb-3 italic">Developed patient data management systems with multi-database architecture and established robust CI/CD infrastructure on AWS cloud platform.</p>
             <ul class="list-disc pl-5 space-y-2 text-gray-700">
               <li>
-                PyQt modules for patient data workflows; improved UX and speed.
+                <strong>Healthcare Data Systems:</strong> Implemented comprehensive data tables using PyQt to add, delete, update, and display patient records and policy information, with modules to connect and monitor Apache Cassandra instance status.
               </li>
               <li>
-                Cassandra & CouchDB integrations enhanced scalability/security.
+                <strong>Multi-Database Architecture:</strong> Designed hybrid data storage solution using Apache CouchDB (NoSQL) on AWS Linux instances in parallel with RDS MySQL, improving data security and report generation efficiency through strategic caching and data reuse.
               </li>
               <li>
-                AWS CloudFormation + shell automated infra; provisioning time ↓
-                ~50%.
+                <strong>CI/CD Pipeline Implementation:</strong> Built comprehensive end-to-end CI/CD pipelines in Jenkins to retrieve code, compile applications, perform automated tests, and push build artifacts to Nexus repository for continuous integration and delivery.
               </li>
               <li>
-                Jenkins CI/CD automated tests & deploys; release errors ↓ ~30%.
+                <strong>AWS Infrastructure Automation:</strong> Managed and automated all aspects of AWS infrastructure including compute, storage, network, permissions, and cost optimization using configuration management tools like CloudFormation and custom shell scripts.
               </li>
             </ul>
           </div>
