@@ -232,104 +232,35 @@
     </a>
     <!-- Header -->
     <header class="bg-gray-900 text-white">
-      <div class="container mx-auto px-4 py-8 text-center">
-        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight">
-          Mihir Patel
-        </h1>
-        <p class="mt-2 text-lg md:text-2xl text-gray-300">
-          Lead / Senior Software Engineer
-        </p>
-        <nav class="mt-5">
-          <ul
-            class="inline-flex flex-wrap justify-center gap-4 md:gap-6 text-sm md:text-base"
-          >
+      <!-- Hero: name + title -->
+      <div class="container mx-auto px-4 pt-8 pb-5 text-center">
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <img src="/images/logo.png" alt="" class="w-10 h-10" aria-hidden="true" />
+          <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight">Mihir Patel</h1>
+          <span class="hidden md:inline text-gray-500 font-light text-3xl">&mdash;</span>
+          <span class="hidden md:inline text-xl text-gray-300 font-light">Lead / Senior Software Engineer</span>
+        </div>
+        <p class="md:hidden mt-1 text-base text-gray-300">Lead / Senior Software Engineer</p>
+      </div>
+      <!-- Toolbar nav -->
+      <nav class="border-t border-gray-700">
+        <div class="container mx-auto px-4 py-3">
+          <ul class="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-sm md:text-base">
+            <li>
+              <a href="/" aria-label="Home" class="flex items-center">
+                <img src="/images/logo.png" alt="Home" class="w-6 h-6" />
+              </a>
+            </li>
             <li><a href="#about" class="hover:text-blue-400">About</a></li>
             <li><a href="#skills" class="hover:text-blue-400">Skills</a></li>
-            <li>
-              <a href="/projects" class="hover:text-blue-400">Projects</a>
-            </li>
-            <li>
-              <a href="/experience" class="hover:text-blue-400">Experience</a>
-            </li>
-            <li>
-              <a href="#education" class="hover:text-blue-400">Education</a>
-            </li>
-            <li>
-              <a href="#certs" class="hover:text-blue-400">Certifications</a>
-            </li>
+            <li><a href="/projects" class="hover:text-blue-400">Projects</a></li>
+            <li><a href="/experience" class="hover:text-blue-400">Experience</a></li>
+            <li><a href="#education" class="hover:text-blue-400">Education</a></li>
+            <li><a href="#certs" class="hover:text-blue-400">Certifications</a></li>
             <li><a href="/blog" class="hover:text-blue-400">Blog</a></li>
           </ul>
-        </nav>
-
-        <!-- Social Link Buttons -->
-        <div class="mt-6 flex justify-center gap-3">
-          <a
-            href="mailto:fullstackfusions@gmail.com"
-            aria-label="Email Mihir"
-            class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-green-500 transition duration-300 hover:shadow-lg"
-          >
-            <img
-              src="images/email.png"
-              alt="Email"
-              class="w-5 h-5"
-              loading="lazy"
-            />
-          </a>
-          <a
-            href="https://linkedin.com/in/fullstackfusions"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="LinkedIn"
-            class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-blue-500 transition duration-300 hover:shadow-lg"
-          >
-            <img
-              src="images/linkedin.png"
-              alt="LinkedIn"
-              class="w-5 h-5"
-              loading="lazy"
-            />
-          </a>
-          <a
-            href="https://www.youtube.com/@fullstackfusions"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="YouTube"
-            class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-red-500 transition duration-300 hover:shadow-lg"
-          >
-            <img
-              src="images/youtube.png"
-              alt="YouTube"
-              class="w-5 h-5"
-              loading="lazy"
-            />
-          </a>
-          <a
-            href="https://fullstackfusions.substack.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Substack"
-            class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-orange-500 transition duration-300 hover:shadow-lg"
-          >
-            <img
-              src="images/substack.png"
-              alt="Substack"
-              class="w-5 h-5"
-              loading="lazy"
-            />
-          </a>
         </div>
-
-        <!-- CTA -->
-        <div class="mt-6">
-          <a
-            href="/data/MIHIR_PATEL_Senior_Software_Engineer.pdf"
-            download="Mihir_Patel_Resume.pdf"
-            type="application/pdf"
-            class="inline-block rounded-lg bg-blue-600 px-5 py-2.5 font-medium hover:bg-blue-500"
-            >Download Résumé</a
-          >
-        </div>
-      </div>
+      </nav>
     </header>
 
     <!-- About Section -->
@@ -374,6 +305,31 @@
               delivery
             </p>
           </div>
+        </div>
+
+        <!-- Social + Resume -->
+        <div class="mt-8 flex flex-wrap items-center gap-4">
+          <a href="mailto:fullstackfusions@gmail.com" aria-label="Email Mihir"
+             class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-green-500 transition duration-300 hover:shadow-lg">
+            <img src="images/email.png" alt="Email" class="w-5 h-5" loading="lazy" />
+          </a>
+          <a href="https://linkedin.com/in/fullstackfusions" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
+             class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-blue-500 transition duration-300 hover:shadow-lg">
+            <img src="images/linkedin.png" alt="LinkedIn" class="w-5 h-5" loading="lazy" />
+          </a>
+          <a href="https://www.youtube.com/@fullstackfusions" target="_blank" rel="noopener noreferrer" aria-label="YouTube"
+             class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-red-500 transition duration-300 hover:shadow-lg">
+            <img src="images/youtube.png" alt="YouTube" class="w-5 h-5" loading="lazy" />
+          </a>
+          <a href="https://fullstackfusions.substack.com/" target="_blank" rel="noopener noreferrer" aria-label="Substack"
+             class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-orange-500 transition duration-300 hover:shadow-lg">
+            <img src="images/substack.png" alt="Substack" class="w-5 h-5" loading="lazy" />
+          </a>
+          <a href="/data/MIHIR_PATEL_Senior_Software_Engineer.pdf" download="Mihir_Patel_Resume.pdf"
+             type="application/pdf"
+             class="ml-2 inline-block rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-500 transition duration-200">
+            Download R&eacute;sum&eacute;
+          </a>
         </div>
       </section>
 

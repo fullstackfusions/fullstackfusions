@@ -52,18 +52,22 @@ function renderTags(tags = []) {
 function siteNav() {
   return `
   <header class="bg-gray-900 text-white">
-    <div class="container mx-auto px-4 py-4">
-      <nav>
-        <ul class="inline-flex flex-wrap justify-center gap-4 md:gap-6 text-sm md:text-base w-full">
-          <li><a href="/" class="hover:text-blue-400 font-extrabold text-lg tracking-tight">Mihir Patel</a></li>
+    <nav class="border-b border-gray-700">
+      <div class="container mx-auto px-4 py-3">
+        <ul class="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-sm md:text-base">
+          <li>
+            <a href="/" aria-label="Home" class="flex items-center">
+              <img src="/images/logo.png" alt="Home" style="width:1.5rem;height:1.5rem;" />
+            </a>
+          </li>
           <li><a href="/#about" class="hover:text-blue-400">About</a></li>
           <li><a href="/#skills" class="hover:text-blue-400">Skills</a></li>
           <li><a href="/projects" class="hover:text-blue-400">Projects</a></li>
           <li><a href="/experience" class="hover:text-blue-400">Experience</a></li>
           <li><a href="/blog" class="hover:text-blue-400">Blog</a></li>
         </ul>
-      </nav>
-    </div>
+      </div>
+    </nav>
   </header>`;
 }
 
