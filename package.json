@@ -1,0 +1,25 @@
+{
+  "name": "fullstackfusions",
+  "version": "1.0.0",
+  "description": "Welcome to my personal portfolio website! This is a **single-page portfolio** showcasing my skills, projects, and professional experience. The site is built to highlight my expertise in **Python backend development, data engineering, AI, and full-stack development**. It is hosted on **GitHub Pages** for easy accessibility.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fullstackfusions/fullstackfusions.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/fullstackfusions/fullstackfusions/issues"
+  },
+  "homepage": "https://github.com/fullstackfusions/fullstackfusions#readme",
+  "devDependencies": {
+    "gray-matter": "^4.0.3",
+    "marked": "^17.0.4"
+  }
+}

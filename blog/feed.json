@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "2026-03-14-finding-peace-in-nature",
+    "title": "Finding Peace in Nature",
+    "date": "2026-03-14T00:00:00.000Z",
+    "tags": [
+      "life",
+      "nature",
+      "reflection"
+    ],
+    "description": "A reflection on slowing down, stepping outside, and finding clarity away from the screen.",
+    "url": "/blog/posts/2026-03-14-finding-peace-in-nature/"
+  },
+  {
+    "slug": "2026-03-14-nature-photo-gallery",
+    "title": "Nature Photo Gallery",
+    "date": "2026-03-14",
+    "tags": [
+      "photography",
+      "nature",
+      "interactive"
+    ],
+    "description": "An interactive gallery of nature photos with lightbox and keyboard navigation.",
+    "url": "/blog/posts/2026-03-14-nature-photo-gallery/"
+  }
+]

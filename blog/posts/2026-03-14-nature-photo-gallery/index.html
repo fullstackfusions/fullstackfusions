@@ -1,0 +1,258 @@
+<!--blog-meta
+{
+  "title": "Nature Photo Gallery",
+  "date": "2026-03-14",
+  "description": "An interactive gallery of nature photos with lightbox and keyboard navigation.",
+  "tags": ["photography", "nature", "interactive"]
+}
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="An interactive photo gallery showcasing nature photography with lightbox and keyboard navigation."
+    />
+    <title>Nature Photo Gallery — fullstackfusions</title>
+    <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/blog/assets/blog.css" />
+    <style>
+      /* Post-specific gallery styles */
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1rem;
+      }
+      .gallery-grid img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .gallery-grid img:hover {
+        transform: scale(1.03);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      }
+      .lightbox {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 50;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+      .lightbox.active {
+        display: flex;
+      }
+      .lightbox img {
+        max-width: 90vw;
+        max-height: 80vh;
+        border-radius: 8px;
+      }
+      .lightbox-caption {
+        color: #d1d5db;
+        margin-top: 1rem;
+        font-size: 0.95rem;
+        text-align: center;
+      }
+      .lightbox-close {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        color: white;
+        font-size: 2rem;
+        cursor: pointer;
+        background: none;
+        border: none;
+        line-height: 1;
+      }
+      .lightbox-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        color: white;
+        font-size: 2.5rem;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0 1rem;
+        user-select: none;
+      }
+      .lightbox-nav.prev {
+        left: 1rem;
+      }
+      .lightbox-nav.next {
+        right: 1rem;
+      }
+      .lightbox-nav:hover,
+      .lightbox-close:hover {
+        color: #93c5fd;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 text-gray-900">
+    <!-- Site nav — keep in sync with build script siteNav() -->
+    <header class="bg-gray-900 text-white">
+      <div class="container mx-auto px-4 py-4">
+        <nav>
+          <ul
+            class="inline-flex flex-wrap justify-center gap-4 md:gap-6 text-sm md:text-base w-full"
+          >
+            <li>
+              <a
+                href="/"
+                class="hover:text-blue-400 font-extrabold text-lg tracking-tight"
+                >Mihir Patel</a
+              >
+            </li>
+            <li><a href="/#about" class="hover:text-blue-400">About</a></li>
+            <li><a href="/#skills" class="hover:text-blue-400">Skills</a></li>
+            <li>
+              <a href="/#projects" class="hover:text-blue-400">Projects</a>
+            </li>
+            <li>
+              <a href="/#experience" class="hover:text-blue-400">Experience</a>
+            </li>
+            <li><a href="/blog" class="hover:text-blue-400">Blog</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="blog-container">
+      <a class="back-link" href="/blog">&#8592; All posts</a>
+
+      <article>
+        <header class="post-header">
+          <div class="post-meta">March 14, 2026</div>
+          <h1 class="text-3xl font-bold mt-2">Nature Photo Gallery</h1>
+          <p class="text-gray-600 mt-2">
+            An interactive gallery of nature photos — click any image to view
+            full-size with keyboard navigation.
+          </p>
+          <div class="post-tags">
+            <span class="tag">photography</span>
+            <span class="tag">nature</span>
+            <span class="tag">interactive</span>
+          </div>
+        </header>
+
+        <div class="post-content">
+          <p>
+            Click any photo to open the lightbox. Use arrow keys or the buttons
+            to navigate. Press <kbd>Esc</kbd> to close.
+          </p>
+
+          <div class="gallery-grid" id="gallery">
+            <img
+              src="./nature_water_hills.jpg"
+              alt="Water and hills landscape"
+              data-caption="Water and Hills — calm waters reflecting the surrounding hills"
+            />
+            <img
+              src="./nature_hills_scenary.jpeg"
+              alt="Rolling hills scenery"
+              data-caption="Hills Scenery — rolling green hills under open sky"
+            />
+            <img
+              src="./nature_water_flower.jpg"
+              alt="Flower near water"
+              data-caption="Water Flower — blossoms growing along the water's edge"
+            />
+          </div>
+        </div>
+      </article>
+    </main>
+
+    <!-- Lightbox overlay -->
+    <div class="lightbox" id="lightbox">
+      <button class="lightbox-close" id="lb-close" aria-label="Close lightbox">
+        &times;
+      </button>
+      <button
+        class="lightbox-nav prev"
+        id="lb-prev"
+        aria-label="Previous image"
+      >
+        &#8249;
+      </button>
+      <button class="lightbox-nav next" id="lb-next" aria-label="Next image">
+        &#8250;
+      </button>
+      <img id="lb-img" src="" alt="" />
+      <div class="lightbox-caption" id="lb-caption"></div>
+    </div>
+
+    <script>
+      (function () {
+        const gallery = document.getElementById("gallery");
+        const images = Array.from(gallery.querySelectorAll("img"));
+        const lightbox = document.getElementById("lightbox");
+        const lbImg = document.getElementById("lb-img");
+        const lbCap = document.getElementById("lb-caption");
+        let current = 0;
+
+        function open(index) {
+          current = index;
+          lbImg.src = images[current].src;
+          lbImg.alt = images[current].alt;
+          lbCap.textContent = images[current].dataset.caption || "";
+          lightbox.classList.add("active");
+        }
+
+        function close() {
+          lightbox.classList.remove("active");
+        }
+
+        function navigate(direction) {
+          current = (current + direction + images.length) % images.length;
+          lbImg.src = images[current].src;
+          lbImg.alt = images[current].alt;
+          lbCap.textContent = images[current].dataset.caption || "";
+        }
+
+        // Click to open
+        images.forEach(function (img, i) {
+          img.addEventListener("click", function () {
+            open(i);
+          });
+        });
+
+        // Close / navigate buttons
+        document.getElementById("lb-close").addEventListener("click", close);
+        document
+          .getElementById("lb-prev")
+          .addEventListener("click", function () {
+            navigate(-1);
+          });
+        document
+          .getElementById("lb-next")
+          .addEventListener("click", function () {
+            navigate(1);
+          });
+
+        // Keyboard navigation
+        document.addEventListener("keydown", function (e) {
+          if (!lightbox.classList.contains("active")) return;
+          if (e.key === "Escape") close();
+          if (e.key === "ArrowLeft") navigate(-1);
+          if (e.key === "ArrowRight") navigate(1);
+        });
+
+        // Click backdrop to close
+        lightbox.addEventListener("click", function (e) {
+          if (e.target === lightbox) close();
+        });
+      })();
+    </script>
+  </body>
+</html>
