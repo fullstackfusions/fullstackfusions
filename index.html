@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -107,6 +107,7 @@
               <a href="#certs" class="hover:text-blue-400">Certifications</a>
             </li>
             <li><a href="#contact" class="hover:text-blue-400">Contact</a></li>
+            <li><a href="/blog" class="hover:text-blue-400">Blog</a></li>
           </ul>
         </nav>
 
@@ -965,6 +966,50 @@
           </div>
         </div>
       </section>
+
+      <!-- Latest Blog Posts -->
+      <section
+        id="blog"
+        class="py-12 container mx-auto px-4 border-b border-gray-200"
+      >
+        <h2 class="text-3xl font-bold mb-6">Latest Writing</h2>
+        <ul id="post-feed" class="space-y-4"></ul>
+        <div class="mt-6">
+          <a href="/blog" class="text-blue-600 hover:underline font-medium"
+            >View all posts &rarr;</a
+          >
+        </div>
+      </section>
+
+      <script>
+        fetch("/blog/feed.json")
+          .then((r) => r.json())
+          .then((posts) => {
+            const list = document.getElementById("post-feed");
+            posts.slice(0, 3).forEach((post) => {
+              const li = document.createElement("li");
+              li.className =
+                "bg-white p-4 rounded-lg border border-gray-200 shadow-sm";
+              const title = document.createElement("a");
+              title.href = post.url;
+              title.className = "text-lg font-semibold hover:underline";
+              title.textContent = post.title;
+              li.appendChild(title);
+              const date = document.createElement("span");
+              date.className = "text-gray-500 text-sm ml-2";
+              date.textContent = post.date;
+              li.appendChild(date);
+              if (post.description) {
+                const desc = document.createElement("p");
+                desc.className = "text-gray-600 mt-1 text-sm";
+                desc.textContent = post.description;
+                li.appendChild(desc);
+              }
+              list.appendChild(li);
+            });
+          })
+          .catch(() => {});
+      </script>
 
       <!-- Contact Section -->
       <section id="contact" class="py-12 container mx-auto px-4">
