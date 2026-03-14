@@ -58,8 +58,8 @@ function siteNav() {
           <li><a href="/" class="hover:text-blue-400 font-extrabold text-lg tracking-tight">Mihir Patel</a></li>
           <li><a href="/#about" class="hover:text-blue-400">About</a></li>
           <li><a href="/#skills" class="hover:text-blue-400">Skills</a></li>
-          <li><a href="/#projects" class="hover:text-blue-400">Projects</a></li>
-          <li><a href="/#experience" class="hover:text-blue-400">Experience</a></li>
+          <li><a href="/projects" class="hover:text-blue-400">Projects</a></li>
+          <li><a href="/experience" class="hover:text-blue-400">Experience</a></li>
           <li><a href="/blog" class="hover:text-blue-400">Blog</a></li>
         </ul>
       </nav>
