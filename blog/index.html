@@ -5,10 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Blog — fullstackfusions</title>
   <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/blog/assets/blog.css" />
+  <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();</script>
 </head>
 <body class="bg-gray-50 text-gray-900">
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode"><span id="theme-icon">&#x1F319;</span></button>
 
   
   <header class="bg-gray-900 text-white">
@@ -27,24 +31,36 @@
   </header>
 
   <main class="blog-container">
-    <h1 class="text-3xl font-bold mb-6">Blog</h1>
+    <h1 class="text-3xl font-bold section-heading mb-8">Blog</h1>
     <ul class="post-list">
       
     <li>
-      <div class="post-meta">March 13, 2026</div>
+      <div class="post-meta">March 15, 2026</div>
+      <div class="post-title"><a href="/blog/posts/2026-03-15-property-comparison-gta/">GTA Property Comparison — 30 Year Analysis</a></div>
+      <p class="text-gray-600 mt-1">A data-driven comparison of detached vs condo ownership in the Greater Toronto Area over 30 years.</p>
+      <div class="post-tags"><span class="tag">real-estate</span><span class="tag">data</span><span class="tag">canada</span><span class="tag">interactive</span></div>
+    </li>
+
+    <li>
+      <div class="post-meta">March 14, 2026</div>
       <div class="post-title"><a href="/blog/posts/2026-03-14-finding-peace-in-nature/">Finding Peace in Nature</a></div>
       <p class="text-gray-600 mt-1">A reflection on slowing down, stepping outside, and finding clarity away from the screen.</p>
       <div class="post-tags"><span class="tag">life</span><span class="tag">nature</span><span class="tag">reflection</span></div>
     </li>
 
     <li>
-      <div class="post-meta">March 13, 2026</div>
+      <div class="post-meta">March 14, 2026</div>
       <div class="post-title"><a href="/blog/posts/2026-03-14-nature-photo-gallery/">Nature Photo Gallery</a></div>
       <p class="text-gray-600 mt-1">An interactive gallery of nature photos with lightbox and keyboard navigation.</p>
       <div class="post-tags"><span class="tag">photography</span><span class="tag">nature</span><span class="tag">interactive</span></div>
     </li>
     </ul>
   </main>
+
+  <script>
+    function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'☀️':'🌙';}
+    document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';
+  </script>
 
 </body>
 </html>

@@ -32,11 +32,13 @@ function escapeHtml(str) {
 }
 
 function formatDate(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-CA', {
-    year:  'numeric',
-    month: 'long',
-    day:   'numeric',
+  // gray-matter parses YAML dates as JS Date objects; normalize to YYYY-MM-DD first
+  const s = (dateStr instanceof Date)
+    ? dateStr.toISOString().slice(0, 10)
+    : String(dateStr).slice(0, 10);
+  const [year, month, day] = s.split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString('en-US', {
+    year: 'numeric', month: 'long', day: 'numeric',
   });
 }
 
@@ -76,10 +78,14 @@ function postTemplate({ title, date, tags = [], description = '', contentHtml })
   <meta name="description" content="${escapeHtml(description)}" />
   <title>${escapeHtml(title)} — fullstackfusions</title>
   <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"><\/script>
   <link rel="stylesheet" href="/blog/assets/blog.css" />
+  <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();<\/script>
 </head>
 <body class="bg-gray-50 text-gray-900">
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode"><span id="theme-icon">&#x1F319;</span></button>
 
   ${siteNav()}
 
@@ -99,6 +105,11 @@ function postTemplate({ title, date, tags = [], description = '', contentHtml })
       </div>
     </article>
   </main>
+
+  <script>
+    function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'\u2600\uFE0F':'\uD83C\uDF19';}
+    document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'\u2600\uFE0F':'\uD83C\uDF19';
+  <\/script>
 
 </body>
 </html>`;
@@ -122,19 +133,28 @@ function indexTemplate(posts) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Blog — fullstackfusions</title>
   <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"><\/script>
   <link rel="stylesheet" href="/blog/assets/blog.css" />
+  <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();<\/script>
 </head>
 <body class="bg-gray-50 text-gray-900">
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode"><span id="theme-icon">&#x1F319;</span></button>
 
   ${siteNav()}
 
   <main class="blog-container">
-    <h1 class="text-3xl font-bold mb-6">Blog</h1>
+    <h1 class="text-3xl font-bold section-heading mb-8">Blog</h1>
     <ul class="post-list">
       ${listItems}
     </ul>
   </main>
+
+  <script>
+    function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'\u2600\uFE0F':'\uD83C\uDF19';}
+    document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'\u2600\uFE0F':'\uD83C\uDF19';
+  <\/script>
 
 </body>
 </html>`;
@@ -164,11 +184,15 @@ function build() {
     const outDir = path.join(POSTS_OUT, slug);
     fs.mkdirSync(outDir, { recursive: true });
 
+    const rawDate = (data.date instanceof Date)
+      ? data.date.toISOString().slice(0, 10)
+      : String(data.date || new Date().toISOString().slice(0, 10)).slice(0, 10);
+
     fs.writeFileSync(
       path.join(outDir, 'index.html'),
       postTemplate({
         title:       data.title       || slug,
-        date:        data.date        || new Date().toISOString().slice(0, 10),
+        date:        rawDate,
         tags:        data.tags        || [],
         description: data.description || '',
         contentHtml,
@@ -179,7 +203,7 @@ function build() {
     postMeta.push({
       slug,
       title:       data.title       || slug,
-      date:        data.date        || new Date().toISOString().slice(0, 10),
+      date:        rawDate,
       tags:        data.tags        || [],
       description: data.description || '',
     });

@@ -36,13 +36,74 @@
       content="https://fullstackfusions.com/images/og-image.png"
     />
     <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="icon" sizes="32x32" type="image/png" href="images/logo.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      html {
-        scroll-behavior: smooth;
+      html { scroll-behavior: smooth; }
+      body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+
+      /* ── Section heading blue accent underline ── */
+      .section-heading { position: relative; padding-bottom: 0.6rem; }
+      .section-heading::after {
+        content: '';
+        position: absolute;
+        left: 0; bottom: 0;
+        width: 36px; height: 3px;
+        background: #3b82f6;
+        border-radius: 2px;
       }
+
+      /* ── Card hover lift ── */
+      .card-hover { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+      .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+
+      /* ── Theme toggle button ── */
+      #theme-toggle {
+        position: fixed; top: 1rem; right: 1rem; z-index: 999;
+        width: 2.25rem; height: 2.25rem;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.2);
+        background: rgba(17,24,39,0.85);
+        backdrop-filter: blur(8px);
+        cursor: pointer; font-size: 1rem;
+        display: flex; align-items: center; justify-content: center;
+        transition: background 0.2s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      }
+      #theme-toggle:hover { background: rgba(30,41,59,0.95); }
+      html.dark #theme-toggle { border-color: rgba(255,255,255,0.15); background: rgba(30,41,59,0.9); }
+
+      /* ── Dark mode overrides ── */
+      html.dark { color-scheme: dark; }
+      html.dark body { background-color: #0f172a; color: #e2e8f0; }
+      html.dark .bg-gray-50 { background-color: #0f172a; }
+      html.dark .bg-white { background-color: #1e293b; }
+      html.dark .bg-gray-200 { background-color: #334155; }
+      html.dark .bg-gray-900 { background-color: #020617; }
+      html.dark .text-gray-900 { color: #f1f5f9; }
+      html.dark .text-gray-800 { color: #e2e8f0; }
+      html.dark .text-gray-700 { color: #cbd5e1; }
+      html.dark .text-gray-600 { color: #94a3b8; }
+      html.dark .text-gray-500 { color: #64748b; }
+      html.dark .text-gray-300 { color: #93c5fd; }
+      html.dark .border-gray-200 { border-color: #334155; }
+      html.dark .shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+      html.dark .shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+      html.dark .text-blue-600 { color: #60a5fa; }
+      html.dark .bg-blue-600 { background-color: #2563eb; }
+      html.dark .italic { color: #94a3b8; }
+      html.dark .section-heading::after { background: #60a5fa; }
     </style>
+    <script>
+      (function () {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -73,6 +134,10 @@
   </head>
 
   <body class="bg-gray-50 text-gray-900">
+    <!-- Day / Night toggle -->
+    <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+      <span id="theme-icon">&#x1F319;</span>
+    </button>
     <a
       href="#about"
       class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 bg-white text-black px-3 py-2 rounded"
@@ -106,7 +171,6 @@
             <li>
               <a href="#certs" class="hover:text-blue-400">Certifications</a>
             </li>
-            <li><a href="#contact" class="hover:text-blue-400">Contact</a></li>
             <li><a href="/blog" class="hover:text-blue-400">Blog</a></li>
           </ul>
         </nav>
@@ -135,20 +199,6 @@
             <img
               src="images/linkedin.png"
               alt="LinkedIn"
-              class="w-5 h-5"
-              loading="lazy"
-            />
-          </a>
-          <a
-            href="https://github.com/fullstackfusions"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub"
-            class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-purple-500 transition duration-300 hover:shadow-lg"
-          >
-            <img
-              src="images/github.png"
-              alt="GitHub"
               class="w-5 h-5"
               loading="lazy"
             />
@@ -202,18 +252,27 @@
         id="about"
         class="py-12 container mx-auto px-4 border-b border-gray-200"
       >
-        <h2 class="text-3xl font-bold mb-4">About Me</h2>
-        <div class="max-w-4xl mx-auto">
-          <p class="text-gray-700 leading-7 text-justify">
-            Senior Software Engineer (7+ yrs) specializing in Python backends,
-            microservices, and AI-driven automation. I build secure APIs,
-            distributed systems, and high-performance data pipelines with
-            Python, Kafka, Airflow, and Kubernetes. I’ve integrated LLMs (RAG,
-            agents, function calling) into enterprise workflows to cut costs and
-            speed decisions. I lead cross-functional delivery, mentor engineers,
-            and translate business needs into scalable architectures with clear,
-            measurable impact.
-          </p>
+        <h2 class="text-3xl font-bold section-heading mb-6">About Me</h2>
+        <p class="text-gray-700 leading-7 mb-6">
+          Senior Software Engineer with 7+ years building Python backends, microservices, and AI-driven
+          automation at scale. I design secure APIs and distributed systems, engineer high-performance data
+          pipelines with Kafka and Airflow, and integrate LLMs &mdash; RAG, agents, and function calling &mdash;
+          into enterprise workflows that measurably cut costs and accelerate decisions. I lead cross-functional
+          delivery and translate business requirements into scalable, maintainable architectures.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+            <p class="text-sm font-semibold text-gray-800 mb-1">Backend &amp; Systems</p>
+            <p class="text-sm text-gray-600">Python &middot; FastAPI &middot; Kafka &middot; Kubernetes &middot; PostgreSQL</p>
+          </div>
+          <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+            <p class="text-sm font-semibold text-gray-800 mb-1">AI &amp; Data Engineering</p>
+            <p class="text-sm text-gray-600">LLMs &middot; RAG &middot; LangGraph &middot; Airflow &middot; AWS</p>
+          </div>
+          <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+            <p class="text-sm font-semibold text-gray-800 mb-1">Leadership</p>
+            <p class="text-sm text-gray-600">Architecture reviews &middot; Mentoring &middot; Cross-functional delivery</p>
+          </div>
         </div>
       </section>
 
@@ -222,8 +281,8 @@
         id="skills"
         class="py-12 container mx-auto px-4 border-b border-gray-200"
       >
-        <h2 class="text-3xl font-bold text-gray-800 mb-8">
-          Technical Skills & Expertise
+        <h2 class="text-3xl font-bold text-gray-800 section-heading mb-8">
+          Technical Skills &amp; Expertise
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div class="bg-white p-6 rounded-lg shadow">
@@ -298,7 +357,7 @@
         id="projects"
         class="py-12 container mx-auto px-4 border-b border-gray-200"
       >
-        <h2 class="text-3xl font-bold mb-6">Key Projects</h2>
+        <h2 class="text-3xl font-bold section-heading mb-6">Key Projects</h2>
 
         <!-- Project: Network Validation Platform (Pre/Post Change Automation) -->
         <div
@@ -559,19 +618,6 @@
           </div>
         </div>
 
-        <!-- GitHub Button Card -->
-        <div
-          class="bg-gray-900 p-4 rounded-lg shadow flex items-center justify-center hover:bg-gray-700 transition"
-        >
-          <a
-            href="https://github.com/fullstackfusions/MyProjects"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="View GitHub Projects"
-            class="w-full text-center text-white font-semibold"
-            >View GitHub Projects</a
-          >
-        </div>
       </section>
 
       <!-- Experience Section -->
@@ -579,7 +625,7 @@
         id="experience"
         class="py-12 container mx-auto px-4 border-b border-gray-200"
       >
-        <h2 class="text-3xl font-bold mb-6">Professional Experience</h2>
+        <h2 class="text-3xl font-bold section-heading mb-6">Professional Experience</h2>
 
         <!-- RBC Senior Developer - Network Automation -->
         <div
@@ -915,7 +961,7 @@
         id="education"
         class="py-12 container mx-auto px-4 border-b border-gray-200"
       >
-        <h2 class="text-3xl font-bold mb-6">Education</h2>
+        <h2 class="text-3xl font-bold section-heading mb-6">Education</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
             <h3 class="font-semibold text-lg">Sheridan College</h3>
@@ -936,7 +982,7 @@
         id="certs"
         class="py-12 container mx-auto px-4 border-b border-gray-200"
       >
-        <h2 class="text-3xl font-bold mb-6">Certifications</h2>
+        <h2 class="text-3xl font-bold section-heading mb-6">Certifications</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
             <h3 class="font-semibold">Elasticsearch Engineer</h3>
@@ -972,7 +1018,7 @@
         id="blog"
         class="py-12 container mx-auto px-4 border-b border-gray-200"
       >
-        <h2 class="text-3xl font-bold mb-6">Latest Writing</h2>
+        <h2 class="text-3xl font-bold section-heading mb-6">Latest Writing</h2>
         <ul id="post-feed" class="space-y-4"></ul>
         <div class="mt-6">
           <a href="/blog" class="text-blue-600 hover:underline font-medium"
@@ -997,7 +1043,9 @@
               li.appendChild(title);
               const date = document.createElement("span");
               date.className = "text-gray-500 text-sm ml-2";
-              date.textContent = post.date;
+              const ds = String(post.date).slice(0, 10);
+              const [yr, mo, dy] = ds.split('-').map(Number);
+              date.textContent = new Date(yr, mo - 1, dy).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
               li.appendChild(date);
               if (post.description) {
                 const desc = document.createElement("p");
@@ -1011,82 +1059,6 @@
           .catch(() => {});
       </script>
 
-      <!-- Contact Section -->
-      <section id="contact" class="py-12 container mx-auto px-4">
-        <div class="flex flex-col items-center gap-4">
-          <div class="flex justify-center gap-3">
-            <a
-              href="mailto:fullstackfusions@gmail.com"
-              aria-label="Email Mihir"
-              class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-green-500 transition duration-300 hover:shadow-lg"
-            >
-              <img
-                src="images/email.png"
-                alt="Email"
-                class="w-5 h-5"
-                loading="lazy"
-              />
-            </a>
-            <a
-              href="https://linkedin.com/in/fullstackfusions"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn"
-              class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-blue-500 transition duration-300 hover:shadow-lg"
-            >
-              <img
-                src="images/linkedin.png"
-                alt="LinkedIn"
-                class="w-5 h-5"
-                loading="lazy"
-              />
-            </a>
-            <a
-              href="https://github.com/fullstackfusions"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub"
-              class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-purple-500 transition duration-300 hover:shadow-lg"
-            >
-              <img
-                src="images/github.png"
-                alt="GitHub"
-                class="w-5 h-5"
-                loading="lazy"
-              />
-            </a>
-            <a
-              href="https://www.youtube.com/@fullstackfusions"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="YouTube"
-              class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-red-500 transition duration-300 hover:shadow-lg"
-            >
-              <img
-                src="images/youtube.png"
-                alt="YouTube"
-                class="w-5 h-5"
-                loading="lazy"
-              />
-            </a>
-            <a
-              href="https://fullstackfusions.substack.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Substack"
-              class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-orange-500 transition duration-300 hover:shadow-lg"
-            >
-              <img
-                src="images/substack.png"
-                alt="Substack"
-                class="w-5 h-5"
-                loading="lazy"
-              />
-            </a>
-          </div>
-        </div>
-      </section>
-
       <!-- Footer -->
       <footer class="bg-gray-900 text-white text-center py-6">
         <div class="container mx-auto px-4">
@@ -1095,8 +1067,15 @@
           </p>
         </div>
         <script>
-          document.getElementById("year").textContent =
-            new Date().getFullYear();
+          document.getElementById("year").textContent = new Date().getFullYear();
+
+          function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('theme-icon').textContent = isDark ? '\u2600\uFE0F' : '\uD83C\uDF19';
+          }
+          document.getElementById('theme-icon').textContent =
+            document.documentElement.classList.contains('dark') ? '\u2600\uFE0F' : '\uD83C\uDF19';
         </script>
       </footer>
     </main>
