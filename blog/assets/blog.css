@@ -4,7 +4,7 @@
 /* ── Layout ──────────────────────────────────────────── */
 
 .blog-container {
-  max-width: 780px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
 }
