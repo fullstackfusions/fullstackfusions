@@ -44,7 +44,7 @@
     '<header class="bg-gray-900 text-white">' +
       '<nav class="border-b border-gray-700">' +
         '<div class="container mx-auto px-4 py-3">' +
-          '<ul class="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-sm md:text-base">' +
+          '<ul class="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-base">' +
             '<li><a href="/" aria-label="Home" class="flex items-center">' +
               '<img src="/images/logo.png" alt="Home" class="w-6 h-6" />' +
             '</a></li>' +
