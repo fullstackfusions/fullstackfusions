@@ -3,6 +3,10 @@
 
 /* ── Theme toggle button ─────────────────────────────── */
 
+body {
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
 #theme-toggle {
   position: fixed;
   bottom: 1rem;

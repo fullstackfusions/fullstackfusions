@@ -69,7 +69,7 @@ function postTemplate({ title, date, tags = [], description = '', contentHtml })
   <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"><\/script>
+  <link rel="stylesheet" href="/assets/tailwind.css" />
   <link rel="stylesheet" href="/blog/assets/blog.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" />
   <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();<\/script>
@@ -124,7 +124,7 @@ function indexTemplate(_posts) {
   <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"><\/script>
+  <link rel="stylesheet" href="/assets/tailwind.css" />
   <link rel="stylesheet" href="/blog/assets/blog.css" />
   <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();<\/script>
 </head>

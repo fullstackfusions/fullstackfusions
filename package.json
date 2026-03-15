@@ -4,6 +4,9 @@
   "description": "Welcome to my personal portfolio website! This is a **single-page portfolio** showcasing my skills, projects, and professional experience. The site is built to highlight my expertise in **Python backend development, data engineering, AI, and full-stack development**. It is hosted on **GitHub Pages** for easy accessibility.",
   "main": "index.js",
   "scripts": {
+    "build:css": "tailwindcss -c tailwind.config.cjs -i ./assets/tailwind.input.css -o ./assets/tailwind.css --minify",
+    "build:blog": "node scripts/build-blog.js",
+    "build": "npm run build:css && npm run build:blog",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,6 +23,7 @@
   "homepage": "https://github.com/fullstackfusions/fullstackfusions#readme",
   "devDependencies": {
     "gray-matter": "^4.0.3",
-    "marked": "^17.0.4"
+    "marked": "^17.0.4",
+    "tailwindcss": "^3.4.17"
   }
 }
