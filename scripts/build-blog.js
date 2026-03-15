@@ -46,30 +46,14 @@ function renderTags(tags = []) {
   return tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
 }
 
-// ── Site nav (matches your homepage header) ───────────────────────────────────
-// Update this block if you change navigation on index.html.
+// ── Site nav ──────────────────────────────────────────────────────────────────
+// Navigation is rendered at runtime by /components/navbar.js.
+// To change links or styling, edit that file — no rebuild needed.
 
 function siteNav() {
   return `
-  <div class="bg-gray-50 py-4"></div>
-  <header class="bg-gray-900 text-white">
-    <nav class="border-b border-gray-700">
-      <div class="container mx-auto px-4 py-3">
-        <ul class="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-sm md:text-base">
-          <li>
-            <a href="/" aria-label="Home" class="flex items-center">
-              <img src="/images/logo.png" alt="Home" style="width:1.5rem;height:1.5rem;" />
-            </a>
-          </li>
-          <li><a href="/#about" class="hover:text-blue-400">About</a></li>
-          <li><a href="/#skills" class="hover:text-blue-400">Skills</a></li>
-          <li><a href="/projects" class="hover:text-blue-400">Projects</a></li>
-          <li><a href="/experience" class="hover:text-blue-400">Experience</a></li>
-          <li><a href="/blog" class="hover:text-blue-400">Blog</a></li>
-        </ul>
-      </div>
-    </nav>
-  </header>`;
+  <div id="site-nav"></div>
+  <script src="/components/navbar.js"><\/script>`;
 }
 
 // ── Post HTML template ────────────────────────────────────────────────────────
@@ -89,6 +73,7 @@ function postTemplate({ title, date, tags = [], description = '', contentHtml })
   <link rel="stylesheet" href="/blog/assets/blog.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" />
   <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();<\/script>
+  <style>body{font-family:"Inter",ui-sans-serif,system-ui,sans-serif}.section-heading{position:relative;padding-bottom:.6rem}.section-heading::after{content:"";position:absolute;left:0;bottom:0;width:36px;height:3px;background:#3b82f6;border-radius:2px}#theme-toggle{position:fixed;bottom:1rem;right:1rem;z-index:999;width:2.25rem;height:2.25rem;border-radius:50%;border:none;background:#2563eb;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .2s}#theme-toggle:hover{background:#3b82f6}html.dark #theme-toggle{background:#2563eb;border:none}html.dark #theme-toggle:hover{background:#3b82f6}html.dark{color-scheme:dark}html.dark body{background-color:#0f172a;color:#e2e8f0}html.dark .bg-gray-50{background-color:#0f172a}html.dark .bg-white{background-color:#1e293b}html.dark .bg-gray-900{background-color:#020617}html.dark .text-gray-900{color:#f1f5f9}html.dark .text-gray-800{color:#e2e8f0}html.dark .text-gray-700{color:#cbd5e1}html.dark .text-gray-600{color:#94a3b8}html.dark .text-gray-500{color:#64748b}html.dark .border-gray-200{border-color:#334155}html.dark .shadow-sm{box-shadow:0 1px 2px rgba(0,0,0,.5)}html.dark .text-blue-600{color:#60a5fa}html.dark .section-heading::after{background:#60a5fa}<\/style>
 </head>
 <body class="bg-gray-50 text-gray-900">
   <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode"><span id="theme-icon">&#x1F319;</span></button>

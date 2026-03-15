@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 build-resume.py
-Generates data/MIHIR_PATEL_Senior_Software_Engineer.pdf by parsing
+Generates data/MIHIR_PATEL_Lead_Staff_Software_Engineer.pdf by parsing
 index.html and experience/index.html — no manual data to maintain.
 Run: python3 scripts/build-resume.py
 Requires: pip install reportlab beautifulsoup4
@@ -23,7 +23,7 @@ from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
 # ── Paths ─────────────────────────────────────────────────────────────────────
 ROOT     = os.path.join(os.path.dirname(__file__), "..")
 OUT_DIR  = os.path.join(ROOT, "data")
-OUT_FILE = os.path.join(OUT_DIR, "MIHIR_PATEL_Senior_Software_Engineer.pdf")
+OUT_FILE = os.path.join(OUT_DIR, "MIHIR_PATEL_Lead_Staff_Software_Engineer.pdf")
 INDEX_HTML      = os.path.join(ROOT, "index.html")
 EXPERIENCE_HTML = os.path.join(ROOT, "experience", "index.html")
 
@@ -37,7 +37,7 @@ RULE_COLOR = colors.HexColor("#e2e8f0")
 # ── Contact (only things not on the page) ─────────────────────────────────────
 CONTACT = {
     "name":     "Mihir Patel",
-    "title":    "Lead / Senior Software Engineer",
+    "title":    "Lead / Staff Software Engineer",
     "email":    "fullstackfusions@gmail.com",
     "linkedin": "linkedin.com/in/fullstackfusions",
     "github":   "github.com/fullstackfusions",

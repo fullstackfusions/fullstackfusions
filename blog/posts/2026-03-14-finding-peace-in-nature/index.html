@@ -1,88 +1,241 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="A reflection on slowing down, stepping outside, and finding clarity away from the screen." />
-  <title>Finding Peace in Nature — fullstackfusions</title>
-  <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="/blog/assets/blog.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" />
-  <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();</script>
-</head>
-<body class="bg-gray-50 text-gray-900">
-  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode"><span id="theme-icon">&#x1F319;</span></button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A reflection on slowing down, stepping outside, and finding clarity away from the screen."
+    />
+    <title>Finding Peace in Nature — fullstackfusions</title>
+    <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/blog/assets/blog.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css"
+    />
+    <script>
+      (function () {
+        const s = localStorage.getItem("theme");
+        if (
+          s === "dark" ||
+          (!s && window.matchMedia("(prefers-color-scheme: dark)").matches)
+        ) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
+    <style>
+      body {
+        font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+      }
+      .section-heading {
+        position: relative;
+        padding-bottom: 0.6rem;
+      }
+      .section-heading::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 36px;
+        height: 3px;
+        background: #3b82f6;
+        border-radius: 2px;
+      }
+      #theme-toggle {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        z-index: 999;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 50%;
+        border: none;
+        background: #2563eb;
+        cursor: pointer;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+      }
+      #theme-toggle:hover {
+        background: #3b82f6;
+      }
+      html.dark #theme-toggle {
+        background: #2563eb;
+        border: none;
+      }
+      html.dark #theme-toggle:hover {
+        background: #3b82f6;
+      }
+      html.dark {
+        color-scheme: dark;
+      }
+      html.dark body {
+        background-color: #0f172a;
+        color: #e2e8f0;
+      }
+      html.dark .bg-gray-50 {
+        background-color: #0f172a;
+      }
+      html.dark .bg-white {
+        background-color: #1e293b;
+      }
+      html.dark .bg-gray-900 {
+        background-color: #020617;
+      }
+      html.dark .text-gray-900 {
+        color: #f1f5f9;
+      }
+      html.dark .text-gray-800 {
+        color: #e2e8f0;
+      }
+      html.dark .text-gray-700 {
+        color: #cbd5e1;
+      }
+      html.dark .text-gray-600 {
+        color: #94a3b8;
+      }
+      html.dark .text-gray-500 {
+        color: #64748b;
+      }
+      html.dark .border-gray-200 {
+        border-color: #334155;
+      }
+      html.dark .shadow-sm {
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      }
+      html.dark .text-blue-600 {
+        color: #60a5fa;
+      }
+      html.dark .section-heading::after {
+        background: #60a5fa;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 text-gray-900">
+    <button
+      id="theme-toggle"
+      onclick="toggleTheme()"
+      aria-label="Toggle dark mode"
+      title="Toggle dark/light mode"
+    >
+      <span id="theme-icon">&#x1F319;</span>
+    </button>
 
-  
-  <div class="bg-gray-50 py-4"></div>
-  <header class="bg-gray-900 text-white">
-    <nav class="border-b border-gray-700">
-      <div class="container mx-auto px-4 py-3">
-        <ul class="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-sm md:text-base">
-          <li>
-            <a href="/" aria-label="Home" class="flex items-center">
-              <img src="/images/logo.png" alt="Home" style="width:1.5rem;height:1.5rem;" />
-            </a>
-          </li>
-          <li><a href="/#about" class="hover:text-blue-400">About</a></li>
-          <li><a href="/#skills" class="hover:text-blue-400">Skills</a></li>
-          <li><a href="/projects" class="hover:text-blue-400">Projects</a></li>
-          <li><a href="/experience" class="hover:text-blue-400">Experience</a></li>
-          <li><a href="/blog" class="hover:text-blue-400">Blog</a></li>
-        </ul>
-      </div>
-    </nav>
-  </header>
+    <div id="site-nav"></div>
+    <script src="/components/navbar.js"></script>
 
-  <main class="blog-container">
-    <a class="back-link" href="/blog">&#8592; All posts</a>
+    <main class="blog-container">
+      <a class="back-link" href="/blog">&#8592; All posts</a>
 
-    <article>
-      <header class="post-header">
-        <div class="post-meta">March 14, 2026</div>
-        <h1 class="text-3xl font-bold mt-2">Finding Peace in Nature</h1>
-        <p class="text-gray-600 mt-2">A reflection on slowing down, stepping outside, and finding clarity away from the screen.</p>
-        <div class="post-tags"><span class="tag">life</span><span class="tag">nature</span><span class="tag">reflection</span></div>
-      </header>
+      <article>
+        <header class="post-header">
+          <div class="post-meta">March 14, 2026</div>
+          <h1 class="text-3xl font-bold mt-2">Finding Peace in Nature</h1>
+          <p class="text-gray-600 mt-2">
+            A reflection on slowing down, stepping outside, and finding clarity
+            away from the screen.
+          </p>
+          <div class="post-tags">
+            <span class="tag">life</span><span class="tag">nature</span
+            ><span class="tag">reflection</span>
+          </div>
+        </header>
 
-      <div class="post-content">
-        <h2>Why I Needed a Break</h2>
-<p>As engineers, we spend most of our waking hours staring at screens — debugging, deploying, reviewing PRs. After months of back-to-back sprints, I realized I hadn&#39;t truly <em>looked up</em> in a while.</p>
-<p>So I took a weekend off, drove out of the city, and just walked.</p>
-<h2>What I Found</h2>
-<p><img src="./nature_water_flower.jpg" alt="Water and flowers"></p>
-<p>There&#39;s a particular calm that comes from standing near water. No Slack notifications, no CI pipeline failures — just the sound of flowing water and birdsong.</p>
-<blockquote>
-<p>&quot;In every walk with nature, one receives far more than he seeks.&quot; — John Muir</p>
-</blockquote>
-<p>I started noticing things I&#39;d been too busy to see: the way light filters through leaves, how water reflects the sky, and how <em>quiet</em> the world actually is when you stop filling it with noise.</p>
-<h2>Bringing It Back to Work</h2>
-<p>This isn&#39;t a &quot;quit your job and live in the woods&quot; post. It&#39;s the opposite — I came back sharper. A few things I&#39;ve started doing since:</p>
-<ul>
-<li><strong>Morning walks before standup</strong> — even 15 minutes makes a difference</li>
-<li><strong>No screens during lunch</strong> — eat outside when the weather allows</li>
-<li><strong>Weekend disconnects</strong> — one full day with no code, no tech Twitter</li>
-</ul>
-<h2>The Takeaway</h2>
-<p>Nature doesn&#39;t care about your uptime SLA. And that&#39;s exactly what makes it valuable. Sometimes the best thing you can do for your engineering career is to step away from it entirely for a bit.</p>
-<p>If you&#39;re feeling burned out, go find some water. Sit near it. Breathe.</p>
-<hr>
-<p><em>This is the first post on my blog. More writing — both personal and technical — coming soon.</em></p>
+        <div class="post-content">
+          <h2>Why I Needed a Break</h2>
+          <p>
+            As engineers, we spend most of our waking hours staring at screens —
+            debugging, deploying, reviewing PRs. After months of back-to-back
+            sprints, I realized I hadn&#39;t truly <em>looked up</em> in a
+            while.
+          </p>
+          <p>
+            So I took a weekend off, drove out of the city, and just walked.
+          </p>
+          <h2>What I Found</h2>
+          <p><img src="./nature_water_flower.jpg" alt="Water and flowers" /></p>
+          <p>
+            There&#39;s a particular calm that comes from standing near water.
+            No Slack notifications, no CI pipeline failures — just the sound of
+            flowing water and birdsong.
+          </p>
+          <blockquote>
+            <p>
+              &quot;In every walk with nature, one receives far more than he
+              seeks.&quot; — John Muir
+            </p>
+          </blockquote>
+          <p>
+            I started noticing things I&#39;d been too busy to see: the way
+            light filters through leaves, how water reflects the sky, and how
+            <em>quiet</em> the world actually is when you stop filling it with
+            noise.
+          </p>
+          <h2>Bringing It Back to Work</h2>
+          <p>
+            This isn&#39;t a &quot;quit your job and live in the woods&quot;
+            post. It&#39;s the opposite — I came back sharper. A few things
+            I&#39;ve started doing since:
+          </p>
+          <ul>
+            <li>
+              <strong>Morning walks before standup</strong> — even 15 minutes
+              makes a difference
+            </li>
+            <li>
+              <strong>No screens during lunch</strong> — eat outside when the
+              weather allows
+            </li>
+            <li>
+              <strong>Weekend disconnects</strong> — one full day with no code,
+              no tech Twitter
+            </li>
+          </ul>
+          <h2>The Takeaway</h2>
+          <p>
+            Nature doesn&#39;t care about your uptime SLA. And that&#39;s
+            exactly what makes it valuable. Sometimes the best thing you can do
+            for your engineering career is to step away from it entirely for a
+            bit.
+          </p>
+          <p>
+            If you&#39;re feeling burned out, go find some water. Sit near it.
+            Breathe.
+          </p>
+          <hr />
+          <p>
+            <em
+              >This is the first post on my blog. More writing — both personal
+              and technical — coming soon.</em
+            >
+          </p>
+        </div>
+      </article>
+    </main>
 
-      </div>
-    </article>
-  </main>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"></script>
-  <script>hljs.highlightAll();</script>
-  <script>
-    function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'☀️':'🌙';}
-    document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';
-  </script>
-
-</body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <script>
+      function toggleTheme() {
+        const d = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("theme", d ? "dark" : "light");
+        document.getElementById("theme-icon").textContent = d ? "☀️" : "🌙";
+      }
+      document.getElementById("theme-icon").textContent =
+        document.documentElement.classList.contains("dark") ? "☀️" : "🌙";
+    </script>
+  </body>
 </html>
