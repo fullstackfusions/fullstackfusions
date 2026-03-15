@@ -32,11 +32,13 @@ function escapeHtml(str) {
 }
 
 function formatDate(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-CA', {
-    year:  'numeric',
-    month: 'long',
-    day:   'numeric',
+  // gray-matter parses YAML dates as JS Date objects; normalize to YYYY-MM-DD first
+  const s = (dateStr instanceof Date)
+    ? dateStr.toISOString().slice(0, 10)
+    : String(dateStr).slice(0, 10);
+  const [year, month, day] = s.split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString('en-US', {
+    year: 'numeric', month: 'long', day: 'numeric',
   });
 }
 
@@ -49,19 +51,24 @@ function renderTags(tags = []) {
 
 function siteNav() {
   return `
+  <div class="bg-gray-50 py-4"></div>
   <header class="bg-gray-900 text-white">
-    <div class="container mx-auto px-4 py-4">
-      <nav>
-        <ul class="inline-flex flex-wrap justify-center gap-4 md:gap-6 text-sm md:text-base w-full">
-          <li><a href="/" class="hover:text-blue-400 font-extrabold text-lg tracking-tight">Mihir Patel</a></li>
+    <nav class="border-b border-gray-700">
+      <div class="container mx-auto px-4 py-3">
+        <ul class="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-sm md:text-base">
+          <li>
+            <a href="/" aria-label="Home" class="flex items-center">
+              <img src="/images/logo.png" alt="Home" style="width:1.5rem;height:1.5rem;" />
+            </a>
+          </li>
           <li><a href="/#about" class="hover:text-blue-400">About</a></li>
           <li><a href="/#skills" class="hover:text-blue-400">Skills</a></li>
-          <li><a href="/#projects" class="hover:text-blue-400">Projects</a></li>
-          <li><a href="/#experience" class="hover:text-blue-400">Experience</a></li>
+          <li><a href="/projects" class="hover:text-blue-400">Projects</a></li>
+          <li><a href="/experience" class="hover:text-blue-400">Experience</a></li>
           <li><a href="/blog" class="hover:text-blue-400">Blog</a></li>
         </ul>
-      </nav>
-    </div>
+      </div>
+    </nav>
   </header>`;
 }
 
@@ -76,10 +83,15 @@ function postTemplate({ title, date, tags = [], description = '', contentHtml })
   <meta name="description" content="${escapeHtml(description)}" />
   <title>${escapeHtml(title)} — fullstackfusions</title>
   <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"><\/script>
   <link rel="stylesheet" href="/blog/assets/blog.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" />
+  <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();<\/script>
 </head>
 <body class="bg-gray-50 text-gray-900">
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode"><span id="theme-icon">&#x1F319;</span></button>
 
   ${siteNav()}
 
@@ -100,21 +112,24 @@ function postTemplate({ title, date, tags = [], description = '', contentHtml })
     </article>
   </main>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"><\/script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"><\/script>
+  <script>hljs.highlightAll();<\/script>
+  <script>
+    function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'\u2600\uFE0F':'\uD83C\uDF19';}
+    document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'\u2600\uFE0F':'\uD83C\uDF19';
+  <\/script>
+
 </body>
 </html>`;
 }
 
 // ── Blog index template ───────────────────────────────────────────────────────
+// Posts are rendered dynamically from feed.json via JS so search + tag
+// filtering work client-side without any server. The build script still
+// regenerates this file on every run — only the shell/chrome is templated here.
 
-function indexTemplate(posts) {
-  const listItems = posts.map(({ slug, title, date, tags = [], description = '' }) => `
-    <li>
-      <div class="post-meta">${formatDate(date)}</div>
-      <div class="post-title"><a href="/blog/posts/${encodeURIComponent(slug)}/">${escapeHtml(title)}</a></div>
-      ${description ? `<p class="text-gray-600 mt-1">${escapeHtml(description)}</p>` : ''}
-      <div class="post-tags">${renderTags(tags)}</div>
-    </li>`).join('\n');
-
+function indexTemplate(_posts) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -122,19 +137,174 @@ function indexTemplate(posts) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Blog — fullstackfusions</title>
   <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"><\/script>
   <link rel="stylesheet" href="/blog/assets/blog.css" />
+  <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();<\/script>
 </head>
 <body class="bg-gray-50 text-gray-900">
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode"><span id="theme-icon">&#x1F319;</span></button>
 
   ${siteNav()}
 
   <main class="blog-container">
-    <h1 class="text-3xl font-bold mb-6">Blog</h1>
-    <ul class="post-list">
-      ${listItems}
-    </ul>
+    <h1 class="text-3xl font-bold section-heading mb-6">Blog</h1>
+
+    <div class="blog-controls">
+      <input
+        id="search-input"
+        type="search"
+        placeholder="Search posts by title, topic, or tag\u2026"
+        aria-label="Search blog posts"
+        autocomplete="off"
+        class="blog-search"
+      />
+      <div id="tag-filter" class="tag-filter-bar" aria-label="Filter by tag"></div>
+    </div>
+
+    <p id="no-results" class="no-results" hidden>No posts match your search.</p>
+    <ul id="post-list" class="post-list"></ul>
   </main>
+
+  <script>
+    (function () {
+      // \u2500\u2500 Theme \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      function toggleTheme() {
+        const d = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', d ? 'dark' : 'light');
+        document.getElementById('theme-icon').textContent = d ? '\u2600\uFE0F' : '\uD83C\uDF19';
+      }
+      window.toggleTheme = toggleTheme;
+      document.getElementById('theme-icon').textContent =
+        document.documentElement.classList.contains('dark') ? '\u2600\uFE0F' : '\uD83C\uDF19';
+
+      // \u2500\u2500 Helpers \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      function esc(s) {
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function formatDate(dateStr) {
+        const [y, m, d] = dateStr.split('-').map(Number);
+        return new Date(y, m - 1, d).toLocaleDateString('en-US', {
+          year: 'numeric', month: 'long', day: 'numeric',
+        });
+      }
+
+      // \u2500\u2500 State \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      let allPosts = [];
+      let activeTag = location.hash
+        ? decodeURIComponent(location.hash.slice(1))
+        : null;
+      let searchQuery = '';
+
+      // \u2500\u2500 Render posts \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      function renderPosts() {
+        const list = document.getElementById('post-list');
+        const noResults = document.getElementById('no-results');
+        const q = searchQuery.trim().toLowerCase();
+
+        const filtered = allPosts.filter((post) => {
+          const matchesTag = !activeTag || post.tags.includes(activeTag);
+          const matchesSearch =
+            !q ||
+            post.title.toLowerCase().includes(q) ||
+            post.description.toLowerCase().includes(q) ||
+            post.tags.some((t) => t.toLowerCase().includes(q));
+          return matchesTag && matchesSearch;
+        });
+
+        if (filtered.length === 0) {
+          list.innerHTML = '';
+          noResults.hidden = false;
+          return;
+        }
+        noResults.hidden = true;
+        list.innerHTML = filtered
+          .map(
+            (post) => \`<li>
+              <div class="post-meta">\${esc(formatDate(post.date))}</div>
+              <div class="post-title"><a href="\${esc(post.url)}">\${esc(post.title)}</a></div>
+              <p class="text-gray-600 mt-1">\${esc(post.description)}</p>
+              <div class="post-tags">
+                \${post.tags
+                  .map(
+                    (t) =>
+                      \`<button class="tag tag-clickable\${t === activeTag ? ' tag-active' : ''}" data-tag="\${esc(t)}">\${esc(t)}</button>\`
+                  )
+                  .join('')}
+              </div>
+            </li>\`
+          )
+          .join('');
+
+        list.querySelectorAll('.tag-clickable').forEach((btn) => {
+          btn.addEventListener('click', () => setTag(btn.dataset.tag));
+        });
+      }
+
+      // \u2500\u2500 Render tag bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      function renderTagBar() {
+        const bar = document.getElementById('tag-filter');
+        const allTags = [...new Set(allPosts.flatMap((p) => p.tags))].sort();
+        bar.innerHTML =
+          \`<button class="tag-pill\${!activeTag ? ' active' : ''}" data-tag="">All</button>\` +
+          allTags
+            .map(
+              (t) =>
+                \`<button class="tag-pill\${t === activeTag ? ' active' : ''}" data-tag="\${esc(t)}">\${esc(t)}</button>\`
+            )
+            .join('');
+
+        bar.querySelectorAll('.tag-pill').forEach((btn) => {
+          btn.addEventListener('click', () => setTag(btn.dataset.tag || null));
+        });
+      }
+
+      // \u2500\u2500 Set active tag \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      function setTag(tag) {
+        activeTag = tag || null;
+        history.replaceState(
+          null, '',
+          activeTag ? '#' + encodeURIComponent(activeTag) : location.pathname
+        );
+        renderTagBar();
+        renderPosts();
+      }
+
+      // \u2500\u2500 Hash navigation (back/forward) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      window.addEventListener('hashchange', () => {
+        activeTag = location.hash
+          ? decodeURIComponent(location.hash.slice(1))
+          : null;
+        renderTagBar();
+        renderPosts();
+      });
+
+      // \u2500\u2500 Search input \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      document.getElementById('search-input').addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        renderPosts();
+      });
+
+      // \u2500\u2500 Load feed.json \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      fetch('/blog/feed.json')
+        .then((r) => r.json())
+        .then((posts) => {
+          allPosts = posts;
+          renderTagBar();
+          renderPosts();
+        })
+        .catch(() => {
+          document.getElementById('post-list').innerHTML =
+            '<li style="padding:1.5rem 0;color:#6b7280">Failed to load posts.</li>';
+        });
+    })();
+  <\/script>
 
 </body>
 </html>`;
@@ -164,11 +334,15 @@ function build() {
     const outDir = path.join(POSTS_OUT, slug);
     fs.mkdirSync(outDir, { recursive: true });
 
+    const rawDate = (data.date instanceof Date)
+      ? data.date.toISOString().slice(0, 10)
+      : String(data.date || new Date().toISOString().slice(0, 10)).slice(0, 10);
+
     fs.writeFileSync(
       path.join(outDir, 'index.html'),
       postTemplate({
         title:       data.title       || slug,
-        date:        data.date        || new Date().toISOString().slice(0, 10),
+        date:        rawDate,
         tags:        data.tags        || [],
         description: data.description || '',
         contentHtml,
@@ -179,7 +353,7 @@ function build() {
     postMeta.push({
       slug,
       title:       data.title       || slug,
-      date:        data.date        || new Date().toISOString().slice(0, 10),
+      date:        rawDate,
       tags:        data.tags        || [],
       description: data.description || '',
     });

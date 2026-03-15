@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Professional experience of Mihir Patel — Senior Software Engineer with 7+ years across RBC, CPPIB, CGI, and Kroger."
+    />
+    <title>Experience — Mihir Patel</title>
+    <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+      }
+
+      .section-heading {
+        position: relative;
+        padding-bottom: 0.6rem;
+      }
+      .section-heading::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 36px;
+        height: 3px;
+        background: #3b82f6;
+        border-radius: 2px;
+      }
+
+      #theme-toggle {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        z-index: 999;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 50%;
+        border: none;
+        background: #2563eb;
+        cursor: pointer;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+      }
+      #theme-toggle:hover {
+        background: #3b82f6;
+      }
+      html.dark #theme-toggle {
+        background: #2563eb;
+        border: none;
+      }
+      html.dark #theme-toggle:hover {
+        background: #3b82f6;
+      }
+
+      html.dark {
+        color-scheme: dark;
+      }
+      html.dark body {
+        background-color: #0f172a;
+        color: #e2e8f0;
+      }
+      html.dark .bg-gray-50 {
+        background-color: #0f172a;
+      }
+      html.dark .bg-white {
+        background-color: #1e293b;
+      }
+      html.dark .bg-gray-900 {
+        background-color: #020617;
+      }
+      html.dark .text-gray-900 {
+        color: #f1f5f9;
+      }
+      html.dark .text-gray-800 {
+        color: #e2e8f0;
+      }
+      html.dark .text-gray-700 {
+        color: #cbd5e1;
+      }
+      html.dark .text-gray-600 {
+        color: #94a3b8;
+      }
+      html.dark .text-gray-500 {
+        color: #64748b;
+      }
+      html.dark .border-gray-200 {
+        border-color: #334155;
+      }
+      html.dark .shadow-sm {
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      }
+      html.dark .text-blue-600 {
+        color: #60a5fa;
+      }
+      html.dark .italic {
+        color: #94a3b8;
+      }
+      html.dark .section-heading::after {
+        background: #60a5fa;
+      }
+    </style>
+    <script>
+      (function () {
+        const s = localStorage.getItem("theme");
+        if (
+          s === "dark" ||
+          (!s && window.matchMedia("(prefers-color-scheme: dark)").matches)
+        ) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
+  </head>
+  <body class="bg-gray-50 text-gray-900">
+    <button
+      id="theme-toggle"
+      onclick="toggleTheme()"
+      aria-label="Toggle dark mode"
+      title="Toggle dark/light mode"
+    >
+      <span id="theme-icon">&#x1F319;</span>
+    </button>
+
+    <div class="bg-gray-50 py-4"></div>
+    <header class="bg-gray-900 text-white">
+      <nav class="border-b border-gray-700">
+        <div class="container mx-auto px-4 py-3">
+          <ul
+            class="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-sm md:text-base"
+          >
+            <li>
+              <a href="/" aria-label="Home" class="flex items-center">
+                <img src="/images/logo.png" alt="Home" class="w-6 h-6" />
+              </a>
+            </li>
+            <li><a href="/#about" class="hover:text-blue-400">About</a></li>
+            <li><a href="/#skills" class="hover:text-blue-400">Skills</a></li>
+            <li>
+              <a href="/projects" class="hover:text-blue-400">Projects</a>
+            </li>
+            <li>
+              <a href="/experience" class="text-blue-400 font-semibold"
+                >Experience</a
+              >
+            </li>
+            <li><a href="/blog" class="hover:text-blue-400">Blog</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main class="max-w-[1200px] mx-auto px-6 py-12">
+      <a
+        href="/"
+        class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800 mb-8 no-underline"
+        >&larr; Back to portfolio</a
+      >
+
+      <h1 class="text-3xl font-bold section-heading mb-10">
+        Professional Experience
+      </h1>
+
+      <!-- RBC Senior Developer - Network Automation -->
+      <div
+        class="bg-white p-6 border border-gray-200 rounded-lg mb-6 shadow-sm"
+      >
+        <div class="flex flex-col md:flex-row gap-3">
+          <div class="md:w-1/3">
+            <h2 class="text-2xl font-bold">Senior Developer</h2>
+            <p class="text-gray-600">
+              RBC <span class="mx-2">|</span
+              ><span class="font-medium">May 2025 &ndash; Present</span>
+            </p>
+          </div>
+          <div class="md:w-2/3">
+            <p class="text-gray-700 mb-3 italic">
+              Leading network automation initiatives to transform manual
+              validation and certification processes into intelligent, scalable
+              platforms.
+            </p>
+            <ul class="list-disc pl-5 space-y-2 text-gray-700">
+              <li>
+                <strong>Network Validation Automation:</strong> Spearheaded
+                development of pre/post change validation system for Cisco
+                NX-OS, IOS and IOS-XE devices, reducing validation time from
+                weeks to 10 minutes while preventing "quiet failures" often
+                missed by manual processes.
+              </li>
+              <li>
+                <strong>Device Certification Platform:</strong> Built automated
+                certification workflow that parses PDF requirements documents
+                using RAG techniques, generates pytest suites, and produces
+                versioned Allure reports — eliminating contractor costs and
+                accelerating onboarding from weeks to minutes.
+              </li>
+              <li>
+                <strong>Topology &amp; Impact Analysis:</strong> Extended
+                network visibility capabilities with scheduled data collection
+                and Neo4j graph-backed mapping to support real-time impact
+                analysis during change management and incident response.
+              </li>
+              <li>
+                <strong>Enterprise Integration:</strong> Embedded platforms into
+                change management workflows, collaborated with network
+                engineering teams to drive adoption, and delivered board-ready
+                compliance reports with full audit traceability.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- RBC Senior Developer - Data Platform -->
+      <div
+        class="bg-white p-6 border border-gray-200 rounded-lg mb-6 shadow-sm"
+      >
+        <div class="flex flex-col md:flex-row gap-3">
+          <div class="md:w-1/3">
+            <h2 class="text-2xl font-bold">Senior Developer</h2>
+            <p class="text-gray-600">
+              RBC <span class="mx-2">|</span
+              ><span class="font-medium">Aug 2024 &ndash; May 2025</span>
+            </p>
+          </div>
+          <div class="md:w-2/3">
+            <p class="text-gray-700 mb-3 italic">
+              Architected and delivered enterprise data platform MVP,
+              establishing scalable ETL pipelines and real-time analytics
+              capabilities.
+            </p>
+            <ul class="list-disc pl-5 space-y-2 text-gray-700">
+              <li>
+                <strong>Data Platform MVP:</strong> Spearheaded development of
+                comprehensive ETL pipelines extracting and transforming data
+                from Grafana, PostgreSQL, Elasticsearch, and Dynatrace into
+                analytics-friendly S3 data lake, enabling enterprise-wide data
+                insights.
+              </li>
+              <li>
+                <strong>Streaming &amp; Orchestration:</strong> Implemented
+                streaming solutions using Kafka and automated data workflows
+                with Airflow, ensuring timely and reliable data delivery to
+                downstream consumers with 99.9% uptime.
+              </li>
+              <li>
+                <strong>Microservices Architecture:</strong> Designed scalable
+                microservices using FastAPI and deployed on OpenShift/Kubernetes
+                (EKS) with comprehensive observability, monitoring through
+                Grafana dashboards, and operational guardrails.
+              </li>
+              <li>
+                <strong>Real-time Systems:</strong> Developed event-driven
+                systems using webhooks and WebSockets, optimizing responsiveness
+                for enterprise applications and improving user experience across
+                internal tools.
+              </li>
+              <li>
+                <strong>Data Governance &amp; Leadership:</strong> Researched
+                and implemented AWS Glue Data Catalog and Lake Formation for
+                data governance, mentored cross-functional teams, and influenced
+                architecture decisions through code reviews and best practices.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- RBC Software Engineer - Chatbot Platform -->
+      <div
+        class="bg-white p-6 border border-gray-200 rounded-lg mb-6 shadow-sm"
+      >
+        <div class="flex flex-col md:flex-row gap-3">
+          <div class="md:w-1/3">
+            <h2 class="text-2xl font-bold">Software Engineer</h2>
+            <p class="text-gray-600">
+              RBC <span class="mx-2">|</span
+              ><span class="font-medium">Jun 2023 &ndash; May 2024</span>
+            </p>
+          </div>
+          <div class="md:w-2/3">
+            <p class="text-gray-700 mb-3 italic">
+              Transformed monolithic chatbot architecture into intelligent
+              microservices platform with advanced NLP capabilities and
+              enterprise-grade scalability.
+            </p>
+            <ul class="list-disc pl-5 space-y-2 text-gray-700">
+              <li>
+                <strong>AI-Powered NLP Integration:</strong> Spearheaded
+                integration of advanced NLP models to automate chatbot
+                responses, significantly improving response time and accuracy
+                while handling complex domain-specific queries.
+              </li>
+              <li>
+                <strong>Microservices Transformation:</strong> Successfully
+                decomposed monolithic chatbot application into 3 scalable
+                microservices, implementing Kafka-backed messaging for reliable
+                communication between multiple frontends and backend services.
+              </li>
+              <li>
+                <strong>RAG Pipeline Development:</strong> Built sophisticated
+                Retrieval-Augmented Generation pipeline using LangChain
+                framework and Hugging Face models, merging LLM knowledge with
+                internal data sources to create a more versatile and intelligent
+                chatbot.
+              </li>
+              <li>
+                <strong>Performance Optimization:</strong> Introduced effective
+                MongoDB caching mechanisms, significantly reducing response
+                times by serving cached responses and optimizing overall system
+                performance.
+              </li>
+              <li>
+                <strong>Cloud-Native Deployment:</strong> Containerized
+                applications using Docker, orchestrated on Kubernetes with
+                autoscaling and health-focused rollouts, and streamlined CI/CD
+                pipelines for fast, consistent, low-risk deployments.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- CPPIB Senior Python Developer -->
+      <div
+        class="bg-white p-6 border border-gray-200 rounded-lg mb-6 shadow-sm"
+      >
+        <div class="flex flex-col md:flex-row gap-3">
+          <div class="md:w-1/3">
+            <h2 class="text-2xl font-bold">Senior Python Developer</h2>
+            <p class="text-gray-600">
+              CPPIB <span class="mx-2">|</span
+              ><span class="font-medium">Jul 2022 &ndash; May 2023</span>
+            </p>
+          </div>
+          <div class="md:w-2/3">
+            <p class="text-gray-700 mb-3 italic">
+              Developed complex capital markets backend systems and led cloud
+              migration initiatives to modernize trading infrastructure.
+            </p>
+            <ul class="list-disc pl-5 space-y-2 text-gray-700">
+              <li>
+                <strong>Capital Markets Backend:</strong> Developed complex
+                backend systems for capital markets using Python frameworks
+                (Flask, Django, SQLAlchemy), designed RESTful APIs and
+                middleware microservices for seamless integration with trading
+                systems.
+              </li>
+              <li>
+                <strong>Cloud Migration Leadership:</strong> Led comprehensive
+                cloud database migration from physical servers to Data Fabric,
+                optimizing performance using AWS SDK tools like Boto3 and
+                modernizing data access patterns for enhanced reliability and
+                performance.
+              </li>
+              <li>
+                <strong>Full-Stack Development:</strong> Implemented complete
+                development lifecycle from code changes to production
+                deployment, including testing, building pipelines, and
+                performance testing on pre-prod environments before
+                client-facing releases.
+              </li>
+              <li>
+                <strong>Enterprise Deployment:</strong> Deployed applications
+                using AWS ECS/EC2 and IBM UrbanCode, managing microservice
+                architectures with focus on high availability, resilience, and
+                smooth rollouts.
+              </li>
+              <li>
+                <strong>Automation &amp; Reporting:</strong> Automated critical
+                workflows using Python and JAMS scheduler tools to generate
+                daily/weekly reports, reducing manual effort and improving
+                operational efficiency.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- CGI Full Stack Developer -->
+      <div
+        class="bg-white p-6 border border-gray-200 rounded-lg mb-6 shadow-sm"
+      >
+        <div class="flex flex-col md:flex-row gap-3">
+          <div class="md:w-1/3">
+            <h2 class="text-2xl font-bold">Full Stack Developer</h2>
+            <p class="text-gray-600">
+              CGI <span class="mx-2">|</span
+              ><span class="font-medium">Mar 2021 &ndash; Jul 2022</span>
+            </p>
+          </div>
+          <div class="md:w-2/3">
+            <p class="text-gray-700 mb-3 italic">
+              Built comprehensive data processing pipelines and full-stack
+              applications while implementing infrastructure as code and
+              cloud-native CI/CD practices.
+            </p>
+            <ul class="list-disc pl-5 space-y-2 text-gray-700">
+              <li>
+                <strong>Workflow Automation:</strong> Automated various manual
+                workflows using Python scripts and Unix shell scripting,
+                developed change data capture scripts for processing incremental
+                records between new and existing relational database data.
+              </li>
+              <li>
+                <strong>Infrastructure as Code:</strong> Implemented Terraform
+                to map complex dependencies, identify network issues, and
+                leverage key features like Infrastructure as Code, execution
+                plans, resource graphs, and change automation.
+              </li>
+              <li>
+                <strong>Full-Stack Dashboard Development:</strong> Developed and
+                tested comprehensive dashboard features using Python, React,
+                Bootstrap, CSS, JavaScript, and jQuery, with expertise in
+                scientific computing stack (NumPy, SciPy, pandas, matplotlib).
+              </li>
+              <li>
+                <strong>Cloud Data Pipelines:</strong> Built reliable AWS data
+                pipelines using Glue ETL jobs triggered by S3 events, Lambda
+                functions, Step Functions, and scheduled Airflow jobs for data
+                loading and time series manipulation.
+              </li>
+              <li>
+                <strong>DevOps &amp; Reporting:</strong> Implemented CI/CD for
+                microservices deployment in Kubernetes clusters on AWS Cloud,
+                generated capacity planning reports using Python visualization
+                packages, and deployed comprehensive AWS stacks including EC2,
+                S3, RDS, and Load Balancing services.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kroger Python Developer -->
+      <div
+        class="bg-white p-6 border border-gray-200 rounded-lg mb-6 shadow-sm"
+      >
+        <div class="flex flex-col md:flex-row gap-3">
+          <div class="md:w-1/3">
+            <h2 class="text-2xl font-bold">Python Developer</h2>
+            <p class="text-gray-600">
+              Kroger <span class="mx-2">|</span
+              ><span class="font-medium">Aug 2019 &ndash; Feb 2021</span>
+            </p>
+          </div>
+          <div class="md:w-2/3">
+            <p class="text-gray-700 mb-3 italic">
+              Developed patient data management systems with multi-database
+              architecture and established robust CI/CD infrastructure on AWS
+              cloud platform.
+            </p>
+            <ul class="list-disc pl-5 space-y-2 text-gray-700">
+              <li>
+                <strong>Healthcare Data Systems:</strong> Implemented
+                comprehensive data tables using PyQt to add, delete, update, and
+                display patient records and policy information, with modules to
+                connect and monitor Apache Cassandra instance status.
+              </li>
+              <li>
+                <strong>Multi-Database Architecture:</strong> Designed hybrid
+                data storage solution using Apache CouchDB (NoSQL) on AWS Linux
+                instances in parallel with RDS MySQL, improving data security
+                and report generation efficiency through strategic caching and
+                data reuse.
+              </li>
+              <li>
+                <strong>CI/CD Pipeline Implementation:</strong> Built
+                comprehensive end-to-end CI/CD pipelines in Jenkins to retrieve
+                code, compile applications, perform automated tests, and push
+                build artifacts to Nexus repository for continuous integration
+                and delivery.
+              </li>
+              <li>
+                <strong>AWS Infrastructure Automation:</strong> Managed and
+                automated all aspects of AWS infrastructure including compute,
+                storage, network, permissions, and cost optimization using
+                configuration management tools like CloudFormation and custom
+                shell scripts.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="bg-gray-900 text-white text-center py-6">
+      <div class="max-w-[1200px] mx-auto px-6">
+        <p>&copy; <span id="year"></span> Mihir Patel. All Rights Reserved.</p>
+      </div>
+      <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+        function toggleTheme() {
+          const isDark = document.documentElement.classList.toggle("dark");
+          localStorage.setItem("theme", isDark ? "dark" : "light");
+          document.getElementById("theme-icon").textContent = isDark
+            ? "\u2600\uFE0F"
+            : "\uD83C\uDF19";
+        }
+        document.getElementById("theme-icon").textContent =
+          document.documentElement.classList.contains("dark")
+            ? "\u2600\uFE0F"
+            : "\uD83C\uDF19";
+      </script>
+    </footer>
+  </body>
+</html>

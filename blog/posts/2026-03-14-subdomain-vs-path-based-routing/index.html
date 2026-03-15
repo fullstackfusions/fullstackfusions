@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="One routing choice quietly shapes your security posture, deployment pipeline, and scaling strategy. Here's how banks, hospitals, and big tech think about it — and how you should too." />
+  <title>Subdomains vs Path-Based Routing: The Architecture Decision Nobody Talks About — fullstackfusions</title>
+  <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/blog/assets/blog.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" />
+  <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();</script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode"><span id="theme-icon">&#x1F319;</span></button>
+
+  
+  <div class="bg-gray-50 py-4"></div>
+  <header class="bg-gray-900 text-white">
+    <nav class="border-b border-gray-700">
+      <div class="container mx-auto px-4 py-3">
+        <ul class="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-sm md:text-base">
+          <li>
+            <a href="/" aria-label="Home" class="flex items-center">
+              <img src="/images/logo.png" alt="Home" style="width:1.5rem;height:1.5rem;" />
+            </a>
+          </li>
+          <li><a href="/#about" class="hover:text-blue-400">About</a></li>
+          <li><a href="/#skills" class="hover:text-blue-400">Skills</a></li>
+          <li><a href="/projects" class="hover:text-blue-400">Projects</a></li>
+          <li><a href="/experience" class="hover:text-blue-400">Experience</a></li>
+          <li><a href="/blog" class="hover:text-blue-400">Blog</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="blog-container">
+    <a class="back-link" href="/blog">&#8592; All posts</a>
+
+    <article>
+      <header class="post-header">
+        <div class="post-meta">March 14, 2026</div>
+        <h1 class="text-3xl font-bold mt-2">Subdomains vs Path-Based Routing: The Architecture Decision Nobody Talks About</h1>
+        <p class="text-gray-600 mt-2">One routing choice quietly shapes your security posture, deployment pipeline, and scaling strategy. Here's how banks, hospitals, and big tech think about it — and how you should too.</p>
+        <div class="post-tags"><span class="tag">security</span><span class="tag">web-development</span><span class="tag">system-design</span></div>
+      </header>
+
+      <div class="post-content">
+        <h2>The Hospital That Got Hacked</h2>
+<p>Imagine you&#39;re a developer at a hospital. You just shipped a patient portal. It lives at <code>hospital.com/patient-portal</code>. Everything&#39;s fine — until one morning, a nurse finds a cross-site scripting bug in the internal scheduling tool, sitting at <code>hospital.com/scheduler</code>.</p>
+<p>Here&#39;s the terrifying part: because both apps share the same origin, that single XSS vulnerability just handed an attacker access to <strong>every patient&#39;s session cookie</strong> — their medical records, prescription data, all of it. One bug. Total compromise.</p>
+<p>That&#39;s not a hypothetical. That&#39;s what happens when you choose the wrong routing architecture.</p>
+<p>This post breaks down one of the most underrated architectural decisions you&#39;ll make: <strong>subdomains versus path-based routing</strong>. I&#39;ll show you how banks, hospitals, big tech, and ecommerce companies actually think about it — because this one choice quietly shapes your security, deployment pipeline, scaling strategy, and career.</p>
+<hr>
+<h2>What Are We Actually Choosing Between?</h2>
+<p>On the surface, this looks cosmetic. Who cares if it&#39;s <code>shop.amazon.com</code> or <code>amazon.com/shop</code>?</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;margin:2rem 0;font-size:.9rem">
+  <div style="background:#0f172a;border:1px solid #1e3a5f;border-radius:12px;padding:1.5rem">
+    <div style="display:flex;align-items:center;gap:.4rem;margin-bottom:1rem">
+      <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block;flex-shrink:0"></span>
+      <span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:inline-block;flex-shrink:0"></span>
+      <span style="width:10px;height:10px;border-radius:50%;background:#10b981;display:inline-block;flex-shrink:0"></span>
+      <span style="margin-left:.5rem;color:#38bdf8;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700">Subdomain Routing</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.5rem">
+      <div style="background:#1e293b;border-radius:6px;padding:.45rem .75rem;font-family:monospace;font-size:.8rem"><span style="color:#475569">https://</span><span style="color:#38bdf8;font-weight:700">shop</span><span style="color:#cbd5e1">.amazon.com</span></div>
+      <div style="background:#1e293b;border-radius:6px;padding:.45rem .75rem;font-family:monospace;font-size:.8rem"><span style="color:#475569">https://</span><span style="color:#38bdf8;font-weight:700">docs</span><span style="color:#cbd5e1">.amazon.com</span></div>
+      <div style="background:#1e293b;border-radius:6px;padding:.45rem .75rem;font-family:monospace;font-size:.8rem"><span style="color:#475569">https://</span><span style="color:#38bdf8;font-weight:700">aws</span><span style="color:#cbd5e1">.amazon.com</span></div>
+    </div>
+    <div style="margin-top:1rem;padding:.6rem .75rem;background:#052e16;border:1px solid #166534;border-radius:6px;color:#86efac;font-size:.775rem">🛡️ Each subdomain = its own browser origin</div>
+  </div>
+  <div style="background:#0f172a;border:1px solid #431307;border-radius:12px;padding:1.5rem">
+    <div style="display:flex;align-items:center;gap:.4rem;margin-bottom:1rem">
+      <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block;flex-shrink:0"></span>
+      <span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:inline-block;flex-shrink:0"></span>
+      <span style="width:10px;height:10px;border-radius:50%;background:#10b981;display:inline-block;flex-shrink:0"></span>
+      <span style="margin-left:.5rem;color:#f97316;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700">Path Routing</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.5rem">
+      <div style="background:#1e293b;border-radius:6px;padding:.45rem .75rem;font-family:monospace;font-size:.8rem"><span style="color:#475569">https://amazon.com</span><span style="color:#f97316;font-weight:700">/shop</span></div>
+      <div style="background:#1e293b;border-radius:6px;padding:.45rem .75rem;font-family:monospace;font-size:.8rem"><span style="color:#475569">https://amazon.com</span><span style="color:#f97316;font-weight:700">/docs</span></div>
+      <div style="background:#1e293b;border-radius:6px;padding:.45rem .75rem;font-family:monospace;font-size:.8rem"><span style="color:#475569">https://amazon.com</span><span style="color:#f97316;font-weight:700">/aws</span></div>
+    </div>
+    <div style="margin-top:1rem;padding:.6rem .75rem;background:#450a0a;border:1px solid #7f1d1d;border-radius:6px;color:#fca5a5;font-size:.775rem">⚠️ All paths share the same browser origin</div>
+  </div>
+</div>
+
+<p>With <strong>subdomain routing</strong>, each application gets its own address — its own front door. <code>shop.amazon.com</code> and <code>docs.amazon.com</code> share the parent domain, but the browser treats them as <strong>separate origins</strong>.</p>
+<p>With <strong>path routing</strong>, everything lives under one roof. One domain, one origin — you carve up apps using URL paths. <code>/shop</code>, <code>/docs</code>, <code>/aws</code> are just rooms inside the same house.</p>
+<p>This single decision ripples through six critical dimensions: security, cost, infrastructure, application code, SEO, and authentication. And once you ship with one approach, switching is painful. Let&#39;s walk through each one.</p>
+<hr>
+<h2>1. Security: The Blast Radius Problem</h2>
+<p>This is the one that matters most. To explain it properly, you need one concept: <strong>browser origin policy</strong>.</p>
+<p>The browser treats each unique combination of protocol, domain, and port as a separate &quot;origin.&quot; The key rule: <strong>JavaScript running in one origin cannot access cookies, localStorage, or the DOM of another origin.</strong> That&#39;s the browser&#39;s security wall.</p>
+<p>Watch what happens with our two approaches.</p>
+<p><strong>With subdomains</strong> — <code>scheduler.hospital.com</code> and <code>patient.hospital.com</code> are two different origins. If an attacker exploits an XSS vulnerability in the scheduler, they can steal the scheduler&#39;s cookies. Bad — but they <em>cannot</em> reach the patient portal&#39;s cookies, localStorage, or session data. The damage is <strong>contained</strong>.</p>
+<p><strong>With paths</strong> — <code>hospital.com/scheduler</code> and <code>hospital.com/patient-portal</code> are the <em>same</em> origin. No wall. That one XSS bug in the scheduler? The attacker now has access to every cookie, every piece of localStorage, every DOM element across every app on the domain. Patient records. Admin panels. Billing data. Everything.</p>
+<p>This is what security engineers call the <strong>blast radius</strong> — how far does damage spread when something goes wrong?</p>
+<div id="blast-demo" style="background:#0a0f1a;border:1px solid #1e293b;border-radius:14px;padding:1.75rem;margin:2rem 0;font-size:.875rem">
+  <p style="text-align:center;color:#94a3b8;margin:0 0 1.5rem;font-size:.8rem;font-style:italic">Click the button below to visualize how an XSS attack propagates in each architecture.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem">
+    <div>
+      <div style="text-align:center;color:#38bdf8;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.875rem">🛡️ Subdomain Routing</div>
+      <div style="background:#0f172a;border:1px solid #1e3a5f;border-radius:10px;padding:1rem;display:flex;flex-direction:column;gap:.5rem">
+        <div id="xss-sub-sched" style="background:#1e293b;border:2px solid #334155;border-radius:8px;padding:.75rem;text-align:center;transition:background .4s,border-color .4s">
+          <div style="font-size:.62rem;color:#64748b;text-transform:uppercase;letter-spacing:.06em;font-family:monospace">scheduler.hospital.com</div>
+          <div style="font-size:.8rem;color:#e2e8f0;margin-top:.25rem;font-weight:500">Scheduling App</div>
+        </div>
+        <div style="text-align:center;padding:.3rem 0;border-top:1px dashed #1e3a5f;border-bottom:1px dashed #1e3a5f">
+          <span style="color:#22c55e;font-size:.72rem;font-weight:700">✦ ORIGIN WALL ✦</span>
+        </div>
+        <div id="xss-sub-patient" style="background:#1e293b;border:2px solid #334155;border-radius:8px;padding:.75rem;text-align:center;transition:background .4s,border-color .4s">
+          <div style="font-size:.62rem;color:#64748b;text-transform:uppercase;letter-spacing:.06em;font-family:monospace">patient.hospital.com</div>
+          <div style="font-size:.8rem;color:#e2e8f0;margin-top:.25rem;font-weight:500">Patient Portal</div>
+        </div>
+      </div>
+      <div id="xss-sub-result" style="display:none;margin-top:.75rem;padding:.7rem .875rem;background:#052e16;border:1px solid #166534;border-radius:8px;color:#86efac;font-size:.78rem;text-align:center">✅ Blast radius contained — patient data is safe</div>
+    </div>
+    <div>
+      <div style="text-align:center;color:#f97316;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.875rem">⚠️ Path Routing</div>
+      <div style="background:#0f172a;border:1px solid #431307;border-radius:10px;padding:1rem;display:flex;flex-direction:column;gap:.5rem">
+        <div id="xss-path-sched" style="background:#1e293b;border:2px solid #334155;border-radius:8px;padding:.75rem;text-align:center;transition:background .4s,border-color .4s">
+          <div style="font-size:.62rem;color:#64748b;text-transform:uppercase;letter-spacing:.06em;font-family:monospace">hospital.com/scheduler</div>
+          <div style="font-size:.8rem;color:#e2e8f0;margin-top:.25rem;font-weight:500">Scheduling App</div>
+        </div>
+        <div style="text-align:center;padding:.3rem 0;border-top:1px dashed #431307;border-bottom:1px dashed #431307">
+          <span style="color:#ef4444;font-size:.72rem;font-weight:700">— same origin, no wall —</span>
+        </div>
+        <div id="xss-path-patient" style="background:#1e293b;border:2px solid #334155;border-radius:8px;padding:.75rem;text-align:center;transition:background .4s,border-color .4s">
+          <div style="font-size:.62rem;color:#64748b;text-transform:uppercase;letter-spacing:.06em;font-family:monospace">hospital.com/patient-portal</div>
+          <div style="font-size:.8rem;color:#e2e8f0;margin-top:.25rem;font-weight:500">Patient Portal</div>
+        </div>
+      </div>
+      <div id="xss-path-result" style="display:none;margin-top:.75rem;padding:.7rem .875rem;background:#450a0a;border:1px solid #7f1d1d;border-radius:8px;color:#fca5a5;font-size:.78rem;text-align:center">💥 Full breach — attacker owns all session data</div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:1.5rem;display:flex;align-items:center;justify-content:center;gap:.75rem;flex-wrap:wrap">
+    <button onclick="xssSimulate()" id="xss-attack-btn" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:.6rem 1.5rem;font-size:.825rem;font-weight:600;cursor:pointer;letter-spacing:.02em">⚡ Simulate XSS Attack</button>
+    <button onclick="xssReset()" id="xss-reset-btn" style="display:none;background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:8px;padding:.6rem 1.25rem;font-size:.825rem;font-weight:600;cursor:pointer">↺ Reset</button>
+  </div>
+</div>
+<script>
+function xssSimulate(){var btn=document.getElementById('xss-attack-btn');btn.disabled=true;btn.textContent='⚡ Attacking...';setTimeout(function(){var s=document.getElementById('xss-sub-sched');s.style.background='#450a0a';s.style.borderColor='#ef4444';var p=document.getElementById('xss-path-sched');p.style.background='#450a0a';p.style.borderColor='#ef4444';},500);setTimeout(function(){document.getElementById('xss-sub-result').style.display='block';},1300);setTimeout(function(){var p2=document.getElementById('xss-path-patient');p2.style.background='#450a0a';p2.style.borderColor='#ef4444';},1600);setTimeout(function(){document.getElementById('xss-path-result').style.display='block';btn.textContent='⚡ Simulate XSS Attack';document.getElementById('xss-reset-btn').style.display='inline-block';},2200);}
+function xssReset(){['xss-sub-sched','xss-sub-patient','xss-path-sched','xss-path-patient'].forEach(function(id){var el=document.getElementById(id);el.style.background='#1e293b';el.style.borderColor='#334155';});document.getElementById('xss-sub-result').style.display='none';document.getElementById('xss-path-result').style.display='none';var btn=document.getElementById('xss-attack-btn');btn.disabled=false;document.getElementById('xss-reset-btn').style.display='none';}
+</script>
+
+<h3>Real-World Examples</h3>
+<p><strong>Banking.</strong> Chase has <code>secure.chase.com</code> for banking and <code>creditcards.chase.com</code> for credit cards. Wells Fargo runs <code>connect.secure.wellsfargo.com</code>. They don&#39;t put their trading platform and mortgage portal on the same origin. If a vulnerability hits one product, regulators ask: &quot;Could this have compromised accounts in your other products?&quot; With path-based routing, the answer is yes — by design.</p>
+<p><strong>Ecommerce.</strong> Shopify gives every merchant their own subdomain: <code>yourstore.myshopify.com</code>. If every Shopify store shared the same origin, one compromised store could access session data from every other store — affecting millions of merchants.</p>
+<p><strong>Healthcare.</strong> HIPAA compliance isn&#39;t optional. If patient data leaks through a vulnerability in a co-located app that you could have isolated with subdomains, that&#39;s an audit finding.</p>
+<blockquote>
+<p><strong>One nuance:</strong> Even with subdomains, if you set your auth cookie to <code>Domain=.hospital.com</code> (with the leading dot), that cookie becomes accessible across all subdomains. You still need intentional cookie scoping — but the <em>default posture</em> is isolation, and that&#39;s always where you want to start.</p>
+</blockquote>
+<p><strong>Verdict: subdomains win, and it&#39;s not close.</strong></p>
+<hr>
+<h2>2. Cost: The Myth That Subdomains Are Expensive</h2>
+<p>Many developers avoid subdomains assuming it costs more. Let&#39;s bust that myth.</p>
+<p><strong>Subdomains are free.</strong> If you own <code>yourdomain.com</code>, you can create unlimited subdomains at zero additional cost.</p>
+<p><strong>SSL certificates?</strong> Let&#39;s Encrypt gives you wildcard certificates — one cert covers <code>*.yourdomain.com</code> — for free. Certbot handles per-subdomain certs automatically with auto-renewal.</p>
+<p><strong>DNS records?</strong> One A record per subdomain. Cloudflare&#39;s free tier supports unlimited subdomains with DNS and proxying.</p>
+<p><strong>VPS cost?</strong> Identical. Whether Nginx routes on subdomain or path, the compute cost is the same.</p>
+<p>The actual cost difference between subdomains and paths is effectively <strong>zero</strong>.</p>
+<p><strong>Verdict: it&#39;s a tie.</strong></p>
+<hr>
+<h2>3. Infrastructure &amp; Deployment: Where It Gets Real</h2>
+<p>This is where the architectural difference becomes tangible, especially at the senior and principal level.</p>
+<p>Compare two Nginx configurations side by side.</p>
+<p><strong>Subdomain config</strong> — each app gets its own <code>server</code> block. Clean and isolated. Changing the marketplace config cannot break the chatbot.</p>
+<pre><code class="language-nginx">server {
+    server_name marketplace.yourdomain.com;
+    location / { proxy_pass http://marketplace:3000; }
+}
+
+server {
+    server_name chatbot.yourdomain.com;
+    location / { proxy_pass http://chatbot:4000; }
+}
+</code></pre>
+<p><strong>Path config</strong> — everything lives in one block with <code>location</code> directives, and you need <strong>path rewriting</strong>. Your app doesn&#39;t know it&#39;s mounted at <code>/marketplace</code> — it thinks it&#39;s at <code>/</code>. Nginx strips the prefix before forwarding, and that rewriting breaks in subtle ways: nested routes, static assets, API paths — all need to be rewrite-aware.</p>
+<pre><code class="language-nginx">server {
+    server_name yourdomain.com;
+    location /marketplace/ {
+        rewrite ^/marketplace/(.*)$ /$1 break;
+        proxy_pass http://marketplace:3000;
+    }
+    location /chatbot/ {
+        rewrite ^/chatbot/(.*)$ /$1 break;
+        proxy_pass http://chatbot:4000;
+    }
+}
+</code></pre>
+<h3>The Deployment Story</h3>
+<p>It&#39;s Friday afternoon. Marketplace has a critical bug fix. With subdomains, you redeploy that one container. The chatbot, LMS, and blog are completely unaffected — different server blocks, different containers, different pipelines.</p>
+<p>With paths, you&#39;re touching the same Nginx config, the same server block. A bad rewrite rule during the marketplace deploy can take down routing for the chatbot too. <strong>Everything is coupled.</strong></p>
+<h3>Scale and Team Structure</h3>
+<p>AWS Console lives at <code>console.aws.amazon.com</code>. AWS Documentation at <code>docs.aws.amazon.com</code>. S3 uses <code>s3.console.aws.amazon.com</code>. Each service is owned by a different team, deployed on its own schedule, on its own infrastructure. When the S3 team needs to scale, they don&#39;t coordinate with the Lambda team. <strong>The subdomain boundary is also an organizational boundary.</strong></p>
+<p>Google does the same: <code>mail.google.com</code>, <code>docs.google.com</code>, <code>drive.google.com</code>, <code>calendar.google.com</code> — separate products, separate teams, separate release cycles.</p>
+<p><strong>Migration path:</strong> if your chatbot becomes wildly popular and needs a dedicated server, with subdomains you change one DNS record — a five-minute operation. With paths, you&#39;d need to refactor your entire routing layer.</p>
+<p><strong>Verdict: subdomains win decisively.</strong></p>
+<hr>
+<h2>4. Application Code: The Hidden Prefix Tax</h2>
+<p>You don&#39;t feel this pain upfront. You feel it six months later when things are subtly broken everywhere.</p>
+<p><strong>With subdomains</strong>, your React app thinks it lives at <code>/</code>. Routes are clean:</p>
+<pre><code class="language-jsx">&lt;Route path=&quot;/products&quot; component={Products} /&gt;
+&lt;Route path=&quot;/cart&quot; component={Cart} /&gt;
+</code></pre>
+<p>API calls are simple: <code>fetch(&#39;/api/products&#39;)</code>. Every asset reference starts from <code>/</code>. It just works — because from the app&#39;s perspective, it <em>is</em> the entire website.</p>
+<p><strong>With paths</strong>, every app needs to know its mounted prefix. React Router needs a <code>basename</code>:</p>
+<pre><code class="language-jsx">&lt;BrowserRouter basename=&quot;/marketplace&quot;&gt;
+  &lt;Route path=&quot;/products&quot; component={Products} /&gt;
+&lt;/BrowserRouter&gt;
+</code></pre>
+<p>Every API call needs the prefix: <code>fetch(&#39;/marketplace/api/products&#39;)</code>. Every image tag, stylesheet link, and asset must include the prefix. Miss one? Broken image. Broken route. Broken API call. And these bugs only surface in production, because in development your app IS at root.</p>
+<p>I call this the <strong>prefix tax</strong> — a constant low-grade complexity that every developer on every team has to carry, forever.</p>
+<p>Stripe runs <code>dashboard.stripe.com</code> and <code>docs.stripe.com</code> — not <code>stripe.com/dashboard</code> and <code>stripe.com/docs</code>. Their dashboard is a complex React SPA; their docs site is a completely different static site generator. Forcing both into the same origin with path prefixes would create constant friction for both teams.</p>
+<p><strong>Verdict: subdomains win.</strong></p>
+<hr>
+<h2>5. SEO and Auth: Where Paths Fight Back</h2>
+<p>In fairness, path-based routing has a genuine edge in two areas.</p>
+<h3>SEO: Domain Authority</h3>
+<p>Google treats subdomains as semi-separate websites. A backlink to <code>blog.yourdomain.com</code> strengthens your blog subdomain, but that authority doesn&#39;t fully flow to <code>shop.yourdomain.com</code>. With paths, every backlink to <code>yourdomain.com/anything</code> strengthens the same root domain.</p>
+<p>For content-heavy businesses — media companies, content marketing sites — this matters. If organic search is your primary growth channel, paths consolidate authority faster.</p>
+<p>The nuance: Google has gotten much better at associating subdomains with their parent. Companies like HubSpot run <code>blog.hubspot.com</code> and still dominate search. Google Search Console lets you explicitly link your subdomains. It&#39;s manageable — but paths do have a natural advantage.</p>
+<h3>Auth: Zero Configuration Overhead</h3>
+<p>With paths, authentication is trivially simple. Everything is the same origin — set a cookie and every app reads it. No CORS. No cookie tricks.</p>
+<p>With subdomains, you need two things:</p>
+<ol>
+<li>Set your auth cookie with <code>Domain=.yourdomain.com</code> so it&#39;s shared across subdomains.</li>
+<li>Configure CORS so that <code>marketplace.yourdomain.com</code> can make credentialed requests to <code>auth.yourdomain.com</code>.</li>
+</ol>
+<p>About 15 lines of config — not hard, but extra work, and if you get it wrong your login flow breaks.</p>
+<p><strong>Paths win on SEO and auth simplicity.</strong> Worth acknowledging.</p>
+<p>But notice the pattern: <strong>paths win on convenience; subdomains win on isolation and scalability.</strong> In production systems serving real users with real data, convenience takes a back seat to resilience.</p>
+<hr>
+<h2>6. The Enterprise Pattern: Use Both</h2>
+<p>What do companies actually do in practice? They use <strong>both</strong>.</p>
+<p>The answer isn&#39;t &quot;always subdomains&quot; or &quot;always paths.&quot; It&#39;s: <strong>subdomains between applications, paths within them.</strong></p>
+<p><strong>GitHub:</strong> <code>gist.github.com</code> and <code>docs.github.com</code> are separate products → subdomains. Inside <code>github.com</code>, <code>/pulls</code>, <code>/issues</code>, and <code>/settings</code> are features of one product → paths.</p>
+<p><strong>AWS:</strong> <code>console.aws.amazon.com</code> and <code>docs.aws.amazon.com</code> are separate products → subdomains. Inside the console, <code>/s3</code>, <code>/ec2</code>, <code>/lambda</code> are sections of one UI → paths.</p>
+<p>This hybrid maps cleanly to a concept from Domain-Driven Design: <strong>bounded contexts</strong>. Each subdomain is a self-contained business capability with its own models, data, and team. Within that context, paths organize the internal features.</p>
+<pre><code>Subdomain per app         →  Bounded Context
+Nginx reverse proxy       →  API Gateway
+Shared auth service       →  Identity Provider (Okta, Auth0)
+Docker network            →  Service Mesh
+</code></pre>
+<p>If you can explain this architecture in a system design interview and connect it to enterprise equivalents, you&#39;re demonstrating principal-engineer-level thinking. Not because of the tooling — because you understood <strong>why the boundaries exist</strong>.</p>
+<hr>
+<h2>Quick Verdict Scorecard</h2>
+<div style="margin:1.5rem 0;overflow-x:auto">
+  <table style="width:100%;border-collapse:collapse;background:#0f172a;border-radius:12px;overflow:hidden;font-size:.875rem;border:1px solid #1e293b;min-width:480px">
+    <thead>
+      <tr style="background:#1e293b">
+        <th style="text-align:left;padding:.875rem 1.25rem;color:#94a3b8;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em">Dimension</th>
+        <th style="text-align:center;padding:.875rem 1rem;color:#38bdf8;font-weight:700;font-size:.9rem">Subdomains</th>
+        <th style="text-align:center;padding:.875rem 1rem;color:#f97316;font-weight:700;font-size:.9rem">Paths</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-top:1px solid #1e293b">
+        <td style="padding:.8rem 1.25rem;color:#e2e8f0">🔒 Security</td>
+        <td style="padding:.8rem;text-align:center"><span style="background:#052e16;color:#4ade80;padding:.2rem .75rem;border-radius:20px;font-size:.75rem;font-weight:700">WINS</span></td>
+        <td style="padding:.8rem;text-align:center"><span style="color:#475569;font-size:.85rem">—</span></td>
+      </tr>
+      <tr style="border-top:1px solid #1e293b;background:#0a0f1a">
+        <td style="padding:.8rem 1.25rem;color:#e2e8f0">💰 Cost</td>
+        <td style="padding:.8rem;text-align:center"><span style="background:#172554;color:#93c5fd;padding:.2rem .75rem;border-radius:20px;font-size:.75rem;font-weight:700">TIE</span></td>
+        <td style="padding:.8rem;text-align:center"><span style="background:#172554;color:#93c5fd;padding:.2rem .75rem;border-radius:20px;font-size:.75rem;font-weight:700">TIE</span></td>
+      </tr>
+      <tr style="border-top:1px solid #1e293b">
+        <td style="padding:.8rem 1.25rem;color:#e2e8f0">🚀 Infrastructure & Deployment</td>
+        <td style="padding:.8rem;text-align:center"><span style="background:#052e16;color:#4ade80;padding:.2rem .75rem;border-radius:20px;font-size:.75rem;font-weight:700">WINS</span></td>
+        <td style="padding:.8rem;text-align:center"><span style="color:#475569;font-size:.85rem">—</span></td>
+      </tr>
+      <tr style="border-top:1px solid #1e293b;background:#0a0f1a">
+        <td style="padding:.8rem 1.25rem;color:#e2e8f0">⚙️ App Code Simplicity</td>
+        <td style="padding:.8rem;text-align:center"><span style="background:#052e16;color:#4ade80;padding:.2rem .75rem;border-radius:20px;font-size:.75rem;font-weight:700">WINS</span></td>
+        <td style="padding:.8rem;text-align:center"><span style="color:#475569;font-size:.85rem">—</span></td>
+      </tr>
+      <tr style="border-top:1px solid #1e293b">
+        <td style="padding:.8rem 1.25rem;color:#e2e8f0">📈 SEO</td>
+        <td style="padding:.8rem;text-align:center"><span style="color:#475569;font-size:.85rem">—</span></td>
+        <td style="padding:.8rem;text-align:center"><span style="background:#052e16;color:#4ade80;padding:.2rem .75rem;border-radius:20px;font-size:.75rem;font-weight:700">WINS</span></td>
+      </tr>
+      <tr style="border-top:1px solid #1e293b;background:#0a0f1a">
+        <td style="padding:.8rem 1.25rem;color:#e2e8f0">🔑 Auth Simplicity</td>
+        <td style="padding:.8rem;text-align:center"><span style="color:#475569;font-size:.85rem">—</span></td>
+        <td style="padding:.8rem;text-align:center"><span style="background:#052e16;color:#4ade80;padding:.2rem .75rem;border-radius:20px;font-size:.75rem;font-weight:700">WINS</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+<h2>The Decision Framework</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem;margin:1.5rem 0">
+  <div style="background:#0f172a;border:1px solid #431307;border-radius:12px;padding:1.5rem">
+    <div style="color:#f97316;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem">Use Paths When</div>
+    <p style="color:#cbd5e1;font-size:.875rem;line-height:1.65;margin:0 0 1rem">You're building <strong style="color:#f97316">one application</strong> with multiple pages. Settings, profile, dashboard — these are features of the same product, built by the same team, deployed together.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:.4rem">
+      <span style="background:#1e293b;color:#94a3b8;padding:.2rem .55rem;border-radius:4px;font-size:.7rem;font-family:monospace">/settings</span>
+      <span style="background:#1e293b;color:#94a3b8;padding:.2rem .55rem;border-radius:4px;font-size:.7rem;font-family:monospace">/dashboard</span>
+      <span style="background:#1e293b;color:#94a3b8;padding:.2rem .55rem;border-radius:4px;font-size:.7rem;font-family:monospace">/profile</span>
+    </div>
+  </div>
+  <div style="background:#0f172a;border:1px solid #1e3a5f;border-radius:12px;padding:1.5rem">
+    <div style="color:#38bdf8;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem">Use Subdomains When</div>
+    <p style="color:#cbd5e1;font-size:.875rem;line-height:1.65;margin:0 0 1rem">You're building <strong style="color:#38bdf8">multiple applications</strong> — different codebases, tech stacks, or deployment cycles. Or when security isolation matters, which is basically always in production.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:.4rem">
+      <span style="background:#1e293b;color:#94a3b8;padding:.2rem .55rem;border-radius:4px;font-size:.7rem;font-family:monospace">shop.domain.com</span>
+      <span style="background:#1e293b;color:#94a3b8;padding:.2rem .55rem;border-radius:4px;font-size:.7rem;font-family:monospace">api.domain.com</span>
+    </div>
+  </div>
+  <div style="background:#0f172a;border:1px solid #4a1d96;border-radius:12px;padding:1.5rem">
+    <div style="color:#a78bfa;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem">At Scale: The Hybrid</div>
+    <p style="color:#cbd5e1;font-size:.875rem;line-height:1.65;margin:0 0 1rem"><strong style="color:#a78bfa">Subdomains between apps</strong>, paths within each app. GitHub, AWS, and Google all use this pattern in practice.</p>
+    <div style="background:#1e1b4b;border-radius:6px;padding:.6rem .85rem;font-family:monospace;font-size:.75rem;color:#c4b5fd">shop.amazon.com<span style="color:#475569">/products/detail</span></div>
+  </div>
+</div>
+
+<hr>
+<p>The routing choice you make today echoes through your system&#39;s security posture, your team&#39;s deployment velocity, and your platform&#39;s ability to scale. It&#39;s one of those decisions that feels small but compounds over time.</p>
+<p>Pick intentionally.</p>
+
+      </div>
+    </article>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script>
+    function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'☀️':'🌙';}
+    document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';
+  </script>
+
+</body>
+</html>

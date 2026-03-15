@@ -1,0 +1,2386 @@
+<!--blog-meta
+{
+  "title": "GTA Property Comparison — 30 Year Analysis",
+  "date": "2026-03-15",
+  "description": "A data-driven comparison of detached vs condo ownership in the Greater Toronto Area over 30 years.",
+  "tags": ["real-estate", "data", "canada", "interactive"]
+}
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GTA Property Comparison — 30 Year Analysis</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --det: #e8a87c;
+        --det-dark: #c97b45;
+        --det-glow: rgba(232, 168, 124, 0.15);
+        --con: #7cb9e8;
+        --con-dark: #4a90c8;
+        --con-glow: rgba(124, 185, 232, 0.15);
+        --bg: #0c0e14;
+        --surface: #13161f;
+        --surface2: #1a1e2a;
+        --border: rgba(255, 255, 255, 0.06);
+        --text: #e8eaf0;
+        --muted: #6b7280;
+        --win: #5eead4;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Outfit", sans-serif;
+        font-weight: 300;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* ── HEADER ── */
+      .hero {
+        position: relative;
+        padding: 56px 40px 40px;
+        border-bottom: 1px solid var(--border);
+        overflow: hidden;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 60% 80% at 20% -10%,
+            rgba(232, 168, 124, 0.08) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse 50% 60% at 80% 110%,
+            rgba(124, 185, 232, 0.07) 0%,
+            transparent 60%
+          );
+        pointer-events: none;
+      }
+      .hero-eyebrow {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 14px;
+      }
+      .hero h1 {
+        font-family: "DM Serif Display", serif;
+        font-size: clamp(28px, 4vw, 52px);
+        line-height: 1.1;
+        color: #fff;
+        margin-bottom: 8px;
+      }
+      .hero h1 span.det {
+        color: var(--det);
+      }
+      .hero h1 span.con {
+        color: var(--con);
+      }
+      .hero-sub {
+        color: var(--muted);
+        font-size: 14px;
+        font-family: "DM Mono", monospace;
+        margin-top: 10px;
+      }
+      .hero-badges {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+      .badge {
+        padding: 4px 12px;
+        border-radius: 99px;
+        font-size: 11px;
+        font-family: "DM Mono", monospace;
+        letter-spacing: 0.05em;
+        border: 1px solid;
+      }
+      .badge.det {
+        color: var(--det);
+        border-color: rgba(232, 168, 124, 0.3);
+        background: var(--det-glow);
+      }
+      .badge.con {
+        color: var(--con);
+        border-color: rgba(124, 185, 232, 0.3);
+        background: var(--con-glow);
+      }
+      .badge.neutral {
+        color: var(--muted);
+        border-color: var(--border);
+      }
+
+      /* ── TABS ── */
+      .tabs-wrap {
+        padding: 0 40px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        gap: 0;
+        overflow-x: auto;
+      }
+      .tab {
+        padding: 16px 22px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--muted);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        white-space: nowrap;
+        transition: all 0.2s;
+        letter-spacing: 0.02em;
+      }
+      .tab:hover {
+        color: var(--text);
+      }
+      .tab.active {
+        color: var(--text);
+        border-bottom-color: var(--det);
+      }
+
+      /* ── CONTENT ── */
+      .panels {
+        padding: 0 40px 60px;
+      }
+      .panel {
+        display: none;
+      }
+      .panel.active {
+        display: block;
+      }
+
+      /* ── CARDS GRID ── */
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 14px;
+        margin: 28px 0;
+      }
+      .metric-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+      }
+      .metric-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+      }
+      .metric-card.det::before {
+        background: linear-gradient(90deg, var(--det), transparent);
+      }
+      .metric-card.con::before {
+        background: linear-gradient(90deg, var(--con), transparent);
+      }
+      .metric-card.win::before {
+        background: linear-gradient(90deg, var(--win), transparent);
+      }
+      .metric-label {
+        font-size: 10px;
+        font-family: "DM Mono", monospace;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      .metric-value {
+        font-family: "DM Serif Display", serif;
+        font-size: 26px;
+        color: #fff;
+        line-height: 1;
+      }
+      .metric-value.det {
+        color: var(--det);
+      }
+      .metric-value.con {
+        color: var(--con);
+      }
+      .metric-value.win {
+        color: var(--win);
+      }
+      .metric-sub {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 6px;
+        font-family: "DM Mono", monospace;
+      }
+
+      /* ── CHART ── */
+      .chart-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 28px;
+        margin: 14px 0;
+      }
+      .chart-title {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        margin-bottom: 4px;
+      }
+      .chart-desc {
+        font-size: 11px;
+        color: var(--muted);
+        font-family: "DM Mono", monospace;
+        margin-bottom: 20px;
+      }
+      .chart-wrap {
+        position: relative;
+        height: 280px;
+      }
+
+      /* ── TWO COL ── */
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      @media (max-width: 700px) {
+        .two-col {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ── COMPARISON TABLE ── */
+      .cmp-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        margin-top: 20px;
+      }
+      .cmp-table th {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding: 10px 14px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+      .cmp-table td {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+      .cmp-table tr:last-child td {
+        border-bottom: none;
+      }
+      .cmp-table .cat {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding-top: 20px;
+        font-weight: 500;
+      }
+      .cmp-table .row-label {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .cmp-table .det-val {
+        color: var(--det);
+        font-weight: 500;
+      }
+      .cmp-table .con-val {
+        color: var(--con);
+        font-weight: 500;
+      }
+      .winner-tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 99px;
+        font-size: 9px;
+        font-family: "DM Mono", monospace;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-left: 6px;
+      }
+      .winner-tag.det {
+        background: var(--det-glow);
+        color: var(--det);
+        border: 1px solid rgba(232, 168, 124, 0.3);
+      }
+      .winner-tag.con {
+        background: var(--con-glow);
+        color: var(--con);
+        border: 1px solid rgba(124, 185, 232, 0.3);
+      }
+
+      /* ── QUAL CARDS ── */
+      .qual-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 14px;
+        margin-top: 20px;
+      }
+      .qual-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 22px;
+      }
+      .qual-card h3 {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .icon {
+        font-size: 18px;
+      }
+      .qual-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 12px;
+      }
+      .qual-row:last-child {
+        border-bottom: none;
+      }
+      .qual-aspect {
+        color: var(--muted);
+        flex: 1;
+      }
+      .qual-det {
+        color: var(--det);
+        text-align: center;
+        flex: 1;
+        font-size: 11px;
+      }
+      .qual-con {
+        color: var(--con);
+        text-align: center;
+        flex: 1;
+        font-size: 11px;
+      }
+
+      /* ── STARS ── */
+      .stars {
+        color: #f59e0b;
+        font-size: 12px;
+      }
+
+      /* ── YEAR SLIDER ── */
+      .slider-wrap {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin: 20px 0;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px 22px;
+      }
+      .slider-wrap label {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      input[type="range"] {
+        flex: 1;
+        accent-color: var(--det);
+        cursor: pointer;
+      }
+      .slider-value {
+        font-family: "DM Serif Display", serif;
+        font-size: 22px;
+        color: var(--det);
+        min-width: 60px;
+        text-align: right;
+      }
+
+      /* ── SNAPSHOT ── */
+      .snapshot-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 14px;
+      }
+      .snap-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+      }
+      .snap-card h4 {
+        font-size: 11px;
+        font-family: "DM Mono", monospace;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 14px;
+      }
+      .snap-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        padding: 5px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .snap-row:last-child {
+        border-bottom: none;
+      }
+      .snap-row .lbl {
+        color: var(--muted);
+      }
+      .snap-row .val {
+        font-weight: 500;
+      }
+
+      /* ── VERDICT ── */
+      .verdict-box {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 28px;
+        margin-top: 20px;
+        position: relative;
+        overflow: hidden;
+      }
+      .verdict-box::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--det), var(--con));
+      }
+      .verdict-box h3 {
+        font-family: "DM Serif Display", serif;
+        font-size: 20px;
+        margin-bottom: 16px;
+      }
+      .verdict-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+      }
+      .verdict-row:last-child {
+        border-bottom: none;
+      }
+      .verdict-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-top: 4px;
+        flex-shrink: 0;
+      }
+      .verdict-dot.det {
+        background: var(--det);
+      }
+      .verdict-dot.con {
+        background: var(--con);
+      }
+
+      .section-header {
+        margin: 32px 0 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .section-header h2 {
+        font-family: "DM Serif Display", serif;
+        font-size: 20px;
+        font-style: italic;
+      }
+      .section-header .line {
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+
+      .legend {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 11px;
+        font-family: "DM Mono", monospace;
+        color: var(--muted);
+      }
+      .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+      }
+
+      .warning-box {
+        background: rgba(251, 191, 36, 0.06);
+        border: 1px solid rgba(251, 191, 36, 0.2);
+        border-radius: 10px;
+        padding: 14px 18px;
+        font-size: 12px;
+        color: #fbb024;
+        font-family: "DM Mono", monospace;
+        margin-top: 14px;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hero">
+      <div class="hero-eyebrow">
+        GTA Ontario · 30-Year Financial Analysis · $4,000/mo Budget
+      </div>
+      <h1>
+        <span class="det">Detached Home</span> vs
+        <span class="con">Condominium</span>
+      </h1>
+      <div class="hero-sub">
+        $989K Detached (Ajax/GTA) &nbsp;·&nbsp; $469K Condo &nbsp;·&nbsp; $200K
+        Down Each &nbsp;·&nbsp; 4% Mortgage · 15% Investment Return
+      </div>
+      <div class="hero-badges">
+        <span class="badge det">🏡 Detached · $989K · 2300 sqft</span>
+        <span class="badge con">🏢 Condo · $469K · 1300 sqft</span>
+        <span class="badge neutral">📅 30 Year Horizon</span>
+        <span class="badge neutral">💰 Budget $4,000/mo</span>
+      </div>
+    </div>
+
+    <div class="tabs-wrap">
+      <div class="tab active" onclick="showTab('overview')">📊 Overview</div>
+      <div class="tab" onclick="showTab('cashflow')">💸 Cash Flow</div>
+      <div class="tab" onclick="showTab('networth')">📈 Net Worth</div>
+      <div class="tab" onclick="showTab('snapshot')">🔍 Year Snapshot</div>
+      <div class="tab" onclick="showTab('qualitative')">🏠 Lifestyle</div>
+      <div class="tab" onclick="showTab('verdict')">⚖️ Verdict</div>
+    </div>
+
+    <div class="panels">
+      <!-- ══════════════════ OVERVIEW ══════════════════ -->
+      <div class="panel active" id="panel-overview">
+        <div class="section-header">
+          <div class="line"></div>
+          <h2>Day-One Economics</h2>
+          <div class="line"></div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card det">
+            <div class="metric-label">Detached Mortgage/mo</div>
+            <div class="metric-value det">$3,767</div>
+            <div class="metric-sub">On $789K loan @ 4% / 30yr</div>
+          </div>
+          <div class="metric-card con">
+            <div class="metric-label">Condo Mortgage/mo</div>
+            <div class="metric-value con">$1,284</div>
+            <div class="metric-sub">On $269K loan @ 4% / 30yr</div>
+          </div>
+          <div class="metric-card det">
+            <div class="metric-label">Detached — Mortgage Only</div>
+            <div class="metric-value det">$3,767</div>
+            <div class="metric-sub">On $789K @ 4% / 30yr</div>
+          </div>
+          <div class="metric-card con">
+            <div class="metric-label">Condo — Mortgage Only</div>
+            <div class="metric-value con">$1,284</div>
+            <div class="metric-sub">On $269K @ 4% / 30yr</div>
+          </div>
+          <div class="metric-card det">
+            <div class="metric-label">Detached — True Net Monthly</div>
+            <div class="metric-value det">$3,642</div>
+            <div class="metric-sub">
+              Mortgage $3,767 + Tax $542 + Maint $333 − Rental $1,000
+            </div>
+          </div>
+          <div class="metric-card con">
+            <div class="metric-label">Condo — True Net Monthly</div>
+            <div class="metric-value con">$2,889</div>
+            <div class="metric-sub">
+              Mortgage $1,284 + Tax $140 + Condo Fee $1,315 + Maint $150
+            </div>
+          </div>
+          <div class="metric-card det">
+            <div class="metric-label">Detached Investable/mo</div>
+            <div class="metric-value" style="color: #5eead4">$358</div>
+            <div class="metric-sub">
+              $4,000 budget − $3,642 all-in net cost (yr 1)
+            </div>
+          </div>
+          <div class="metric-card con">
+            <div class="metric-label">Condo Investable/mo</div>
+            <div class="metric-value" style="color: #5eead4">$1,111</div>
+            <div class="metric-sub">
+              $4,000 budget − $2,889 all-in net cost (yr 1)
+            </div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div class="line"></div>
+          <h2>Upfront Costs</h2>
+          <div class="line"></div>
+        </div>
+
+        <div class="two-col">
+          <div class="chart-card">
+            <div class="chart-title" style="color: var(--det)">
+              🏡 Detached — Upfront Breakdown
+            </div>
+            <div class="chart-desc">
+              Total cash required before mortgage begins
+            </div>
+            <div class="chart-wrap"><canvas id="detUpfront"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title" style="color: var(--con)">
+              🏢 Condo — Upfront Breakdown
+            </div>
+            <div class="chart-desc">
+              Total cash required before mortgage begins
+            </div>
+            <div class="chart-wrap"><canvas id="conUpfront"></canvas></div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div class="line"></div>
+          <h2>Monthly Cost Breakdown (Year 1)</h2>
+          <div class="line"></div>
+        </div>
+        <div class="chart-card">
+          <div class="legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--det)"></div>
+              Detached
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--con)"></div>
+              Condo
+            </div>
+          </div>
+          <div class="chart-wrap"><canvas id="monthlyBreakdown"></canvas></div>
+        </div>
+
+        <div class="warning-box">
+          💡
+          <strong>Why is Detached net cost $3,642 and not $2,767?</strong>
+          Mortgage ($3,767) − Rental ($1,000) = $2,767 covers the mortgage only.
+          But you also pay Property Tax ($542/mo) and Maintenance ($333/mo),
+          adding $875/mo on top → total $3,642/mo. This leaves only
+          <strong>$358/mo to invest</strong> from your $4,000 budget. The rental
+          income is critical — without it, you'd be $375 over budget every
+          single month.<br /><br />
+          ⚠️ <strong>Immediate capital outlay ~$15,000</strong> (flooring,
+          lighting, 200A electrical panel) not in the monthly budget — treat as
+          a one-time outlay at purchase. Solar panels ($15–25K in yr 2–3) earn
+          6–10% annually via net metering and are strongly recommended given the
+          N-S roof slope.
+        </div>
+      </div>
+
+      <!-- ══════════════════ CASH FLOW ══════════════════ -->
+      <div class="panel" id="panel-cashflow">
+        <div class="section-header">
+          <div class="line"></div>
+          <h2>Annual Cost Evolution</h2>
+          <div class="line"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">
+            Annual Net Cost (Mortgage + Tax + Maintenance − Rental)
+          </div>
+          <div class="chart-desc">
+            Condo costs escalate faster due to rising maintenance fees; detached
+            costs are partially offset by growing rental income
+          </div>
+          <div class="legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--det)"></div>
+              Detached Annual Net Cost
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--con)"></div>
+              Condo Annual Net Cost
+            </div>
+          </div>
+          <div class="chart-wrap" style="height: 300px">
+            <canvas id="annualCosts"></canvas>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div class="line"></div>
+          <h2>Monthly Investable Amount</h2>
+          <div class="line"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">
+            Monthly Surplus Available for Investment
+          </div>
+          <div class="chart-desc">
+            Detached surplus grows slowly; Condo surplus turns negative ~Year 14
+            as maintenance fees outpace budget. Negative = need to draw from
+            savings/reduce spending.
+          </div>
+          <div class="legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--det)"></div>
+              Detached Investable
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--con)"></div>
+              Condo Investable
+            </div>
+          </div>
+          <div class="chart-wrap" style="height: 300px">
+            <canvas id="investable"></canvas>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div class="line"></div>
+          <h2>Rental Income vs Condo Fee Growth</h2>
+          <div class="line"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">
+            Detached Rental Income vs Condo Maintenance Fee (Annual)
+          </div>
+          <div class="chart-desc">
+            Rental income (3%/yr growth) provides increasing offset; condo fee
+            (4%/yr) becomes a significant liability. By year 30 condo fee
+            ~$51K/yr vs rental income ~$29K/yr.
+          </div>
+          <div class="legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--det)"></div>
+              Rental Income (Annual)
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--con)"></div>
+              Condo Fee (Annual)
+            </div>
+          </div>
+          <div class="chart-wrap" style="height: 280px">
+            <canvas id="rentalVsFee"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════ NET WORTH ══════════════════ -->
+      <div class="panel" id="panel-networth">
+        <div class="section-header">
+          <div class="line"></div>
+          <h2>Total Net Worth (Property Equity + Investment Portfolio)</h2>
+          <div class="line"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">30-Year Net Worth Trajectory</div>
+          <div class="chart-desc">
+            Detached wins on total net worth; advantage grows after year 10. At
+            year 30: Detached $5.33M vs Condo $4.60M — difference of $736K.
+          </div>
+          <div class="legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--det)"></div>
+              Detached Total Net Worth
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--con)"></div>
+              Condo Total Net Worth
+            </div>
+          </div>
+          <div class="chart-wrap" style="height: 350px">
+            <canvas id="netWorthTotal"></canvas>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="chart-card">
+            <div class="chart-title">Property Equity Growth</div>
+            <div class="chart-desc">
+              Detached: 4%/yr appreciation on $989K base. Condo: 3%/yr on $469K
+              base.
+            </div>
+            <div class="legend">
+              <div class="legend-item">
+                <div class="legend-dot" style="background: var(--det)"></div>
+                Detached Equity
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background: var(--con)"></div>
+                Condo Equity
+              </div>
+            </div>
+            <div class="chart-wrap"><canvas id="equityChart"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Investment Portfolio Growth</div>
+            <div class="chart-desc">
+              Condo has more to invest early (higher surplus). Detached surplus
+              shrinks further after yr 14 as condo contributions become
+              negative. At 15% return compounding, condo's early lead gives it a
+              better investment portfolio.
+            </div>
+            <div class="legend">
+              <div class="legend-item">
+                <div class="legend-dot" style="background: var(--det)"></div>
+                Detached Portfolio
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background: var(--con)"></div>
+                Condo Portfolio
+              </div>
+            </div>
+            <div class="chart-wrap"><canvas id="investPortfolio"></canvas></div>
+          </div>
+        </div>
+
+        <div class="metrics-grid" style="margin-top: 14px">
+          <div class="metric-card det">
+            <div class="metric-label">Detached @ Year 30</div>
+            <div class="metric-value det">$5.33M</div>
+            <div class="metric-sub">$3.21M equity + $2.12M portfolio</div>
+          </div>
+          <div class="metric-card con">
+            <div class="metric-label">Condo @ Year 30</div>
+            <div class="metric-value con">$4.60M</div>
+            <div class="metric-sub">$1.14M equity + $3.46M portfolio</div>
+          </div>
+          <div class="metric-card win">
+            <div class="metric-label">Detached Advantage</div>
+            <div class="metric-value win">+$736K</div>
+            <div class="metric-sub">16% higher total net worth at yr 30</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════ SNAPSHOT ══════════════════ -->
+      <div class="panel" id="panel-snapshot">
+        <div class="section-header">
+          <div class="line"></div>
+          <h2>Year-by-Year Snapshot</h2>
+          <div class="line"></div>
+        </div>
+
+        <div class="slider-wrap">
+          <label>SELECT YEAR</label>
+          <input
+            type="range"
+            id="yearSlider"
+            min="1"
+            max="30"
+            value="10"
+            oninput="updateSnapshot(this.value)"
+          />
+          <div class="slider-value" id="sliderYear">10</div>
+        </div>
+
+        <div class="snapshot-grid" id="snapshotGrid">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <!-- ══════════════════ QUALITATIVE ══════════════════ -->
+      <div class="panel" id="panel-qualitative">
+        <div class="section-header">
+          <div class="line"></div>
+          <h2>Lifestyle & Qualitative Comparison</h2>
+          <div class="line"></div>
+        </div>
+
+        <div class="qual-grid">
+          <div class="qual-card">
+            <h3><span class="icon">👨‍👩‍👧‍👦</span> Kids & Family Life</h3>
+            <div class="qual-row">
+              <div class="qual-aspect">Space per child</div>
+              <div class="qual-det">
+                ⭐⭐⭐⭐⭐<br />Basement, backyard, 3+1 bed
+              </div>
+              <div class="qual-con">⭐⭐<br />2+1 bed, limited play space</div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Outdoor play</div>
+              <div class="qual-det">✅ Private backyard<br />35×126 ft lot</div>
+              <div class="qual-con">
+                ❌ No private outdoor<br />Common areas only
+              </div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Noise & neighbours</div>
+              <div class="qual-det">
+                ✅ Detached walls<br />Kids can run freely
+              </div>
+              <div class="qual-con">
+                ⚠️ Shared walls<br />Noise complaints likely
+              </div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">School proximity</div>
+              <div class="qual-det">
+                Typical suburban<br />GTA neighbourhood
+              </div>
+              <div class="qual-con">
+                Often closer to urban<br />core schools & transit
+              </div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Pet-friendliness</div>
+              <div class="qual-det">✅ Full freedom</div>
+              <div class="qual-con">⚠️ Condo rules apply</div>
+            </div>
+          </div>
+
+          <div class="qual-card">
+            <h3><span class="icon">🥂</span> Guests & Hosting</h3>
+            <div class="qual-row">
+              <div class="qual-aspect">Guest bedroom</div>
+              <div class="qual-det">
+                ✅ Basement suite<br />Private entry possible
+              </div>
+              <div class="qual-con">
+                ⚠️ Den as guest room<br />Shared bathroom
+              </div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Parking for guests</div>
+              <div class="qual-det">
+                ✅ 4 spots total<br />2 garage + 2 driveway
+              </div>
+              <div class="qual-con">⚠️ Visitor parking<br />Limited, timed</div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Entertaining space</div>
+              <div class="qual-det">
+                2,300 sqft + backyard<br />BBQ, pool potential
+              </div>
+              <div class="qual-con">
+                1,300 sqft indoors<br />Common rooftop/party room
+              </div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Holiday gatherings</div>
+              <div class="qual-det">
+                ⭐⭐⭐⭐⭐<br />Large family events easy
+              </div>
+              <div class="qual-con">⭐⭐<br />Tight for large gatherings</div>
+            </div>
+          </div>
+
+          <div class="qual-card">
+            <h3><span class="icon">🔧</span> Maintenance & Control</h3>
+            <div class="qual-row">
+              <div class="qual-aspect">Control over upgrades</div>
+              <div class="qual-det">✅ Full autonomy<br />Renovate anytime</div>
+              <div class="qual-con">
+                ⚠️ Board approval needed<br />Common areas fixed
+              </div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Surprise costs</div>
+              <div class="qual-det">
+                ⚠️ 1996 build<br />Roof, HVAC, plumbing
+              </div>
+              <div class="qual-con">
+                ⚠️ Special assessments<br />Can be $5–30K surprise
+              </div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Immediate work needed</div>
+              <div class="qual-det">
+                ⚠️ ~$15K now<br />Panel, flooring, lighting
+              </div>
+              <div class="qual-con">✅ 2007 build<br />Move-in ready</div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Solar opportunity</div>
+              <div class="qual-det">
+                ✅ N-S roof slope<br />Excellent solar potential
+              </div>
+              <div class="qual-con">
+                ❌ Not possible<br />Common roof, no control
+              </div>
+            </div>
+          </div>
+
+          <div class="qual-card">
+            <h3><span class="icon">📍</span> Lifestyle & Amenities</h3>
+            <div class="qual-row">
+              <div class="qual-aspect">Gym & Pool</div>
+              <div class="qual-det">
+                ❌ Need membership<br />$100–150/mo extra
+              </div>
+              <div class="qual-con">
+                ✅ Included in fee<br />On-site convenience
+              </div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Privacy</div>
+              <div class="qual-det">⭐⭐⭐⭐⭐<br />True private property</div>
+              <div class="qual-con">⭐⭐<br />Shared lobby/elevators</div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Long-term flexibility</div>
+              <div class="qual-det">
+                ✅ Sever lot, build coach<br />house, ADU potential
+              </div>
+              <div class="qual-con">
+                ⚠️ Limited by condo corp<br />and city zoning
+              </div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Emotional ownership feel</div>
+              <div class="qual-det">⭐⭐⭐⭐⭐<br />"This is mine" feeling</div>
+              <div class="qual-con">⭐⭐⭐<br />Shared building ownership</div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Resale demand</div>
+              <div class="qual-det">
+                ⭐⭐⭐⭐⭐<br />Detached always in demand
+              </div>
+              <div class="qual-con">⭐⭐⭐<br />GTA condo oversupply risk</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div class="line"></div>
+          <h2>Emotional & Long-Term Asset Quality</h2>
+          <div class="line"></div>
+        </div>
+        <div class="qual-grid">
+          <div class="qual-card" style="grid-column: 1 / -1">
+            <h3>
+              <span class="icon">🏆</span> Long-Term Asset Characteristics
+            </h3>
+            <div class="qual-row" style="font-weight: 500; color: var(--muted)">
+              <div class="qual-aspect">Dimension</div>
+              <div class="qual-det" style="color: var(--det)">🏡 DETACHED</div>
+              <div class="qual-con" style="color: var(--con)">🏢 CONDO</div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Land appreciation</div>
+              <div class="qual-det">
+                ✅ You own the land<br />Historically outperforms
+              </div>
+              <div class="qual-con">
+                ❌ No land ownership<br />Air rights only
+              </div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Inheritance value</div>
+              <div class="qual-det">⭐⭐⭐⭐⭐<br />Generational asset</div>
+              <div class="qual-con">⭐⭐⭐<br />Good but not generational</div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Rental income potential</div>
+              <div class="qual-det">
+                ✅ Basement + potential ADU<br />Multiple income streams
+              </div>
+              <div class="qual-con">
+                ⚠️ Can rent unit<br />But fee limits returns
+              </div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Portfolio diversification</div>
+              <div class="qual-det">
+                ⚠️ Less cash to invest<br />Higher real estate concentration
+              </div>
+              <div class="qual-con">
+                ✅ More investable cash<br />Better diversification
+              </div>
+            </div>
+            <div class="qual-row">
+              <div class="qual-aspect">Risk profile</div>
+              <div class="qual-det">
+                ⚠️ Higher exposure<br />to real estate cycle
+              </div>
+              <div class="qual-con">
+                ✅ More balanced<br />real estate + market
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════ VERDICT ══════════════════ -->
+      <div class="panel" id="panel-verdict">
+        <div class="section-header">
+          <div class="line"></div>
+          <h2>Final Verdict & Mentor's Take</h2>
+          <div class="line"></div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card det">
+            <div class="metric-label">Detached — 30yr Net Worth</div>
+            <div class="metric-value det">$5.33M</div>
+            <div class="metric-sub">Equity $3.21M · Portfolio $2.12M</div>
+          </div>
+          <div class="metric-card con">
+            <div class="metric-label">Condo — 30yr Net Worth</div>
+            <div class="metric-value con">$4.60M</div>
+            <div class="metric-sub">Equity $1.14M · Portfolio $3.46M</div>
+          </div>
+          <div class="metric-card win">
+            <div class="metric-label">Detached Wins By</div>
+            <div class="metric-value win">$736K</div>
+            <div class="metric-sub">16% more total wealth over 30 years</div>
+          </div>
+        </div>
+
+        <div class="verdict-box">
+          <h3>📋 Scorecard by Category</h3>
+          <div class="verdict-row">
+            <div class="verdict-dot det"></div>
+            <div>
+              <strong>Total Net Worth (30yr):</strong>
+              <span style="color: var(--det)">Detached wins</span> — $5.33M vs
+              $4.60M. The land appreciation advantage of a detached home
+              outweighs the condo's better investment surplus.
+            </div>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-dot con"></div>
+            <div>
+              <strong>Investment Portfolio:</strong>
+              <span style="color: var(--con)">Condo wins</span> — $3.46M vs
+              $2.12M. The extra ~$690/mo surplus (yr 1) compounding at 15%
+              creates a massive portfolio. But note: condo goes cash-flow
+              negative ~yr 14 as fees escalate.
+            </div>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-dot det"></div>
+            <div>
+              <strong>Property Asset Value:</strong>
+              <span style="color: var(--det)">Detached wins decisively</span> —
+              $3.21M vs $1.14M. You own land. Land in GTA is finite. This is the
+              single biggest wealth driver.
+            </div>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-dot det"></div>
+            <div>
+              <strong>Family &amp; Kids:</strong>
+              <span style="color: var(--det)">Detached wins</span> — Space,
+              backyard, basement, 4 parking. Non-negotiable advantages for
+              raising kids.
+            </div>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-dot det"></div>
+            <div>
+              <strong>Guests &amp; Hosting:</strong>
+              <span style="color: var(--det)">Detached wins</span> — Guest suite
+              in basement, 4 parking spots, large entertaining space.
+            </div>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-dot con"></div>
+            <div>
+              <strong>Monthly Cash Flow:</strong>
+              <span style="color: var(--con)">Condo wins early</span> — More
+              investable cash in years 1–13. But the maintenance fee becomes a
+              serious liability by year 14+.
+            </div>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-dot con"></div>
+            <div>
+              <strong>Lifestyle Convenience:</strong>
+              <span style="color: var(--con)">Condo wins</span> — Gym, pool
+              included, less maintenance responsibility, newer building. Great
+              for young professionals, less suited for families.
+            </div>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-dot det"></div>
+            <div>
+              <strong>Long-term Asset Quality:</strong>
+              <span style="color: var(--det)">Detached wins</span> —
+              Generational asset, land ownership, rental income, solar
+              potential, no board risk, full renovation freedom.
+            </div>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-dot det"></div>
+            <div>
+              <strong>Risk: Special Assessments</strong> — Condo owners face
+              unpredictable special assessments ($5–30K). Detached maintenance
+              is predictable and your choice.
+            </div>
+          </div>
+        </div>
+
+        <div class="verdict-box" style="margin-top: 14px">
+          <h3>🎯 Mentor's Recommendation</h3>
+          <div class="verdict-row">
+            <div class="verdict-dot" style="background: var(--win)"></div>
+            <div>
+              <strong>For your life stage — go Detached.</strong> You have a
+              wife, you're building toward leadership, you value privacy and
+              control. The basement rental offsets cost significantly. The land
+              is yours. The numbers say detached wins by $736K at 30 years. But
+              more importantly — this is a <em>home</em>, not just an
+              investment. Backyard, guest suite, full autonomy, and no condo
+              board telling you what to do with your property.
+            </div>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-dot" style="background: var(--win)"></div>
+            <div>
+              <strong
+                >The immediate $15K fix cost is a one-time hurdle, not a
+                dealbreaker.</strong
+              >
+              Electrical panel to 200A is actually an upgrade, not just a repair
+              — it unlocks EV charging, solar, and higher resale value. Treat it
+              as value-add capital, not sunk cost.
+            </div>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-dot" style="background: var(--win)"></div>
+            <div>
+              <strong>Solar panels are a compounding return asset.</strong>
+              North-south facing roof = ideal solar exposure in GTA. Install in
+              year 2–3 after upfront fixes. Ontario net metering + $15–25K
+              install could generate $1,500–2,500/yr in savings + sell-back.
+              That's 6–10% annual return on install cost — better than most
+              bonds.
+            </div>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-dot" style="background: var(--win)"></div>
+            <div>
+              <strong>Budget note:</strong> Your $363/mo investable amount is
+              tight in Year 1, but the rental income ($1,000/mo) is your real
+              wealth buffer. Optimize the basement unit, sign a 1-year lease,
+              and treat that as locked income. By Year 10, rental grows to
+              ~$1,344/mo and your investable amount slowly increases.
+            </div>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-dot" style="background: var(--win)"></div>
+            <div>
+              <strong>Think like a Principal Engineer:</strong> The detached
+              home is a platform, not just a dwelling — it gives you
+              optionality. You can add an ADU (accessory dwelling unit) under
+              Ontario's "More Homes Built Faster Act", potentially adding
+              $800–1,200/mo income. You can sever the lot in 15–20 years if the
+              city allows. You can refinance to fund your FullStackFusions or
+              Localz ventures. A condo traps you. Land frees you.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end panels -->
+
+    <script>
+      const DATA = [
+        {
+          year: 1,
+          det_property_value: 1028560,
+          condo_property_value: 483070,
+          det_loan_balance: 775105,
+          condo_loan_balance: 264263,
+          det_equity: 253455,
+          condo_equity: 218807,
+          det_invest_portfolio: 4363,
+          condo_invest_portfolio: 12645,
+          det_net_worth: 257818,
+          condo_net_worth: 231453,
+          det_annual_investable: 4363,
+          condo_annual_investable: 12645,
+          det_annual_costs: 43637,
+          condo_annual_costs: 35355,
+          det_rental: 12360,
+          condo_fee: 16411,
+        },
+        {
+          year: 2,
+          det_property_value: 1069702,
+          condo_property_value: 497562,
+          det_loan_balance: 760645,
+          condo_loan_balance: 259333,
+          det_equity: 309058,
+          condo_equity: 238229,
+          det_invest_portfolio: 9449,
+          condo_invest_portfolio: 26479,
+          det_net_worth: 318506,
+          condo_net_worth: 264709,
+          det_annual_investable: 4431,
+          condo_annual_investable: 11937,
+          det_annual_costs: 43569,
+          condo_annual_costs: 36063,
+          det_rental: 12731,
+          condo_fee: 17068,
+        },
+        {
+          year: 3,
+          det_property_value: 1112490,
+          condo_property_value: 512489,
+          det_loan_balance: 745595,
+          condo_loan_balance: 254202,
+          det_equity: 366896,
+          condo_equity: 258287,
+          det_invest_portfolio: 15367,
+          condo_invest_portfolio: 41652,
+          det_net_worth: 382262,
+          condo_net_worth: 299939,
+          det_annual_investable: 4501,
+          condo_annual_investable: 11201,
+          det_annual_costs: 43499,
+          condo_annual_costs: 36799,
+          det_rental: 13113,
+          condo_fee: 17750,
+        },
+        {
+          year: 4,
+          det_property_value: 1156990,
+          condo_property_value: 527864,
+          det_loan_balance: 729932,
+          condo_loan_balance: 248861,
+          det_equity: 427058,
+          condo_equity: 279002,
+          det_invest_portfolio: 22245,
+          condo_invest_portfolio: 58335,
+          det_net_worth: 449303,
+          condo_net_worth: 337337,
+          det_annual_investable: 4573,
+          condo_annual_investable: 10436,
+          det_annual_costs: 43427,
+          condo_annual_costs: 37564,
+          det_rental: 13506,
+          condo_fee: 18460,
+        },
+        {
+          year: 5,
+          det_property_value: 1203270,
+          condo_property_value: 543700,
+          det_loan_balance: 713631,
+          condo_loan_balance: 243304,
+          det_equity: 489639,
+          condo_equity: 300396,
+          det_invest_portfolio: 30230,
+          condo_invest_portfolio: 76726,
+          det_net_worth: 519869,
+          condo_net_worth: 377121,
+          det_annual_investable: 4649,
+          condo_annual_investable: 9640,
+          det_annual_costs: 43351,
+          condo_annual_costs: 38360,
+          det_rental: 13911,
+          condo_fee: 19199,
+        },
+        {
+          year: 6,
+          det_property_value: 1251401,
+          condo_property_value: 560011,
+          det_loan_balance: 696666,
+          condo_loan_balance: 237520,
+          det_equity: 554735,
+          condo_equity: 322491,
+          det_invest_portfolio: 39492,
+          condo_invest_portfolio: 97048,
+          det_net_worth: 594227,
+          condo_net_worth: 419539,
+          det_annual_investable: 4727,
+          condo_annual_investable: 8814,
+          det_annual_costs: 43273,
+          condo_annual_costs: 39186,
+          det_rental: 14329,
+          condo_fee: 19967,
+        },
+        {
+          year: 7,
+          det_property_value: 1301457,
+          condo_property_value: 576811,
+          det_loan_balance: 679009,
+          condo_loan_balance: 231500,
+          det_equity: 622447,
+          condo_equity: 345311,
+          det_invest_portfolio: 50223,
+          condo_invest_portfolio: 119561,
+          det_net_worth: 672671,
+          condo_net_worth: 464872,
+          det_annual_investable: 4808,
+          condo_annual_investable: 7955,
+          det_annual_costs: 43192,
+          condo_annual_costs: 40045,
+          det_rental: 14758,
+          condo_fee: 20765,
+        },
+        {
+          year: 8,
+          det_property_value: 1353515,
+          condo_property_value: 594115,
+          det_loan_balance: 660633,
+          condo_loan_balance: 225235,
+          det_equity: 692881,
+          condo_equity: 368880,
+          det_invest_portfolio: 62649,
+          condo_invest_portfolio: 144557,
+          det_net_worth: 755530,
+          condo_net_worth: 513437,
+          det_annual_investable: 4892,
+          condo_annual_investable: 7062,
+          det_annual_costs: 43108,
+          condo_annual_costs: 40938,
+          det_rental: 15201,
+          condo_fee: 21596,
+        },
+        {
+          year: 9,
+          det_property_value: 1407655,
+          condo_property_value: 611939,
+          det_loan_balance: 641509,
+          condo_loan_balance: 218715,
+          det_equity: 766146,
+          condo_equity: 393224,
+          det_invest_portfolio: 77025,
+          condo_invest_portfolio: 172375,
+          det_net_worth: 843172,
+          condo_net_worth: 565599,
+          det_annual_investable: 4979,
+          condo_annual_investable: 6135,
+          det_annual_costs: 43021,
+          condo_annual_costs: 41865,
+          det_rental: 15657,
+          condo_fee: 22460,
+        },
+        {
+          year: 10,
+          det_property_value: 1463962,
+          condo_property_value: 630297,
+          det_loan_balance: 621605,
+          condo_loan_balance: 211929,
+          det_equity: 842356,
+          condo_equity: 418368,
+          det_invest_portfolio: 93649,
+          condo_invest_portfolio: 203402,
+          det_net_worth: 936005,
+          condo_net_worth: 621770,
+          det_annual_investable: 5070,
+          condo_annual_investable: 5170,
+          det_annual_costs: 42930,
+          condo_annual_costs: 42830,
+          det_rental: 16127,
+          condo_fee: 23358,
+        },
+        {
+          year: 11,
+          det_property_value: 1522520,
+          condo_property_value: 649206,
+          det_loan_balance: 600891,
+          condo_loan_balance: 204866,
+          det_equity: 921629,
+          condo_equity: 444339,
+          det_invest_portfolio: 112859,
+          condo_invest_portfolio: 238080,
+          det_net_worth: 1034488,
+          condo_net_worth: 682419,
+          det_annual_investable: 5163,
+          condo_annual_investable: 4168,
+          det_annual_costs: 42837,
+          condo_annual_costs: 43832,
+          det_rental: 16611,
+          condo_fee: 24293,
+        },
+        {
+          year: 12,
+          det_property_value: 1583421,
+          condo_property_value: 668682,
+          det_loan_balance: 579333,
+          condo_loan_balance: 197516,
+          det_equity: 1004088,
+          condo_equity: 471165,
+          det_invest_portfolio: 135049,
+          condo_invest_portfolio: 276919,
+          det_net_worth: 1139137,
+          condo_net_worth: 748084,
+          det_annual_investable: 5260,
+          condo_annual_investable: 3127,
+          det_annual_costs: 42740,
+          condo_annual_costs: 44873,
+          det_rental: 17109,
+          condo_fee: 25264,
+        },
+        {
+          year: 13,
+          det_property_value: 1646758,
+          condo_property_value: 688742,
+          det_loan_balance: 556896,
+          condo_loan_balance: 189867,
+          det_equity: 1089862,
+          condo_equity: 498875,
+          det_invest_portfolio: 160667,
+          condo_invest_portfolio: 320501,
+          det_net_worth: 1250529,
+          condo_net_worth: 819376,
+          det_annual_investable: 5361,
+          condo_annual_investable: 2044,
+          det_annual_costs: 42639,
+          condo_annual_costs: 45956,
+          det_rental: 17622,
+          condo_fee: 26275,
+        },
+        {
+          year: 14,
+          det_property_value: 1712628,
+          condo_property_value: 709405,
+          det_loan_balance: 533545,
+          condo_loan_balance: 181906,
+          det_equity: 1179083,
+          condo_equity: 527499,
+          det_invest_portfolio: 190233,
+          condo_invest_portfolio: 369495,
+          det_net_worth: 1369316,
+          condo_net_worth: 896994,
+          det_annual_investable: 5466,
+          condo_annual_investable: 919,
+          det_annual_costs: 42534,
+          condo_annual_costs: 47081,
+          det_rental: 18151,
+          condo_fee: 27326,
+        },
+        {
+          year: 15,
+          det_property_value: 1781133,
+          condo_property_value: 730687,
+          det_loan_balance: 509243,
+          condo_loan_balance: 173620,
+          det_equity: 1271890,
+          condo_equity: 557067,
+          det_invest_portfolio: 224342,
+          condo_invest_portfolio: 424919,
+          det_net_worth: 1496232,
+          condo_net_worth: 981986,
+          det_annual_investable: 5574,
+          condo_annual_investable: -250,
+          det_annual_costs: 42426,
+          condo_annual_costs: 48250,
+          det_rental: 18696,
+          condo_fee: 28419,
+        },
+        {
+          year: 16,
+          det_property_value: 1852378,
+          condo_property_value: 752607,
+          det_loan_balance: 483950,
+          condo_loan_balance: 164997,
+          det_equity: 1368428,
+          condo_equity: 587610,
+          det_invest_portfolio: 263679,
+          condo_invest_portfolio: 488657,
+          det_net_worth: 1632107,
+          condo_net_worth: 1076267,
+          det_annual_investable: 5686,
+          condo_annual_investable: -1466,
+          det_annual_costs: 42314,
+          condo_annual_costs: 49466,
+          det_rental: 19256,
+          condo_fee: 29556,
+        },
+        {
+          year: 17,
+          det_property_value: 1926474,
+          condo_property_value: 775186,
+          det_loan_balance: 457628,
+          condo_loan_balance: 156023,
+          det_equity: 1468846,
+          condo_equity: 619163,
+          det_invest_portfolio: 309034,
+          condo_invest_portfolio: 561955,
+          det_net_worth: 1777880,
+          condo_net_worth: 1181118,
+          det_annual_investable: 5803,
+          condo_annual_investable: -2729,
+          det_annual_costs: 42197,
+          condo_annual_costs: 50729,
+          det_rental: 19834,
+          condo_fee: 30738,
+        },
+        {
+          year: 18,
+          det_property_value: 2003533,
+          condo_property_value: 798441,
+          det_loan_balance: 430232,
+          condo_loan_balance: 146683,
+          det_equity: 1573300,
+          condo_equity: 651759,
+          det_invest_portfolio: 361312,
+          condo_invest_portfolio: 646249,
+          det_net_worth: 1934612,
+          condo_net_worth: 1298007,
+          det_annual_investable: 5923,
+          condo_annual_investable: -4042,
+          det_annual_costs: 42077,
+          condo_annual_costs: 52042,
+          det_rental: 20429,
+          condo_fee: 31967,
+        },
+        {
+          year: 19,
+          det_property_value: 2083674,
+          condo_property_value: 822394,
+          det_loan_balance: 401721,
+          condo_loan_balance: 136962,
+          det_equity: 1681953,
+          condo_equity: 685432,
+          det_invest_portfolio: 421557,
+          condo_invest_portfolio: 743186,
+          det_net_worth: 2103509,
+          condo_net_worth: 1428618,
+          det_annual_investable: 6048,
+          condo_annual_investable: -5406,
+          det_annual_costs: 41952,
+          condo_annual_costs: 53406,
+          det_rental: 21042,
+          condo_fee: 33246,
+        },
+        {
+          year: 20,
+          det_property_value: 2167021,
+          condo_property_value: 847066,
+          det_loan_balance: 372048,
+          condo_loan_balance: 126845,
+          det_equity: 1794973,
+          condo_equity: 720221,
+          det_invest_portfolio: 490968,
+          condo_invest_portfolio: 854664,
+          det_net_worth: 2285940,
+          condo_net_worth: 1574885,
+          det_annual_investable: 6177,
+          condo_annual_investable: -6825,
+          det_annual_costs: 41823,
+          condo_annual_costs: 54825,
+          det_rental: 21673,
+          condo_fee: 34576,
+        },
+        {
+          year: 21,
+          det_property_value: 2253702,
+          condo_property_value: 872478,
+          det_loan_balance: 341166,
+          condo_loan_balance: 116317,
+          det_equity: 1912535,
+          condo_equity: 756162,
+          det_invest_portfolio: 570924,
+          condo_invest_portfolio: 982864,
+          det_net_worth: 2483460,
+          condo_net_worth: 1739025,
+          det_annual_investable: 6312,
+          condo_annual_investable: -8299,
+          det_annual_costs: 41688,
+          condo_annual_costs: 56299,
+          det_rental: 22324,
+          condo_fee: 35959,
+        },
+        {
+          year: 22,
+          det_property_value: 2343850,
+          condo_property_value: 898652,
+          det_loan_balance: 309026,
+          condo_loan_balance: 105359,
+          det_equity: 2034823,
+          condo_equity: 793294,
+          det_invest_portfolio: 663014,
+          condo_invest_portfolio: 1130293,
+          det_net_worth: 2697837,
+          condo_net_worth: 1923587,
+          det_annual_investable: 6451,
+          condo_annual_investable: -9831,
+          det_annual_costs: 41549,
+          condo_annual_costs: 57831,
+          det_rental: 22993,
+          condo_fee: 37397,
+        },
+        {
+          year: 23,
+          det_property_value: 2437604,
+          condo_property_value: 925612,
+          det_loan_balance: 275577,
+          condo_loan_balance: 93955,
+          det_equity: 2162027,
+          condo_equity: 831657,
+          det_invest_portfolio: 769060,
+          condo_invest_portfolio: 1299837,
+          det_net_worth: 2931087,
+          condo_net_worth: 2131495,
+          det_annual_investable: 6595,
+          condo_annual_investable: -11424,
+          det_annual_costs: 41405,
+          condo_annual_costs: 59424,
+          det_rental: 23683,
+          condo_fee: 38893,
+        },
+        {
+          year: 24,
+          det_property_value: 2535108,
+          condo_property_value: 953380,
+          det_loan_balance: 240765,
+          condo_loan_balance: 82086,
+          det_equity: 2294343,
+          condo_equity: 871295,
+          det_invest_portfolio: 891163,
+          condo_invest_portfolio: 1494813,
+          det_net_worth: 3185506,
+          condo_net_worth: 2366107,
+          det_annual_investable: 6744,
+          condo_annual_investable: -13079,
+          det_annual_costs: 41256,
+          condo_annual_costs: 61079,
+          det_rental: 24394,
+          condo_fee: 40449,
+        },
+        {
+          year: 25,
+          det_property_value: 2636512,
+          condo_property_value: 981982,
+          det_loan_balance: 204534,
+          condo_loan_balance: 69733,
+          det_equity: 2431978,
+          condo_equity: 912248,
+          det_invest_portfolio: 1031736,
+          condo_invest_portfolio: 1719034,
+          det_net_worth: 3463714,
+          condo_net_worth: 2631283,
+          det_annual_investable: 6898,
+          condo_annual_investable: -14800,
+          det_annual_costs: 41102,
+          condo_annual_costs: 62800,
+          det_rental: 25125,
+          condo_fee: 42067,
+        },
+        {
+          year: 26,
+          det_property_value: 2741973,
+          condo_property_value: 1011441,
+          det_loan_balance: 166827,
+          condo_loan_balance: 56878,
+          det_equity: 2575145,
+          condo_equity: 954563,
+          det_invest_portfolio: 1193555,
+          condo_invest_portfolio: 1976890,
+          det_net_worth: 3768700,
+          condo_net_worth: 2931453,
+          det_annual_investable: 7058,
+          condo_annual_investable: -16588,
+          det_annual_costs: 40942,
+          condo_annual_costs: 64588,
+          det_rental: 25879,
+          condo_fee: 43750,
+        },
+        {
+          year: 27,
+          det_property_value: 2851652,
+          condo_property_value: 1041785,
+          det_loan_balance: 127585,
+          condo_loan_balance: 43498,
+          det_equity: 2724067,
+          condo_equity: 998286,
+          det_invest_portfolio: 1379812,
+          condo_invest_portfolio: 2273423,
+          det_net_worth: 4103879,
+          condo_net_worth: 3271709,
+          det_annual_investable: 7224,
+          condo_annual_investable: -18447,
+          det_annual_costs: 40776,
+          condo_annual_costs: 66447,
+          det_rental: 26655,
+          condo_fee: 45500,
+        },
+        {
+          year: 28,
+          det_property_value: 2965718,
+          condo_property_value: 1073038,
+          det_loan_balance: 86743,
+          condo_loan_balance: 29574,
+          det_equity: 2878975,
+          condo_equity: 1043464,
+          det_invest_portfolio: 1594180,
+          condo_invest_portfolio: 2614437,
+          det_net_worth: 4473154,
+          condo_net_worth: 3657901,
+          det_annual_investable: 7396,
+          condo_annual_investable: -20379,
+          det_annual_costs: 40604,
+          condo_annual_costs: 68379,
+          det_rental: 27455,
+          condo_fee: 47320,
+        },
+        {
+          year: 29,
+          det_property_value: 3084346,
+          condo_property_value: 1105229,
+          det_loan_balance: 44237,
+          condo_loan_balance: 15082,
+          det_equity: 3040109,
+          condo_equity: 1090147,
+          det_invest_portfolio: 1840880,
+          condo_invest_portfolio: 3006602,
+          det_net_worth: 4880989,
+          condo_net_worth: 4096749,
+          det_annual_investable: 7574,
+          condo_annual_investable: -22387,
+          det_annual_costs: 40426,
+          condo_annual_costs: 70387,
+          det_rental: 28279,
+          condo_fee: 49212,
+        },
+        {
+          year: 30,
+          det_property_value: 3207720,
+          condo_property_value: 1138386,
+          det_loan_balance: 0,
+          condo_loan_balance: 0,
+          det_equity: 3207720,
+          condo_equity: 1138386,
+          det_invest_portfolio: 2124770,
+          condo_invest_portfolio: 3457592,
+          det_net_worth: 5332491,
+          condo_net_worth: 4595978,
+          det_annual_investable: 7758,
+          condo_annual_investable: -24474,
+          det_annual_costs: 40242,
+          condo_annual_costs: 72474,
+          det_rental: 29127,
+          condo_fee: 51181,
+        },
+      ];
+
+      const YEARS = DATA.map((d) => `Y${d.year}`);
+      const DET_COLOR = "#E8A87C";
+      const CON_COLOR = "#7CB9E8";
+      const DET_BG = "rgba(232,168,124,0.12)";
+      const CON_BG = "rgba(124,185,232,0.12)";
+
+      Chart.defaults.color = "#6B7280";
+      Chart.defaults.font.family = "'DM Mono', monospace";
+      Chart.defaults.font.size = 10;
+
+      const gridColor = "rgba(255,255,255,0.04)";
+      const borderColor = "rgba(255,255,255,0.08)";
+
+      function fmt(n) {
+        if (Math.abs(n) >= 1e6) return "$" + (n / 1e6).toFixed(2) + "M";
+        if (Math.abs(n) >= 1e3) return "$" + Math.round(n / 1000) + "K";
+        return "$" + Math.round(n);
+      }
+
+      function mkChart(id, cfg) {
+        const ctx = document.getElementById(id);
+        if (!ctx) return;
+        return new Chart(ctx, cfg);
+      }
+
+      // UPFRONT DOUGHNUT - DETACHED
+      mkChart("detUpfront", {
+        type: "doughnut",
+        data: {
+          labels: ["Down Payment", "Land Transfer Tax", "Immediate Repairs"],
+          datasets: [
+            {
+              data: [200000, 16255, 15000],
+              backgroundColor: ["#E8A87C", "#C97B45", "#8B5E35"],
+              borderWidth: 0,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: { padding: 14, font: { size: 10 }, color: "#6B7280" },
+            },
+            tooltip: {
+              callbacks: { label: (ctx) => ` ${ctx.label}: ${fmt(ctx.raw)}` },
+            },
+          },
+        },
+      });
+
+      // UPFRONT DOUGHNUT - CONDO
+      mkChart("conUpfront", {
+        type: "doughnut",
+        data: {
+          labels: ["Down Payment", "Land Transfer Tax"],
+          datasets: [
+            {
+              data: [200000, 5855],
+              backgroundColor: ["#7CB9E8", "#4A90C8"],
+              borderWidth: 0,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: { padding: 14, font: { size: 10 }, color: "#6B7280" },
+            },
+            tooltip: {
+              callbacks: { label: (ctx) => ` ${ctx.label}: ${fmt(ctx.raw)}` },
+            },
+          },
+        },
+      });
+
+      // MONTHLY BREAKDOWN BAR
+      mkChart("monthlyBreakdown", {
+        type: "bar",
+        data: {
+          labels: [
+            "Mortgage",
+            "Property Tax",
+            "Maintenance /\nCondo Fee",
+            "Rental Income\n(Det. offset)",
+            "NET TOTAL",
+          ],
+          datasets: [
+            {
+              label: "Detached",
+              data: [3767, 542, 333, -1000, 3642],
+              backgroundColor: DET_COLOR,
+              borderRadius: 4,
+            },
+            {
+              label: "Condo",
+              data: [1284, 140, 1465, 0, 2889],
+              backgroundColor: CON_COLOR,
+              borderRadius: 4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: gridColor }, border: { color: borderColor } },
+            y: {
+              grid: { color: gridColor },
+              border: { color: borderColor },
+              ticks: { callback: (v) => "$" + v.toLocaleString() },
+            },
+          },
+          plugins: {
+            legend: { labels: { color: "#9CA3AF", font: { size: 10 } } },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.dataset.label}: ${fmt(ctx.raw)}`,
+              },
+            },
+          },
+        },
+      });
+
+      // ANNUAL COSTS LINE
+      mkChart("annualCosts", {
+        type: "line",
+        data: {
+          labels: YEARS,
+          datasets: [
+            {
+              label: "Detached",
+              data: DATA.map((d) => d.det_annual_costs),
+              borderColor: DET_COLOR,
+              backgroundColor: DET_BG,
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: true,
+              tension: 0.4,
+            },
+            {
+              label: "Condo",
+              data: DATA.map((d) => d.condo_annual_costs),
+              borderColor: CON_COLOR,
+              backgroundColor: CON_BG,
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: true,
+              tension: 0.4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: gridColor }, border: { color: borderColor } },
+            y: {
+              grid: { color: gridColor },
+              border: { color: borderColor },
+              ticks: { callback: (v) => "$" + (v / 1000).toFixed(0) + "K" },
+            },
+          },
+          plugins: {
+            legend: { labels: { color: "#9CA3AF", font: { size: 10 } } },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.dataset.label}: ${fmt(ctx.raw)}/yr`,
+              },
+            },
+          },
+        },
+      });
+
+      // INVESTABLE LINE
+      mkChart("investable", {
+        type: "line",
+        data: {
+          labels: YEARS,
+          datasets: [
+            {
+              label: "Detached",
+              data: DATA.map((d) => d.det_annual_investable / 12),
+              borderColor: DET_COLOR,
+              backgroundColor: DET_BG,
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: true,
+              tension: 0.4,
+            },
+            {
+              label: "Condo",
+              data: DATA.map((d) => d.condo_annual_investable / 12),
+              borderColor: CON_COLOR,
+              backgroundColor: CON_BG,
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: true,
+              tension: 0.4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: gridColor }, border: { color: borderColor } },
+            y: {
+              grid: { color: gridColor },
+              border: { color: borderColor },
+              ticks: { callback: (v) => "$" + v.toFixed(0) },
+            },
+          },
+          plugins: {
+            legend: { labels: { color: "#9CA3AF", font: { size: 10 } } },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.dataset.label}: ${fmt(ctx.raw)}/mo`,
+              },
+            },
+            annotation: {},
+          },
+        },
+      });
+
+      // RENTAL vs FEE
+      mkChart("rentalVsFee", {
+        type: "line",
+        data: {
+          labels: YEARS,
+          datasets: [
+            {
+              label: "Rental Income (Detached)",
+              data: DATA.map((d) => d.det_rental),
+              borderColor: DET_COLOR,
+              backgroundColor: DET_BG,
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: false,
+              tension: 0.4,
+            },
+            {
+              label: "Condo Fee",
+              data: DATA.map((d) => d.condo_fee),
+              borderColor: CON_COLOR,
+              backgroundColor: CON_BG,
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: false,
+              tension: 0.4,
+              borderDash: [5, 3],
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: gridColor }, border: { color: borderColor } },
+            y: {
+              grid: { color: gridColor },
+              border: { color: borderColor },
+              ticks: { callback: (v) => "$" + (v / 1000).toFixed(0) + "K" },
+            },
+          },
+          plugins: {
+            legend: { labels: { color: "#9CA3AF", font: { size: 10 } } },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.dataset.label}: ${fmt(ctx.raw)}/yr`,
+              },
+            },
+          },
+        },
+      });
+
+      // NET WORTH TOTAL
+      mkChart("netWorthTotal", {
+        type: "line",
+        data: {
+          labels: YEARS,
+          datasets: [
+            {
+              label: "Detached Total Net Worth",
+              data: DATA.map((d) => d.det_net_worth),
+              borderColor: DET_COLOR,
+              backgroundColor: DET_BG,
+              borderWidth: 3,
+              pointRadius: 0,
+              fill: true,
+              tension: 0.4,
+            },
+            {
+              label: "Condo Total Net Worth",
+              data: DATA.map((d) => d.condo_net_worth),
+              borderColor: CON_COLOR,
+              backgroundColor: CON_BG,
+              borderWidth: 3,
+              pointRadius: 0,
+              fill: true,
+              tension: 0.4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: gridColor }, border: { color: borderColor } },
+            y: {
+              grid: { color: gridColor },
+              border: { color: borderColor },
+              ticks: { callback: (v) => "$" + (v / 1e6).toFixed(1) + "M" },
+            },
+          },
+          plugins: {
+            legend: { labels: { color: "#9CA3AF", font: { size: 11 } } },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.dataset.label}: ${fmt(ctx.raw)}`,
+              },
+            },
+          },
+        },
+      });
+
+      // EQUITY
+      mkChart("equityChart", {
+        type: "line",
+        data: {
+          labels: YEARS,
+          datasets: [
+            {
+              label: "Detached Equity",
+              data: DATA.map((d) => d.det_equity),
+              borderColor: DET_COLOR,
+              backgroundColor: DET_BG,
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: true,
+              tension: 0.4,
+            },
+            {
+              label: "Condo Equity",
+              data: DATA.map((d) => d.condo_equity),
+              borderColor: CON_COLOR,
+              backgroundColor: CON_BG,
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: true,
+              tension: 0.4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: gridColor }, border: { color: borderColor } },
+            y: {
+              grid: { color: gridColor },
+              border: { color: borderColor },
+              ticks: { callback: (v) => "$" + (v / 1e6).toFixed(1) + "M" },
+            },
+          },
+          plugins: {
+            legend: { labels: { color: "#9CA3AF", font: { size: 10 } } },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.dataset.label}: ${fmt(ctx.raw)}`,
+              },
+            },
+          },
+        },
+      });
+
+      // INVEST PORTFOLIO
+      mkChart("investPortfolio", {
+        type: "line",
+        data: {
+          labels: YEARS,
+          datasets: [
+            {
+              label: "Detached Portfolio",
+              data: DATA.map((d) => d.det_invest_portfolio),
+              borderColor: DET_COLOR,
+              backgroundColor: DET_BG,
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: true,
+              tension: 0.4,
+            },
+            {
+              label: "Condo Portfolio",
+              data: DATA.map((d) => d.condo_invest_portfolio),
+              borderColor: CON_COLOR,
+              backgroundColor: CON_BG,
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: true,
+              tension: 0.4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: gridColor }, border: { color: borderColor } },
+            y: {
+              grid: { color: gridColor },
+              border: { color: borderColor },
+              ticks: { callback: (v) => "$" + (v / 1e6).toFixed(1) + "M" },
+            },
+          },
+          plugins: {
+            legend: { labels: { color: "#9CA3AF", font: { size: 10 } } },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.dataset.label}: ${fmt(ctx.raw)}`,
+              },
+            },
+          },
+        },
+      });
+
+      // ── TAB LOGIC ──
+      function showTab(id) {
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+        document
+          .querySelectorAll(".panel")
+          .forEach((p) => p.classList.remove("active"));
+        document.getElementById("panel-" + id).classList.add("active");
+        event.target.classList.add("active");
+      }
+
+      // ── SNAPSHOT ──
+      function updateSnapshot(yr) {
+        const y = parseInt(yr) - 1;
+        const d = DATA[y];
+        document.getElementById("sliderYear").textContent = `Year ${yr}`;
+
+        const detInv = (d.det_annual_investable / 12).toFixed(0);
+        const conInv = (d.condo_annual_investable / 12).toFixed(0);
+        const conInvDisplay =
+          conInv < 0
+            ? `<span style="color:#F87171">${fmt(d.condo_annual_investable / 12)}/mo ⚠️</span>`
+            : `<span style="color:var(--win)">${fmt(d.condo_annual_investable / 12)}/mo</span>`;
+
+        const winner =
+          d.det_net_worth > d.condo_net_worth
+            ? "Detached ahead by " + fmt(d.det_net_worth - d.condo_net_worth)
+            : "Condo ahead by " + fmt(d.condo_net_worth - d.det_net_worth);
+
+        document.getElementById("snapshotGrid").innerHTML = `
+    <div class="snap-card" style="border-top: 2px solid var(--det)">
+      <h4 style="color:var(--det)">🏡 Detached — Year ${yr}</h4>
+      <div class="snap-row"><span class="lbl">Property Value</span><span class="val" style="color:var(--det)">${fmt(d.det_property_value)}</span></div>
+      <div class="snap-row"><span class="lbl">Loan Balance</span><span class="val">${fmt(d.det_loan_balance)}</span></div>
+      <div class="snap-row"><span class="lbl">Property Equity</span><span class="val">${fmt(d.det_equity)}</span></div>
+      <div class="snap-row"><span class="lbl">Investment Portfolio</span><span class="val">${fmt(d.det_invest_portfolio)}</span></div>
+      <div class="snap-row" style="border-top:1px solid rgba(232,168,124,0.2); margin-top:4px; padding-top:8px"><span class="lbl" style="font-weight:600">TOTAL NET WORTH</span><span class="val" style="color:var(--det); font-size:15px">${fmt(d.det_net_worth)}</span></div>
+      <div class="snap-row"><span class="lbl">Annual Costs</span><span class="val">${fmt(d.det_annual_costs)}/yr</span></div>
+      <div class="snap-row"><span class="lbl">Rental Income</span><span class="val" style="color:var(--win)">${fmt(d.det_rental)}/yr</span></div>
+      <div class="snap-row"><span class="lbl">Monthly Investable</span><span class="val" style="color:var(--win)">$${Math.round(d.det_annual_investable / 12)}/mo</span></div>
+    </div>
+    <div class="snap-card" style="border-top: 2px solid var(--con)">
+      <h4 style="color:var(--con)">🏢 Condo — Year ${yr}</h4>
+      <div class="snap-row"><span class="lbl">Property Value</span><span class="val" style="color:var(--con)">${fmt(d.condo_property_value)}</span></div>
+      <div class="snap-row"><span class="lbl">Loan Balance</span><span class="val">${fmt(d.condo_loan_balance)}</span></div>
+      <div class="snap-row"><span class="lbl">Property Equity</span><span class="val">${fmt(d.condo_equity)}</span></div>
+      <div class="snap-row"><span class="lbl">Investment Portfolio</span><span class="val">${fmt(d.condo_invest_portfolio)}</span></div>
+      <div class="snap-row" style="border-top:1px solid rgba(124,185,232,0.2); margin-top:4px; padding-top:8px"><span class="lbl" style="font-weight:600">TOTAL NET WORTH</span><span class="val" style="color:var(--con); font-size:15px">${fmt(d.condo_net_worth)}</span></div>
+      <div class="snap-row"><span class="lbl">Annual Costs</span><span class="val">${fmt(d.condo_annual_costs)}/yr</span></div>
+      <div class="snap-row"><span class="lbl">Condo Fee</span><span class="val" style="color:#F87171">${fmt(d.condo_fee)}/yr</span></div>
+      <div class="snap-row"><span class="lbl">Monthly Investable</span><span class="val">${conInvDisplay}</span></div>
+    </div>
+    <div class="snap-card" style="grid-column:1/-1; background: rgba(94,234,212,0.04); border-color: rgba(94,234,212,0.15)">
+      <h4 style="color:var(--win)">⚖️ At Year ${yr}: ${winner}</h4>
+      <div class="snap-row"><span class="lbl">Detached Net Worth</span><span class="val" style="color:var(--det)">${fmt(d.det_net_worth)}</span></div>
+      <div class="snap-row"><span class="lbl">Condo Net Worth</span><span class="val" style="color:var(--con)">${fmt(d.condo_net_worth)}</span></div>
+      <div class="snap-row"><span class="lbl">Gap</span><span class="val" style="color:var(--win)">${fmt(Math.abs(d.det_net_worth - d.condo_net_worth))}</span></div>
+      <div class="snap-row"><span class="lbl">Detached Property Value</span><span class="val">${fmt(d.det_property_value)}</span></div>
+      <div class="snap-row"><span class="lbl">Condo Property Value</span><span class="val">${fmt(d.condo_property_value)}</span></div>
+    </div>
+  `;
+      }
+
+      updateSnapshot(10);
+    </script>
+  </body>
+</html>

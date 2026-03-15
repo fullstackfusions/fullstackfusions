@@ -1,10 +1,33 @@
 /* blog/assets/blog.css
    Blog-specific styles — Tailwind handles the rest via CDN. */
 
+/* ── Theme toggle button ─────────────────────────────── */
+
+#theme-toggle {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 999;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: none;
+  background: #2563eb;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+#theme-toggle:hover {
+  background: #3b82f6;
+}
+
 /* ── Layout ──────────────────────────────────────────── */
 
 .blog-container {
-  max-width: 780px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
 }
@@ -66,29 +89,131 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
-.post-content h2 { margin-top: 2rem; }
-.post-content h3 { margin-top: 1.5rem; }
+/* ── Post content typography (Tailwind Preflight resets all defaults) ── */
+
+.post-content {
+  line-height: 1.8;
+  font-size: 1rem;
+  color: #1e293b;
+}
+
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6 {
+  font-weight: 700;
+  line-height: 1.3;
+  color: #0f172a;
+}
+
+.post-content h1 { font-size: 2rem;   margin: 2.5rem 0 1rem; }
+.post-content h2 { font-size: 1.55rem; margin: 2.5rem 0 0.75rem; }
+.post-content h3 { font-size: 1.25rem; margin: 2rem 0 0.5rem; }
+.post-content h4 { font-size: 1.05rem; margin: 1.5rem 0 0.4rem; }
+
+.post-content p {
+  margin: 0 0 1.25rem;
+}
+
+.post-content ul,
+.post-content ol {
+  margin: 0.25rem 0 1.25rem;
+  padding-left: 1.75rem;
+}
+
+.post-content ul { list-style-type: disc; }
+.post-content ol { list-style-type: decimal; }
+
+.post-content li {
+  margin-bottom: 0.35rem;
+  line-height: 1.75;
+}
+
+.post-content li > ul,
+.post-content li > ol {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.post-content strong { font-weight: 700; }
+.post-content em     { font-style: italic; }
+
+.post-content a {
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.post-content a:hover { color: #1d4ed8; }
+
+.post-content hr {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 2.5rem 0;
+}
+
+/* Tables */
+.post-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.75rem 0;
+  font-size: 0.9rem;
+}
+
+.post-content th,
+.post-content td {
+  border: 1px solid #e2e8f0;
+  padding: 0.6rem 1rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.post-content thead tr {
+  background: #f8fafc;
+}
+
+.post-content thead th {
+  font-weight: 600;
+  color: #334155;
+}
+
+.post-content tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
 
 .post-content pre {
-  background: #1e1e1e;
-  color: #d4d4d4;
-  padding: 1.25rem;
-  border-radius: 8px;
-  overflow-x: auto;
+  border-radius: 10px;
+  overflow: hidden;        /* clips hljs background to border-radius */
   font-size: 0.9rem;
   line-height: 1.6;
+  margin: 1.5rem 0;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 }
 
-.post-content code {
+/* hljs applies .hljs to the <code> inside <pre> — let it own background/color */
+.post-content pre code.hljs {
+  border-radius: 10px;
+  padding: 1.4rem 1.5rem;
+  display: block;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+  font-size: 0.855rem;
+}
+
+/* Inline code (not inside a pre) */
+.post-content code:not(.hljs) {
   background: #f3f4f6;
-  padding: 0.15rem 0.4rem;
+  color: #1e293b;
+  padding: 0.15rem 0.45rem;
   border-radius: 4px;
   font-size: 0.875em;
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
 }
 
-.post-content pre code {
-  background: none;
-  padding: 0;
+html.dark .post-content code:not(.hljs) {
+  background: #1e293b;
+  color: #e2e8f0;
 }
 
 .post-content img {
@@ -117,4 +242,175 @@
 
 .back-link:hover {
   color: inherit;
+}
+
+
+
+/* ── Section heading accent ── */
+.section-heading { position: relative; padding-bottom: 0.6rem; }
+.section-heading::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 36px; height: 3px;
+  background: #3b82f6;
+  border-radius: 2px;
+}
+
+/* ── Dark mode ── */
+html.dark { color-scheme: dark; }
+html.dark body { background-color: #0f172a; color: #e2e8f0; }
+html.dark .bg-gray-50 { background-color: #0f172a; }
+html.dark .bg-gray-900 { background-color: #020617; }
+html.dark .text-gray-900 { color: #f1f5f9; }
+html.dark .text-gray-600 { color: #94a3b8; }
+html.dark .text-gray-300 { color: #93c5fd; }
+html.dark #theme-toggle { background: #2563eb; border: none; }
+html.dark #theme-toggle:hover { background: #3b82f6; }
+html.dark .section-heading::after { background: #60a5fa; }
+
+/* Blog-specific dark overrides */
+html.dark .post-list li { border-color: #334155; }
+html.dark .post-meta { color: #94a3b8; }
+html.dark .post-title a { color: #e2e8f0; }
+html.dark .tag { background: #1e293b; color: #94a3b8; border: 1px solid #334155; }
+html.dark .post-header { border-color: #334155; }
+html.dark .post-content h1,
+html.dark .post-content h2,
+html.dark .post-content h3,
+html.dark .post-content h4 { color: #f1f5f9; }
+html.dark .post-content p,
+html.dark .post-content li { color: #cbd5e1; }
+html.dark .post-content a { color: #60a5fa; }
+html.dark .post-content a:hover { color: #93c5fd; }
+html.dark .post-content blockquote { border-color: #475569; color: #94a3b8; }
+html.dark .post-content code { background: #1e293b; color: #e2e8f0; }
+html.dark .post-content hr { border-color: #334155; }
+html.dark .post-content th,
+html.dark .post-content td { border-color: #334155; }
+html.dark .post-content thead tr { background: #1e293b; }
+html.dark .post-content thead th { color: #94a3b8; }
+html.dark .post-content tbody tr:nth-child(even) { background: #0f172a; }
+html.dark .post-content { color: #cbd5e1; }
+html.dark .back-link { color: #94a3b8; }
+html.dark .back-link:hover { color: #e2e8f0; }
+
+/* ── Blog index: search + tag filter ─────────────────── */
+
+.blog-controls {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.blog-search {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: #fff;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+}
+.blog-search:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+.blog-search::placeholder {
+  color: #9ca3af;
+}
+
+.tag-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.tag-pill {
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: transparent;
+  font-size: 0.78rem;
+  font-family: inherit;
+  color: #4b5563;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  line-height: 1.6;
+}
+.tag-pill:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+.tag-pill.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+/* Tags inside post cards — now buttons, clickable */
+.tag-clickable {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s;
+}
+.tag-clickable:hover {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.tag-active {
+  background: #bfdbfe !important;
+  color: #1e40af !important;
+}
+
+.no-results {
+  padding: 2rem 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+/* Dark mode overrides for new elements */
+html.dark .blog-search {
+  background: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+html.dark .blog-search:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+html.dark .blog-search::placeholder {
+  color: #64748b;
+}
+html.dark .tag-pill {
+  border-color: #334155;
+  color: #94a3b8;
+}
+html.dark .tag-pill:hover {
+  background: #1e3a5f;
+  border-color: #3b82f6;
+  color: #93c5fd;
+}
+html.dark .tag-pill.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+html.dark .tag-clickable:hover {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+html.dark .tag-active {
+  background: #1e3a5f !important;
+  color: #93c5fd !important;
+}
+html.dark .no-results {
+  color: #64748b;
 }
