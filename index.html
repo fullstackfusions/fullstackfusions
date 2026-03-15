@@ -81,29 +81,30 @@
       /* ── Theme toggle button ── */
       #theme-toggle {
         position: fixed;
-        top: 1rem;
+        bottom: 1rem;
         right: 1rem;
         z-index: 999;
         width: 2.25rem;
         height: 2.25rem;
         border-radius: 50%;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        background: rgba(17, 24, 39, 0.85);
-        backdrop-filter: blur(8px);
+        border: none;
+        background: #2563eb;
         cursor: pointer;
         font-size: 1rem;
         display: flex;
         align-items: center;
         justify-content: center;
         transition: background 0.2s;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
       }
       #theme-toggle:hover {
-        background: rgba(30, 41, 59, 0.95);
+        background: #3b82f6;
       }
       html.dark #theme-toggle {
-        border-color: rgba(255, 255, 255, 0.15);
-        background: rgba(30, 41, 59, 0.9);
+        background: #2563eb;
+        border: none;
+      }
+      html.dark #theme-toggle:hover {
+        background: #3b82f6;
       }
 
       /* ── Dark mode overrides ── */
@@ -172,14 +173,20 @@
         border-color: #334155;
         color: #e2e8f0;
       }
-      html.dark .hero-banner .text-gray-500 { color: #94a3b8; }
-      html.dark .hero-banner .text-gray-400 { color: #64748b; }
+      html.dark .hero-banner .text-gray-500 {
+        color: #94a3b8;
+      }
+      html.dark .hero-banner .text-gray-400 {
+        color: #64748b;
+      }
 
       /* ── Social buttons: keep visible in dark mode ── */
-      html.dark header a.bg-gray-200:not(:hover) {
+      html.dark header a.bg-gray-200:not(:hover),
+      html.dark section a.bg-gray-200:not(:hover) {
         background-color: rgba(255, 255, 255, 0.14);
       }
-      html.dark header a.bg-gray-200 img {
+      html.dark header a.bg-gray-200 img,
+      html.dark section a.bg-gray-200 img {
         filter: invert(1);
       }
     </style>
@@ -242,15 +249,21 @@
     <!-- Header -->
     <!-- Hero: name + title (white in light mode, dark in dark mode) -->
     <div class="hero-banner bg-white text-gray-900 border-b border-gray-200">
-      <div class="container mx-auto px-4 pt-8 pb-5 text-center">
+      <div class="max-w-[1200px] mx-auto px-6 pt-8 pb-5 text-center">
         <div class="flex flex-wrap items-center justify-center gap-3">
           <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight">
             Mihir Patel
           </h1>
-          <span class="hidden md:inline text-gray-400 font-light text-3xl">&mdash;</span>
-          <span class="hidden md:inline text-xl text-gray-500 font-light">Lead / Senior Software Engineer</span>
+          <span class="hidden md:inline text-gray-400 font-light text-3xl"
+            >&mdash;</span
+          >
+          <span class="hidden md:inline text-xl text-gray-500 font-light"
+            >Lead / Senior Software Engineer</span
+          >
         </div>
-        <p class="md:hidden mt-1 text-base text-gray-500">Lead / Senior Software Engineer</p>
+        <p class="md:hidden mt-1 text-base text-gray-500">
+          Lead / Senior Software Engineer
+        </p>
       </div>
     </div>
     <header class="bg-gray-900 text-white">
@@ -289,7 +302,7 @@
     <main id="main-content">
       <section
         id="about"
-        class="py-12 container mx-auto px-4 border-b border-gray-200"
+        class="py-12 max-w-[1200px] mx-auto px-6 border-b border-gray-200"
       >
         <h2 class="text-3xl font-bold section-heading mb-6">About Me</h2>
         <p class="text-gray-700 leading-7 mb-6">
@@ -302,32 +315,6 @@
           translate business requirements into scalable, maintainable
           architectures.
         </p>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-            <p class="text-sm font-semibold text-gray-800 mb-1">
-              Backend &amp; Systems
-            </p>
-            <p class="text-sm text-gray-600">
-              Python &middot; FastAPI &middot; Kafka &middot; Kubernetes
-              &middot; PostgreSQL
-            </p>
-          </div>
-          <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-            <p class="text-sm font-semibold text-gray-800 mb-1">
-              AI &amp; Data Engineering
-            </p>
-            <p class="text-sm text-gray-600">
-              LLMs &middot; RAG &middot; LangGraph &middot; Airflow &middot; AWS
-            </p>
-          </div>
-          <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-            <p class="text-sm font-semibold text-gray-800 mb-1">Leadership</p>
-            <p class="text-sm text-gray-600">
-              Architecture reviews &middot; Mentoring &middot; Cross-functional
-              delivery
-            </p>
-          </div>
-        </div>
 
         <!-- Social + Resume -->
         <div class="mt-8 flex flex-wrap items-center gap-4">
@@ -399,75 +386,285 @@
       <!-- Skills Section -->
       <section
         id="skills"
-        class="py-12 container mx-auto px-4 border-b border-gray-200"
+        class="py-12 max-w-[1200px] mx-auto px-6 border-b border-gray-200"
       >
         <h2 class="text-3xl font-bold text-gray-800 section-heading mb-8">
           Technical Skills &amp; Expertise
         </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">Programming</h3>
-            <p class="text-gray-600">Python, JavaScript, TypeScript, SQL, Go</p>
+        <div class="space-y-8">
+          <div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">
+              Application Engineering
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div class="bg-white p-6 rounded-lg shadow">
+                <h4 class="text-lg font-semibold mb-4">
+                  Programming & Frameworks
+                </h4>
+                <div class="space-y-3 text-sm">
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Tools
+                    </p>
+                    <p class="text-gray-600">
+                      Python: FastAPI, Flask, Django<br />
+                      JavaScript/TypeScript: React, Next.js<br />
+                      Go: Gin, Echo, Fiber
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Value I Add
+                    </p>
+                    <p class="text-gray-600">
+                      Clean service design, reusable architecture patterns,
+                      maintainable codebases, and faster feature delivery
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white p-6 rounded-lg shadow">
+                <h4 class="text-lg font-semibold mb-4">APIs & Messaging</h4>
+                <div class="space-y-3 text-sm">
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Tools
+                    </p>
+                    <p class="text-gray-600">
+                      Webhooks, WebSocket, REST, GraphQL, gRPC
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Value I Add
+                    </p>
+                    <p class="text-gray-600">
+                      Contract-first API design, secure integrations,
+                      versioning, and performance tuning for scalable services,
+                      API security with OAuth2/OIDC, JWT, RBAC/ABAC, rate
+                      limiting, and auditability
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white p-6 rounded-lg shadow">
+                <h4 class="text-lg font-semibold mb-4">Databases</h4>
+                <div class="space-y-3 text-sm">
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Tools
+                    </p>
+                    <p class="text-gray-600">
+                      PostgreSQL, MongoDB, Elasticsearch, Redis, SQL Server,
+                      Cassandra
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Value I Add
+                    </p>
+                    <p class="text-gray-600">
+                      Schema and data modeling, query optimization, indexing
+                      strategy, and reliability-oriented data architecture
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">Frameworks</h3>
-            <p class="text-gray-600">FastAPI, Flask, Django, React, Next.js</p>
+
+          <div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">
+              Data, AI & Platform
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div class="bg-white p-6 rounded-lg shadow">
+                <h4 class="text-lg font-semibold mb-4">Data Engineering</h4>
+                <div class="space-y-3 text-sm">
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Tools
+                    </p>
+                    <p class="text-gray-600">
+                      Kafka, Airflow, AWS S3, ETL Pipelines, AWS Glue
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Value I Add
+                    </p>
+                    <p class="text-gray-600">
+                      Resilient batch/stream pipelines, data quality guardrails,
+                      and production-ready analytics foundations
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white p-6 rounded-lg shadow">
+                <h4 class="text-lg font-semibold mb-4">GenAI Features</h4>
+                <div class="space-y-3 text-sm">
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Tools
+                    </p>
+                    <p class="text-gray-600">
+                      Agentic RAG, fine-tuning, function/tool calling, prompt
+                      chaining, orchestration, and re-ranking
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Value I Add
+                    </p>
+                    <p class="text-gray-600">
+                      Business-ready AI workflows that improve accuracy,
+                      automate operations, and reduce manual effort
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white p-6 rounded-lg shadow">
+                <h4 class="text-lg font-semibold mb-4">
+                  Platform & Environment Span
+                </h4>
+                <div class="space-y-3 text-sm">
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Tools
+                    </p>
+                    <p class="text-gray-600">
+                      On-prem, cloud-native, hybrid-cloud, multi-cloud,
+                      containerized workloads, Kubernetes/OpenShift
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Value I Add
+                    </p>
+                    <p class="text-gray-600">
+                      Platform standardization, secure-by-default architecture,
+                      and smooth modernization across mixed environments
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">Databases</h3>
-            <p class="text-gray-600">
-              PostgreSQL, MongoDB, Elasticsearch, Redis, SQL Server
-            </p>
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">DevOps & Cloud</h3>
-            <p class="text-gray-600">
-              Docker, Kubernetes, Jenkins, GitHub Actions, OpenShift, AWS
-            </p>
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">Data Engineering</h3>
-            <p class="text-gray-600">
-              Kafka, Airflow, AWS S3, ETL Pipelines, AWS Glue
-            </p>
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">Network & Observability</h3>
-            <p class="text-gray-600">
-              Grafana, Dynatrace, Netbrain, Extrahop, Corvil
-            </p>
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">APIs & Messaging</h3>
-            <p class="text-gray-600">
-              Webhooks, WebSocket, REST, GraphQL, gRPC
-            </p>
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">GenAI Features</h3>
-            <p class="text-gray-600">
-              Retrieval Augmented Generations (RAG), Fine Tuning, Function
-              (Tool) Calling, AI Agents, Prompt chaining, LLM usage
-            </p>
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">GenAI Tools</h3>
-            <p class="text-gray-600">
-              LangChain, LangGraph, n8n, MCP servers/clients/hosts
-            </p>
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">Leadership</h3>
-            <p class="text-gray-600">
-              Architecture reviews, mentoring, and driving engineering best
-              practices
-            </p>
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">Others</h3>
-            <p class="text-gray-600">
-              Shell scripting, CI/CD pipelines, Setup Automations
-            </p>
+
+          <div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">
+              Operations & Delivery
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div class="bg-white p-6 rounded-lg shadow">
+                <h4 class="text-lg font-semibold mb-4">DevOps & Cloud</h4>
+                <div class="space-y-3 text-sm">
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Tools
+                    </p>
+                    <p class="text-gray-600">
+                      Docker, Kubernetes, Jenkins, GitHub Actions, OpenShift,
+                      AWS
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Value I Add
+                    </p>
+                    <p class="text-gray-600">
+                      Faster release cycles, stable CI/CD, secure delivery
+                      controls, and cost-aware cloud operations
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white p-6 rounded-lg shadow">
+                <h4 class="text-lg font-semibold mb-4">
+                  Network & Observability
+                </h4>
+                <div class="space-y-3 text-sm">
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Tools
+                    </p>
+                    <p class="text-gray-600">
+                      Grafana, Dynatrace, NetBrain, ExtraHop, Corvil
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Value I Add
+                    </p>
+                    <p class="text-gray-600">
+                      End-to-end visibility, faster incident triage, proactive
+                      performance tuning, and measurable reliability improvement
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white p-6 rounded-lg shadow">
+                <h4 class="text-lg font-semibold mb-4">
+                  Leadership & Delivery
+                </h4>
+                <div class="space-y-3 text-sm">
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Tools
+                    </p>
+                    <p class="text-gray-600">
+                      Architecture reviews, mentoring, shell scripting, CI/CD,
+                      and delivery automation
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-gray-500 font-medium uppercase tracking-wide"
+                    >
+                      Value I Add
+                    </p>
+                    <p class="text-gray-600">
+                      Clear technical direction, stronger engineering practices,
+                      and higher team execution velocity
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -475,7 +672,7 @@
       <!-- Projects Section -->
       <section
         id="projects"
-        class="py-12 container mx-auto px-4 border-b border-gray-200"
+        class="py-12 max-w-[1200px] mx-auto px-6 border-b border-gray-200"
       >
         <h2 class="text-3xl font-bold section-heading mb-6">Key Projects</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -534,7 +731,7 @@
       <!-- Experience Section -->
       <section
         id="experience"
-        class="py-12 container mx-auto px-4 border-b border-gray-200"
+        class="py-12 max-w-[1200px] mx-auto px-6 border-b border-gray-200"
       >
         <h2 class="text-3xl font-bold section-heading mb-6">
           Professional Experience
@@ -600,7 +797,7 @@
       <!-- Education & Certifications Section -->
       <section
         id="education"
-        class="py-12 container mx-auto px-4 border-b border-gray-200"
+        class="py-12 max-w-[1200px] mx-auto px-6 border-b border-gray-200"
       >
         <h2 class="text-3xl font-bold section-heading mb-6">Education</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -621,7 +818,7 @@
 
       <section
         id="certs"
-        class="py-12 container mx-auto px-4 border-b border-gray-200"
+        class="py-12 max-w-[1200px] mx-auto px-6 border-b border-gray-200"
       >
         <h2 class="text-3xl font-bold section-heading mb-6">Certifications</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -657,7 +854,7 @@
       <!-- Latest Blog Posts -->
       <section
         id="blog"
-        class="py-12 container mx-auto px-4 border-b border-gray-200"
+        class="py-12 max-w-[1200px] mx-auto px-6 border-b border-gray-200"
       >
         <h2 class="text-3xl font-bold section-heading mb-6">Latest Writing</h2>
         <ul id="post-feed" class="space-y-4"></ul>
@@ -705,7 +902,7 @@
 
       <!-- Footer -->
       <footer class="bg-gray-900 text-white text-center py-6">
-        <div class="container mx-auto px-4">
+        <div class="max-w-[1200px] mx-auto px-6">
           <p>
             &copy; <span id="year"></span> Mihir Patel. All Rights Reserved.
           </p>

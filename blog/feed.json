@@ -1,39 +1,24 @@
 [
   {
-    "slug": "2026-03-15-property-comparison-gta",
-    "title": "GTA Property Comparison — 30 Year Analysis",
+    "slug": "2026-03-15-databases-a-lead-engineers-field-guide",
+    "title": "Databases: A Lead Engineer's Field Guide to Picking the Right Tool",
     "date": "2026-03-15",
     "tags": [
-      "real-estate",
-      "data",
-      "canada",
-      "interactive"
+      "databases"
     ],
-    "description": "A data-driven comparison of detached vs condo ownership in the Greater Toronto Area over 30 years.",
-    "url": "/blog/posts/2026-03-15-property-comparison-gta/"
+    "description": "From OLTP to analytics, caches to graphs — how I think about database selection as a Lead Software Developer inching toward Principal.",
+    "url": "/blog/posts/2026-03-15-databases-a-lead-engineers-field-guide/"
   },
   {
-    "slug": "2026-03-14-finding-peace-in-nature",
-    "title": "Finding Peace in Nature",
+    "slug": "2026-03-14-subdomain-vs-path-based-routing",
+    "title": "Subdomains vs Path-Based Routing: The Architecture Decision Nobody Talks About",
     "date": "2026-03-14",
     "tags": [
-      "life",
-      "nature",
-      "reflection"
+      "security",
+      "web-development",
+      "system-design"
     ],
-    "description": "A reflection on slowing down, stepping outside, and finding clarity away from the screen.",
-    "url": "/blog/posts/2026-03-14-finding-peace-in-nature/"
-  },
-  {
-    "slug": "2026-03-14-nature-photo-gallery",
-    "title": "Nature Photo Gallery",
-    "date": "2026-03-14",
-    "tags": [
-      "photography",
-      "nature",
-      "interactive"
-    ],
-    "description": "An interactive gallery of nature photos with lightbox and keyboard navigation.",
-    "url": "/blog/posts/2026-03-14-nature-photo-gallery/"
+    "description": "One routing choice quietly shapes your security posture, deployment pipeline, and scaling strategy. Here's how banks, hospitals, and big tech think about it — and how you should too.",
+    "url": "/blog/posts/2026-03-14-subdomain-vs-path-based-routing/"
   }
 ]

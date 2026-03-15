@@ -51,6 +51,7 @@ function renderTags(tags = []) {
 
 function siteNav() {
   return `
+  <div class="bg-gray-50 py-4"></div>
   <header class="bg-gray-900 text-white">
     <nav class="border-b border-gray-700">
       <div class="container mx-auto px-4 py-3">
@@ -86,6 +87,7 @@ function postTemplate({ title, date, tags = [], description = '', contentHtml })
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"><\/script>
   <link rel="stylesheet" href="/blog/assets/blog.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" />
   <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();<\/script>
 </head>
 <body class="bg-gray-50 text-gray-900">
@@ -110,6 +112,9 @@ function postTemplate({ title, date, tags = [], description = '', contentHtml })
     </article>
   </main>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"><\/script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"><\/script>
+  <script>hljs.highlightAll();<\/script>
   <script>
     function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'\u2600\uFE0F':'\uD83C\uDF19';}
     document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'\u2600\uFE0F':'\uD83C\uDF19';
@@ -120,16 +125,11 @@ function postTemplate({ title, date, tags = [], description = '', contentHtml })
 }
 
 // ── Blog index template ───────────────────────────────────────────────────────
+// Posts are rendered dynamically from feed.json via JS so search + tag
+// filtering work client-side without any server. The build script still
+// regenerates this file on every run — only the shell/chrome is templated here.
 
-function indexTemplate(posts) {
-  const listItems = posts.map(({ slug, title, date, tags = [], description = '' }) => `
-    <li>
-      <div class="post-meta">${formatDate(date)}</div>
-      <div class="post-title"><a href="/blog/posts/${encodeURIComponent(slug)}/">${escapeHtml(title)}</a></div>
-      ${description ? `<p class="text-gray-600 mt-1">${escapeHtml(description)}</p>` : ''}
-      <div class="post-tags">${renderTags(tags)}</div>
-    </li>`).join('\n');
-
+function indexTemplate(_posts) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -149,15 +149,161 @@ function indexTemplate(posts) {
   ${siteNav()}
 
   <main class="blog-container">
-    <h1 class="text-3xl font-bold section-heading mb-8">Blog</h1>
-    <ul class="post-list">
-      ${listItems}
-    </ul>
+    <h1 class="text-3xl font-bold section-heading mb-6">Blog</h1>
+
+    <div class="blog-controls">
+      <input
+        id="search-input"
+        type="search"
+        placeholder="Search posts by title, topic, or tag\u2026"
+        aria-label="Search blog posts"
+        autocomplete="off"
+        class="blog-search"
+      />
+      <div id="tag-filter" class="tag-filter-bar" aria-label="Filter by tag"></div>
+    </div>
+
+    <p id="no-results" class="no-results" hidden>No posts match your search.</p>
+    <ul id="post-list" class="post-list"></ul>
   </main>
 
   <script>
-    function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'\u2600\uFE0F':'\uD83C\uDF19';}
-    document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'\u2600\uFE0F':'\uD83C\uDF19';
+    (function () {
+      // \u2500\u2500 Theme \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      function toggleTheme() {
+        const d = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', d ? 'dark' : 'light');
+        document.getElementById('theme-icon').textContent = d ? '\u2600\uFE0F' : '\uD83C\uDF19';
+      }
+      window.toggleTheme = toggleTheme;
+      document.getElementById('theme-icon').textContent =
+        document.documentElement.classList.contains('dark') ? '\u2600\uFE0F' : '\uD83C\uDF19';
+
+      // \u2500\u2500 Helpers \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      function esc(s) {
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function formatDate(dateStr) {
+        const [y, m, d] = dateStr.split('-').map(Number);
+        return new Date(y, m - 1, d).toLocaleDateString('en-US', {
+          year: 'numeric', month: 'long', day: 'numeric',
+        });
+      }
+
+      // \u2500\u2500 State \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      let allPosts = [];
+      let activeTag = location.hash
+        ? decodeURIComponent(location.hash.slice(1))
+        : null;
+      let searchQuery = '';
+
+      // \u2500\u2500 Render posts \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      function renderPosts() {
+        const list = document.getElementById('post-list');
+        const noResults = document.getElementById('no-results');
+        const q = searchQuery.trim().toLowerCase();
+
+        const filtered = allPosts.filter((post) => {
+          const matchesTag = !activeTag || post.tags.includes(activeTag);
+          const matchesSearch =
+            !q ||
+            post.title.toLowerCase().includes(q) ||
+            post.description.toLowerCase().includes(q) ||
+            post.tags.some((t) => t.toLowerCase().includes(q));
+          return matchesTag && matchesSearch;
+        });
+
+        if (filtered.length === 0) {
+          list.innerHTML = '';
+          noResults.hidden = false;
+          return;
+        }
+        noResults.hidden = true;
+        list.innerHTML = filtered
+          .map(
+            (post) => \`<li>
+              <div class="post-meta">\${esc(formatDate(post.date))}</div>
+              <div class="post-title"><a href="\${esc(post.url)}">\${esc(post.title)}</a></div>
+              <p class="text-gray-600 mt-1">\${esc(post.description)}</p>
+              <div class="post-tags">
+                \${post.tags
+                  .map(
+                    (t) =>
+                      \`<button class="tag tag-clickable\${t === activeTag ? ' tag-active' : ''}" data-tag="\${esc(t)}">\${esc(t)}</button>\`
+                  )
+                  .join('')}
+              </div>
+            </li>\`
+          )
+          .join('');
+
+        list.querySelectorAll('.tag-clickable').forEach((btn) => {
+          btn.addEventListener('click', () => setTag(btn.dataset.tag));
+        });
+      }
+
+      // \u2500\u2500 Render tag bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      function renderTagBar() {
+        const bar = document.getElementById('tag-filter');
+        const allTags = [...new Set(allPosts.flatMap((p) => p.tags))].sort();
+        bar.innerHTML =
+          \`<button class="tag-pill\${!activeTag ? ' active' : ''}" data-tag="">All</button>\` +
+          allTags
+            .map(
+              (t) =>
+                \`<button class="tag-pill\${t === activeTag ? ' active' : ''}" data-tag="\${esc(t)}">\${esc(t)}</button>\`
+            )
+            .join('');
+
+        bar.querySelectorAll('.tag-pill').forEach((btn) => {
+          btn.addEventListener('click', () => setTag(btn.dataset.tag || null));
+        });
+      }
+
+      // \u2500\u2500 Set active tag \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      function setTag(tag) {
+        activeTag = tag || null;
+        history.replaceState(
+          null, '',
+          activeTag ? '#' + encodeURIComponent(activeTag) : location.pathname
+        );
+        renderTagBar();
+        renderPosts();
+      }
+
+      // \u2500\u2500 Hash navigation (back/forward) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      window.addEventListener('hashchange', () => {
+        activeTag = location.hash
+          ? decodeURIComponent(location.hash.slice(1))
+          : null;
+        renderTagBar();
+        renderPosts();
+      });
+
+      // \u2500\u2500 Search input \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      document.getElementById('search-input').addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        renderPosts();
+      });
+
+      // \u2500\u2500 Load feed.json \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      fetch('/blog/feed.json')
+        .then((r) => r.json())
+        .then((posts) => {
+          allPosts = posts;
+          renderTagBar();
+          renderPosts();
+        })
+        .catch(() => {
+          document.getElementById('post-list').innerHTML =
+            '<li style="padding:1.5rem 0;color:#6b7280">Failed to load posts.</li>';
+        });
+    })();
   <\/script>
 
 </body>

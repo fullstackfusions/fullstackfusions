@@ -15,6 +15,7 @@
   <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode"><span id="theme-icon">&#x1F319;</span></button>
 
   
+  <div class="bg-gray-50 py-4"></div>
   <header class="bg-gray-900 text-white">
     <nav class="border-b border-gray-700">
       <div class="container mx-auto px-4 py-3">
@@ -35,35 +36,161 @@
   </header>
 
   <main class="blog-container">
-    <h1 class="text-3xl font-bold section-heading mb-8">Blog</h1>
-    <ul class="post-list">
-      
-    <li>
-      <div class="post-meta">March 15, 2026</div>
-      <div class="post-title"><a href="/blog/posts/2026-03-15-property-comparison-gta/">GTA Property Comparison — 30 Year Analysis</a></div>
-      <p class="text-gray-600 mt-1">A data-driven comparison of detached vs condo ownership in the Greater Toronto Area over 30 years.</p>
-      <div class="post-tags"><span class="tag">real-estate</span><span class="tag">data</span><span class="tag">canada</span><span class="tag">interactive</span></div>
-    </li>
+    <h1 class="text-3xl font-bold section-heading mb-6">Blog</h1>
 
-    <li>
-      <div class="post-meta">March 14, 2026</div>
-      <div class="post-title"><a href="/blog/posts/2026-03-14-finding-peace-in-nature/">Finding Peace in Nature</a></div>
-      <p class="text-gray-600 mt-1">A reflection on slowing down, stepping outside, and finding clarity away from the screen.</p>
-      <div class="post-tags"><span class="tag">life</span><span class="tag">nature</span><span class="tag">reflection</span></div>
-    </li>
+    <div class="blog-controls">
+      <input
+        id="search-input"
+        type="search"
+        placeholder="Search posts by title, topic, or tag…"
+        aria-label="Search blog posts"
+        autocomplete="off"
+        class="blog-search"
+      />
+      <div id="tag-filter" class="tag-filter-bar" aria-label="Filter by tag"></div>
+    </div>
 
-    <li>
-      <div class="post-meta">March 14, 2026</div>
-      <div class="post-title"><a href="/blog/posts/2026-03-14-nature-photo-gallery/">Nature Photo Gallery</a></div>
-      <p class="text-gray-600 mt-1">An interactive gallery of nature photos with lightbox and keyboard navigation.</p>
-      <div class="post-tags"><span class="tag">photography</span><span class="tag">nature</span><span class="tag">interactive</span></div>
-    </li>
-    </ul>
+    <p id="no-results" class="no-results" hidden>No posts match your search.</p>
+    <ul id="post-list" class="post-list"></ul>
   </main>
 
   <script>
-    function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'☀️':'🌙';}
-    document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';
+    (function () {
+      // ── Theme ─────────────────────────────────────────────
+      function toggleTheme() {
+        const d = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', d ? 'dark' : 'light');
+        document.getElementById('theme-icon').textContent = d ? '☀️' : '🌙';
+      }
+      window.toggleTheme = toggleTheme;
+      document.getElementById('theme-icon').textContent =
+        document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+
+      // ── Helpers ───────────────────────────────────────────
+      function esc(s) {
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function formatDate(dateStr) {
+        const [y, m, d] = dateStr.split('-').map(Number);
+        return new Date(y, m - 1, d).toLocaleDateString('en-US', {
+          year: 'numeric', month: 'long', day: 'numeric',
+        });
+      }
+
+      // ── State ─────────────────────────────────────────────
+      let allPosts = [];
+      let activeTag = location.hash
+        ? decodeURIComponent(location.hash.slice(1))
+        : null;
+      let searchQuery = '';
+
+      // ── Render posts ──────────────────────────────────────
+      function renderPosts() {
+        const list = document.getElementById('post-list');
+        const noResults = document.getElementById('no-results');
+        const q = searchQuery.trim().toLowerCase();
+
+        const filtered = allPosts.filter((post) => {
+          const matchesTag = !activeTag || post.tags.includes(activeTag);
+          const matchesSearch =
+            !q ||
+            post.title.toLowerCase().includes(q) ||
+            post.description.toLowerCase().includes(q) ||
+            post.tags.some((t) => t.toLowerCase().includes(q));
+          return matchesTag && matchesSearch;
+        });
+
+        if (filtered.length === 0) {
+          list.innerHTML = '';
+          noResults.hidden = false;
+          return;
+        }
+        noResults.hidden = true;
+        list.innerHTML = filtered
+          .map(
+            (post) => `<li>
+              <div class="post-meta">${esc(formatDate(post.date))}</div>
+              <div class="post-title"><a href="${esc(post.url)}">${esc(post.title)}</a></div>
+              <p class="text-gray-600 mt-1">${esc(post.description)}</p>
+              <div class="post-tags">
+                ${post.tags
+                  .map(
+                    (t) =>
+                      `<button class="tag tag-clickable${t === activeTag ? ' tag-active' : ''}" data-tag="${esc(t)}">${esc(t)}</button>`
+                  )
+                  .join('')}
+              </div>
+            </li>`
+          )
+          .join('');
+
+        list.querySelectorAll('.tag-clickable').forEach((btn) => {
+          btn.addEventListener('click', () => setTag(btn.dataset.tag));
+        });
+      }
+
+      // ── Render tag bar ────────────────────────────────────
+      function renderTagBar() {
+        const bar = document.getElementById('tag-filter');
+        const allTags = [...new Set(allPosts.flatMap((p) => p.tags))].sort();
+        bar.innerHTML =
+          `<button class="tag-pill${!activeTag ? ' active' : ''}" data-tag="">All</button>` +
+          allTags
+            .map(
+              (t) =>
+                `<button class="tag-pill${t === activeTag ? ' active' : ''}" data-tag="${esc(t)}">${esc(t)}</button>`
+            )
+            .join('');
+
+        bar.querySelectorAll('.tag-pill').forEach((btn) => {
+          btn.addEventListener('click', () => setTag(btn.dataset.tag || null));
+        });
+      }
+
+      // ── Set active tag ────────────────────────────────────
+      function setTag(tag) {
+        activeTag = tag || null;
+        history.replaceState(
+          null, '',
+          activeTag ? '#' + encodeURIComponent(activeTag) : location.pathname
+        );
+        renderTagBar();
+        renderPosts();
+      }
+
+      // ── Hash navigation (back/forward) ────────────────────
+      window.addEventListener('hashchange', () => {
+        activeTag = location.hash
+          ? decodeURIComponent(location.hash.slice(1))
+          : null;
+        renderTagBar();
+        renderPosts();
+      });
+
+      // ── Search input ──────────────────────────────────────
+      document.getElementById('search-input').addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        renderPosts();
+      });
+
+      // ── Load feed.json ────────────────────────────────────
+      fetch('/blog/feed.json')
+        .then((r) => r.json())
+        .then((posts) => {
+          allPosts = posts;
+          renderTagBar();
+          renderPosts();
+        })
+        .catch(() => {
+          document.getElementById('post-list').innerHTML =
+            '<li style="padding:1.5rem 0;color:#6b7280">Failed to load posts.</li>';
+        });
+    })();
   </script>
 
 </body>
