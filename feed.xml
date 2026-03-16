@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>fullstackfusions</title>
+    <link>https://fullstackfusions.com</link>
+    <description>Engineering blog — architecture, databases, and systems thinking by Mihir.</description>
+    <language>en-us</language>
+    <atom:link href="https://fullstackfusions.com/feed.xml" rel="self" type="application/rss+xml" />
+  <item>
+    <title>Databases: A Lead Engineer's Field Guide to Picking the Right Tool</title>
+    <link>https://fullstackfusions.com/blog/posts/2026-03-15-databases-a-lead-engineers-field-guide/</link>
+    <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-15-databases-a-lead-engineers-field-guide/</guid>
+    <description>From OLTP to analytics, caches to graphs — how I think about database selection as a Lead Software Developer inching toward Principal.</description>
+    <pubDate>Sun, 15 Mar 2026 04:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Subdomains vs Path-Based Routing: The Architecture Decision Nobody Talks About</title>
+    <link>https://fullstackfusions.com/blog/posts/2026-03-14-subdomain-vs-path-based-routing/</link>
+    <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-14-subdomain-vs-path-based-routing/</guid>
+    <description>One routing choice quietly shapes your security posture, deployment pipeline, and scaling strategy. Here's how banks, hospitals, and big tech think about it — and how you should too.</description>
+    <pubDate>Sat, 14 Mar 2026 04:00:00 GMT</pubDate>
+  </item>
+  </channel>
+</rss>
