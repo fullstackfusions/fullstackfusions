@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /blog/_drafts/
+
+Sitemap: https://fullstackfusions.com/sitemap.xml

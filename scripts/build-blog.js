@@ -15,6 +15,24 @@ const POSTS_SRC  = path.join(__dirname, '../_posts');
 const POSTS_OUT  = path.join(__dirname, '../blog/posts');
 const BLOG_INDEX = path.join(__dirname, '../blog/index.html');
 const FEED_OUT   = path.join(__dirname, '../blog/feed.json');
+const SITEMAP_OUT = path.join(__dirname, '../sitemap.xml');
+const RSS_OUT     = path.join(__dirname, '../feed.xml');
+
+const SITE_URL = 'https://fullstackfusions.com';
+const AUTHOR   = 'Mihir';
+const GA_ID    = 'G-QWCQ7T2CM8';
+
+function gaTag() {
+  return `
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"><\/script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '${GA_ID}');
+  <\/script>`;
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -58,14 +76,55 @@ function siteNav() {
 
 // ── Post HTML template ────────────────────────────────────────────────────────
 
-function postTemplate({ title, date, tags = [], description = '', contentHtml }) {
+function postTemplate({ slug, title, date, tags = [], description = '', contentHtml, relatedPosts = [] }) {
+  const rawDate   = (date instanceof Date) ? date.toISOString().slice(0, 10) : String(date).slice(0, 10);
+  const canonical = `${SITE_URL}/blog/posts/${slug}/`;
+  const jsonLd    = JSON.stringify({
+    '@context':    'https://schema.org',
+    '@type':       'TechArticle',
+    headline:      title,
+    author:        { '@type': 'Person', name: AUTHOR },
+    datePublished: rawDate,
+    description:   description,
+    url:           canonical,
+  }).replace(/</g, '\\u003c');
+
+  const relatedHtml = relatedPosts.length ? `
+    <aside style="margin-top:3rem;padding-top:2rem;border-top:1px solid #334155">
+      <h3 style="font-size:1.05rem;font-weight:600;margin-bottom:.75rem">Related Posts</h3>
+      <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.6rem">
+        ${relatedPosts.map(p => `<li><a href="/blog/posts/${p.slug}/" style="color:#2563eb;font-weight:500;text-decoration:none">${escapeHtml(p.title)}</a> <span style="color:#6b7280;font-size:.8rem">— ${formatDate(p.date)}</span></li>`).join('\n        ')}
+      </ul>
+    </aside>` : '';
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  ${gaTag()}
   <meta name="description" content="${escapeHtml(description)}" />
   <title>${escapeHtml(title)} — fullstackfusions</title>
+  <link rel="canonical" href="${canonical}" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="${escapeHtml(title)}" />
+  <meta property="og:description" content="${escapeHtml(description)}" />
+  <meta property="og:url" content="${canonical}" />
+  <meta property="og:site_name" content="fullstackfusions" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="${escapeHtml(title)}" />
+  <meta name="twitter:description" content="${escapeHtml(description)}" />
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="fullstackfusions" href="${SITE_URL}/feed.xml" />
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">${jsonLd}<\/script>
+
   <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -94,6 +153,7 @@ function postTemplate({ title, date, tags = [], description = '', contentHtml })
       <div class="post-content">
         ${contentHtml}
       </div>
+      ${relatedHtml}
     </article>
   </main>
 
@@ -120,7 +180,10 @@ function indexTemplate(_posts) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  ${gaTag()}
   <title>Blog — fullstackfusions</title>
+  <link rel="canonical" href="${SITE_URL}/blog/" />
+  <link rel="alternate" type="application/rss+xml" title="fullstackfusions" href="${SITE_URL}/feed.xml" />
   <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -295,6 +358,72 @@ function indexTemplate(_posts) {
 </html>`;
 }
 
+// ── Sitemap ───────────────────────────────────────────────────────────────────
+
+function buildSitemap(postMeta) {
+  const staticUrls = [
+    { loc: `${SITE_URL}/`,            priority: '1.0', changefreq: 'monthly' },
+    { loc: `${SITE_URL}/blog/`,       priority: '0.9', changefreq: 'weekly'  },
+    { loc: `${SITE_URL}/projects/`,   priority: '0.7', changefreq: 'monthly' },
+    { loc: `${SITE_URL}/experience/`, priority: '0.7', changefreq: 'monthly' },
+  ];
+
+  const postUrls = postMeta.map(p => ({
+    loc:        `${SITE_URL}/blog/posts/${p.slug}/`,
+    lastmod:    p.date,
+    priority:   '0.8',
+    changefreq: 'monthly',
+  }));
+
+  const entries = [...staticUrls, ...postUrls].map(u =>
+    `  <url>\n    <loc>${u.loc}</loc>${u.lastmod ? `\n    <lastmod>${u.lastmod}</lastmod>` : ''}\n    <changefreq>${u.changefreq}</changefreq>\n    <priority>${u.priority}</priority>\n  </url>`
+  ).join('\n');
+
+  const xml =
+`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${entries}
+</urlset>`;
+
+  fs.writeFileSync(SITEMAP_OUT, xml);
+  console.log('✓ Built: sitemap.xml');
+}
+
+// ── RSS feed ──────────────────────────────────────────────────────────────────
+
+function buildRssFeed(postMeta) {
+  function toRfc822(dateStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d).toUTCString();
+  }
+
+  const items = postMeta.slice(0, 20).map(p =>
+`  <item>
+    <title>${escapeHtml(p.title)}</title>
+    <link>${SITE_URL}/blog/posts/${p.slug}/</link>
+    <guid isPermaLink="true">${SITE_URL}/blog/posts/${p.slug}/</guid>
+    <description>${escapeHtml(p.description)}</description>
+    <pubDate>${toRfc822(p.date)}</pubDate>
+  </item>`
+  ).join('\n');
+
+  const xml =
+`<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>fullstackfusions</title>
+    <link>${SITE_URL}</link>
+    <description>Engineering blog — architecture, databases, and systems thinking by ${AUTHOR}.</description>
+    <language>en-us</language>
+    <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml" />
+${items}
+  </channel>
+</rss>`;
+
+  fs.writeFileSync(RSS_OUT, xml);
+  console.log('✓ Built: feed.xml');
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 function build() {
@@ -309,31 +438,17 @@ function build() {
     .reverse(); // newest first
 
   const postMeta = [];
+  const mdParsed = []; // stash parsed content for pass 2
 
+  // Pass 1: parse all Markdown and collect metadata
   for (const file of mdFiles) {
     const raw               = fs.readFileSync(path.join(POSTS_SRC, file), 'utf8');
     const { data, content } = matter(raw);
     const slug              = slugFromFilename(file);
     const contentHtml       = marked(content);
-
-    const outDir = path.join(POSTS_OUT, slug);
-    fs.mkdirSync(outDir, { recursive: true });
-
-    const rawDate = (data.date instanceof Date)
+    const rawDate           = (data.date instanceof Date)
       ? data.date.toISOString().slice(0, 10)
       : String(data.date || new Date().toISOString().slice(0, 10)).slice(0, 10);
-
-    fs.writeFileSync(
-      path.join(outDir, 'index.html'),
-      postTemplate({
-        title:       data.title       || slug,
-        date:        rawDate,
-        tags:        data.tags        || [],
-        description: data.description || '',
-        contentHtml,
-      })
-    );
-    console.log(`✓ Built: blog/posts/${slug}/index.html`);
 
     postMeta.push({
       slug,
@@ -342,6 +457,7 @@ function build() {
       tags:        data.tags        || [],
       description: data.description || '',
     });
+    mdParsed.push({ slug, rawDate, data, contentHtml });
   }
 
   // Scan for custom HTML posts with <!--blog-meta ... --> comments
@@ -373,6 +489,26 @@ function build() {
   // Sort all posts (markdown + custom) by date, newest first
   postMeta.sort((a, b) => new Date(b.date) - new Date(a.date));
 
+  // Pass 2: build HTML for Markdown posts (full postMeta now available for related posts)
+  for (const { slug, rawDate, data, contentHtml } of mdParsed) {
+    const outDir  = path.join(POSTS_OUT, slug);
+    fs.mkdirSync(outDir, { recursive: true });
+    const related = postMeta.filter(p => p.slug !== slug).slice(0, 2);
+    fs.writeFileSync(
+      path.join(outDir, 'index.html'),
+      postTemplate({
+        slug,
+        title:        data.title       || slug,
+        date:         rawDate,
+        tags:         data.tags        || [],
+        description:  data.description || '',
+        contentHtml,
+        relatedPosts: related,
+      })
+    );
+    console.log(`✓ Built: blog/posts/${slug}/index.html`);
+  }
+
   // Regenerate blog/index.html
   fs.mkdirSync(path.dirname(BLOG_INDEX), { recursive: true });
   fs.writeFileSync(BLOG_INDEX, indexTemplate(postMeta));
@@ -385,6 +521,10 @@ function build() {
   }));
   fs.writeFileSync(FEED_OUT, JSON.stringify(feed, null, 2));
   console.log('✓ Built: blog/feed.json');
+
+  // Generate sitemap.xml and RSS feed
+  buildSitemap(postMeta);
+  buildRssFeed(postMeta);
 
   console.log(`\nDone — ${mdFiles.length} Markdown post(s) built.`);
 }
