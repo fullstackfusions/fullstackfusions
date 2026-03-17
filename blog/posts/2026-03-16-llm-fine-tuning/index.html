@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWCQ7T2CM8"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QWCQ7T2CM8');
+  </script>
+  <meta name="description" content="A Principal Engineer's honest field guide to LLM fine-tuning — from LoRA and QLoRA mechanics to DPO, dataset curation, and the decision framework for when not to fine-tune." />
+  <title>LLM Fine-Tuning: What Nobody Tells You Until You've Burned the GPU Budget — fullstackfusions</title>
+  <link rel="canonical" href="https://fullstackfusions.com/blog/posts/2026-03-16-llm-fine-tuning/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="LLM Fine-Tuning: What Nobody Tells You Until You've Burned the GPU Budget" />
+  <meta property="og:description" content="A Principal Engineer's honest field guide to LLM fine-tuning — from LoRA and QLoRA mechanics to DPO, dataset curation, and the decision framework for when not to fine-tune." />
+  <meta property="og:url" content="https://fullstackfusions.com/blog/posts/2026-03-16-llm-fine-tuning/" />
+  <meta property="og:site_name" content="fullstackfusions" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="LLM Fine-Tuning: What Nobody Tells You Until You've Burned the GPU Budget" />
+  <meta name="twitter:description" content="A Principal Engineer's honest field guide to LLM fine-tuning — from LoRA and QLoRA mechanics to DPO, dataset curation, and the decision framework for when not to fine-tune." />
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="fullstackfusions" href="https://fullstackfusions.com/feed.xml" />
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"LLM Fine-Tuning: What Nobody Tells You Until You've Burned the GPU Budget","author":{"@type":"Person","name":"Mihir"},"datePublished":"2026-03-16","description":"A Principal Engineer's honest field guide to LLM fine-tuning — from LoRA and QLoRA mechanics to DPO, dataset curation, and the decision framework for when not to fine-tune.","url":"https://fullstackfusions.com/blog/posts/2026-03-16-llm-fine-tuning/"}</script>
+
+  <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/tailwind.css" />
+  <link rel="stylesheet" href="/blog/assets/blog.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" />
+  <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();</script>
+  <style>body{font-family:"Inter",ui-sans-serif,system-ui,sans-serif}.section-heading{position:relative;padding-bottom:.6rem}.section-heading::after{content:"";position:absolute;left:0;bottom:0;width:36px;height:3px;background:#3b82f6;border-radius:2px}#theme-toggle{position:fixed;bottom:1rem;right:1rem;z-index:999;width:2.25rem;height:2.25rem;border-radius:50%;border:none;background:#2563eb;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .2s}#theme-toggle:hover{background:#3b82f6}html.dark #theme-toggle{background:#2563eb;border:none}html.dark #theme-toggle:hover{background:#3b82f6}html.dark{color-scheme:dark}html.dark body{background-color:#0f172a;color:#e2e8f0}html.dark .bg-gray-50{background-color:#0f172a}html.dark .bg-white{background-color:#1e293b}html.dark .bg-gray-900{background-color:#020617}html.dark .text-gray-900{color:#f1f5f9}html.dark .text-gray-800{color:#e2e8f0}html.dark .text-gray-700{color:#cbd5e1}html.dark .text-gray-600{color:#94a3b8}html.dark .text-gray-500{color:#64748b}html.dark .border-gray-200{border-color:#334155}html.dark .shadow-sm{box-shadow:0 1px 2px rgba(0,0,0,.5)}html.dark .text-blue-600{color:#60a5fa}html.dark .section-heading::after{background:#60a5fa}</style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode"><span id="theme-icon">&#x1F319;</span></button>
+
+  
+  <div id="site-nav"></div>
+  <script src="/components/navbar.js"></script>
+
+  <main class="blog-container">
+    <a class="back-link" href="/blog">&#8592; All posts</a>
+
+    <article>
+      <header class="post-header">
+        <div class="post-meta">March 16, 2026</div>
+        <h1 class="text-3xl font-bold mt-2">LLM Fine-Tuning: What Nobody Tells You Until You've Burned the GPU Budget</h1>
+        <p class="text-gray-600 mt-2">A Principal Engineer's honest field guide to LLM fine-tuning — from LoRA and QLoRA mechanics to DPO, dataset curation, and the decision framework for when not to fine-tune.</p>
+        <div class="post-tags"><span class="tag">llm</span><span class="tag">fine-tuning</span><span class="tag">machine-learning</span><span class="tag">ai</span></div>
+      </header>
+
+      <div class="post-content">
+        <h1>LLM Fine-Tuning: What Nobody Tells You Until You&#39;ve Burned the GPU Budget</h1>
+<p><em>A Principal Engineer&#39;s honest field guide — from theory to production</em></p>
+<hr>
+<blockquote>
+<p>&quot;The first time I recommended fine-tuning to leadership, I was wrong. Not about the technology — about the timing. We hadn&#39;t exhausted the simpler options yet. That mistake taught me more about engineering judgment than any training run ever did.&quot;</p>
+<p>— Perspective of a Principal Engineer, Financial Services Infrastructure</p>
+</blockquote>
+<hr>
+<h2>The Question That Changes Everything</h2>
+<p>Here&#39;s a question I want you to sit with before we go any further:</p>
+<p><strong>When a junior engineer asks &quot;should we fine-tune this model?&quot; — what separates a good answer from a Principal Engineer&#39;s answer?</strong></p>
+<p>The junior says: <em>&quot;Yes, fine-tuning will make it better at our domain.&quot;</em></p>
+<p>The principal says: <em>&quot;Let&#39;s define what &#39;better&#39; means, measure where we are today, exhaust cheaper options first, then make a build-vs-buy decision with a TCO model attached.&quot;</em></p>
+<p>That framing — that discipline — is what this entire blog is about. The technical mechanics of fine-tuning are learnable in a weekend. The judgment to know <em>when</em>, <em>why</em>, and <em>whether</em> — that&#39;s what takes years. Let&#39;s compress that.</p>
+<hr>
+<div id="ft-decision" style="background:#0a0f1a;border:1px solid #1e293b;border-radius:14px;padding:1.75rem;margin:2rem 0;font-size:.875rem">
+  <div style="text-align:center;color:#38bdf8;font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.25rem">🤔 Are You Ready to Fine-Tune?</div>
+  <div id="ft-q-area"></div>
+  <div id="ft-result" style="display:none"></div>
+</div>
+<script>
+(function(){
+var questions=[
+  {text:"Do you have 500+ high-quality labeled examples?",yes:1,no:'prompting'},
+  {text:"Have you tried prompt engineering + RAG and it's not good enough?",yes:2,no:'prompting'},
+  {text:"Is output consistency or format adherence a hard requirement?",yes:3,no:'rag'},
+  {text:"Is latency or inference cost at scale a concern?",yes:4,no:'sft'},
+  {text:"Do you have data residency / on-prem requirements?",yes:'sft_full',no:'sft'}
+];
+var outcomes={
+  prompting:{label:'Stick with Prompting',color:'#f59e0b',bg:'#451a03',border:'#92400e',icon:'💬',reason:'You haven\'t exhausted the simpler options yet. Prompt engineering + few-shot examples + RAG covers most use cases without a training run.'},
+  rag:{label:'Use RAG',color:'#34d399',bg:'#022c22',border:'#065f46',icon:'🔍',reason:'You have enough complexity to need dynamic knowledge injection, but not enough data or a consistent-enough task to justify fine-tuning. RAG is the right next step.'},
+  sft:{label:'Fine-Tune (LoRA/QLoRA)',color:'#60a5fa',bg:'#0c1a3a',border:'#1e3a8a',icon:'🎯',reason:'You\'ve earned it. You have the data, prompting isn\'t cutting it, and you have a clear repeatable task. Start with QLoRA on a 7B model.'},
+  sft_full:{label:'Full Pipeline: QLoRA + DPO + On-Prem',color:'#a78bfa',bg:'#1e1b4b',border:'#4338ca',icon:'🏗️',reason:'This is the regulated-industry path. Fine-tune on-prem for data sovereignty, add DPO to encode policy constraints, serve with vLLM for production throughput.'}
+};
+var step=0;
+function render(){
+  var qa=document.getElementById('ft-q-area');
+  var rs=document.getElementById('ft-result');
+  if(typeof step==='string'){
+    qa.innerHTML='';
+    rs.style.display='block';
+    var o=outcomes[step];
+    rs.innerHTML='<div style="background:'+o.bg+';border:1px solid '+o.border+';border-radius:10px;padding:1.25rem"><div style="font-size:1.5rem;margin-bottom:.5rem">'+o.icon+'</div><div style="color:'+o.color+';font-weight:700;font-size:1rem;margin-bottom:.5rem">'+o.label+'</div><div style="color:#cbd5e1;font-size:.85rem;line-height:1.6">'+o.reason+'</div><button onclick="ftReset()" style="margin-top:1rem;background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:6px;padding:.4rem 1rem;font-size:.775rem;cursor:pointer">↺ Start Over</button></div>';
+    return;
+  }
+  var q=questions[step];
+  var prog=Math.round((step/questions.length)*100);
+  qa.innerHTML='<div style="margin-bottom:1rem"><div style="display:flex;justify-content:space-between;font-size:.7rem;color:#475569;margin-bottom:.35rem"><span>Question '+(step+1)+' of '+questions.length+'</span><span>'+prog+'% complete</span></div><div style="background:#1e293b;border-radius:4px;height:4px"><div style="background:#2563eb;height:4px;border-radius:4px;width:'+prog+'%;transition:width .3s"></div></div></div><div style="background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1.25rem;margin-bottom:1rem"><div style="color:#e2e8f0;font-size:.9rem;line-height:1.55">'+q.text+'</div></div><div style="display:flex;gap:.75rem;justify-content:center"><button onclick="ftAnswer(true)" style="background:#1e3a5f;color:#38bdf8;border:1px solid #1e40af;border-radius:8px;padding:.55rem 1.5rem;font-size:.825rem;font-weight:600;cursor:pointer">✓ Yes</button><button onclick="ftAnswer(false)" style="background:#2d1515;color:#f87171;border:1px solid #7f1d1d;border-radius:8px;padding:.55rem 1.5rem;font-size:.825rem;font-weight:600;cursor:pointer">✗ No</button></div>';
+}
+window.ftAnswer=function(yes){
+  var q=questions[step];
+  var next=yes?q.yes:q.no;
+  if(typeof next==='number'){step=next;}else{step=next;}
+  render();
+};
+window.ftReset=function(){
+  step=0;
+  document.getElementById('ft-result').style.display='none';
+  render();
+};
+render();
+})();
+</script>
+
+<hr>
+<h2>Part 1: What Is Fine-Tuning, Really?</h2>
+<p>Let&#39;s start at first principles, because most explanations stop too early.</p>
+<p>A pre-trained LLM — Llama 3, Mistral, GPT-4 — has consumed trillions of tokens. It has absorbed the structure of language, the patterns of reasoning, and an enormous breadth of world knowledge. But here&#39;s what it <em>doesn&#39;t</em> know:</p>
+<ul>
+<li>Your internal tool names, network topology naming conventions, or proprietary terminology</li>
+<li>Your organization&#39;s regulatory tone — the precise way a risk statement should be framed</li>
+<li>How a senior network engineer at your firm reasons through a BGP convergence failure</li>
+<li>What &quot;acceptable output format&quot; means in your specific pipeline</li>
+</ul>
+<p><strong>Fine-tuning</strong> is the act of continuing the pre-training process — but on <em>your</em> curated dataset. You are nudging the model&#39;s weights to internalize your domain&#39;s patterns.</p>
+<p>A useful mental model:</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Analogy</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Pre-training</td>
+<td>University education — broad, general, foundational</td>
+</tr>
+<tr>
+<td>Fine-tuning</td>
+<td>On-the-job apprenticeship — specialized, contextual, opinionated</td>
+</tr>
+<tr>
+<td>Prompt engineering</td>
+<td>Giving written instructions to an already-trained employee</td>
+</tr>
+</tbody></table>
+<p>Notice that prompt engineering is the <em>lightest</em> intervention. It doesn&#39;t change the employee. Fine-tuning <em>changes who they are</em>.</p>
+<p>That&#39;s why it&#39;s powerful. And why it demands respect.</p>
+<hr>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.25rem;margin:2rem 0;perspective:1000px">
+  <div class="analogy-card" onclick="flipCard(this)" style="height:160px;cursor:pointer;position:relative" title="Click to flip">
+    <div style="position:absolute;inset:0;transition:transform .6s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d">
+      <div style="position:absolute;inset:0;background:#0f172a;border:1px solid #1e3a5f;border-radius:12px;padding:1.25rem;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden">
+        <div style="font-size:1.75rem;margin-bottom:.5rem">🎓</div>
+        <div style="color:#38bdf8;font-weight:700;font-size:.875rem;text-align:center">Pre-training</div>
+        <div style="color:#475569;font-size:.7rem;margin-top:.25rem">click to reveal</div>
+      </div>
+      <div style="position:absolute;inset:0;background:#0f2a1a;border:1px solid #166534;border-radius:12px;padding:1.25rem;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;transform:rotateY(180deg)">
+        <div style="font-size:1.4rem;margin-bottom:.4rem">🏛️</div>
+        <div style="color:#4ade80;font-weight:700;font-size:.8rem;text-align:center">University Education</div>
+        <div style="color:#86efac;font-size:.75rem;margin-top:.5rem;text-align:center;line-height:1.5">Broad, general, foundational. Trillions of tokens of world knowledge.</div>
+      </div>
+    </div>
+  </div>
+  <div class="analogy-card" onclick="flipCard(this)" style="height:160px;cursor:pointer;position:relative" title="Click to flip">
+    <div style="position:absolute;inset:0;transition:transform .6s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d">
+      <div style="position:absolute;inset:0;background:#0f172a;border:1px solid #4338ca;border-radius:12px;padding:1.25rem;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden">
+        <div style="font-size:1.75rem;margin-bottom:.5rem">🎯</div>
+        <div style="color:#a78bfa;font-weight:700;font-size:.875rem;text-align:center">Fine-tuning</div>
+        <div style="color:#475569;font-size:.7rem;margin-top:.25rem">click to reveal</div>
+      </div>
+      <div style="position:absolute;inset:0;background:#1e1b4b;border:1px solid #4338ca;border-radius:12px;padding:1.25rem;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;transform:rotateY(180deg)">
+        <div style="font-size:1.4rem;margin-bottom:.4rem">🔧</div>
+        <div style="color:#a78bfa;font-weight:700;font-size:.8rem;text-align:center">On-the-job Apprenticeship</div>
+        <div style="color:#c4b5fd;font-size:.75rem;margin-top:.5rem;text-align:center;line-height:1.5">Specialized, contextual, opinionated. Changes who the model <em>is</em>.</div>
+      </div>
+    </div>
+  </div>
+  <div class="analogy-card" onclick="flipCard(this)" style="height:160px;cursor:pointer;position:relative" title="Click to flip">
+    <div style="position:absolute;inset:0;transition:transform .6s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d">
+      <div style="position:absolute;inset:0;background:#0f172a;border:1px solid #92400e;border-radius:12px;padding:1.25rem;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden">
+        <div style="font-size:1.75rem;margin-bottom:.5rem">✍️</div>
+        <div style="color:#fbbf24;font-weight:700;font-size:.875rem;text-align:center">Prompt Engineering</div>
+        <div style="color:#475569;font-size:.7rem;margin-top:.25rem">click to reveal</div>
+      </div>
+      <div style="position:absolute;inset:0;background:#1c1209;border:1px solid #92400e;border-radius:12px;padding:1.25rem;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;transform:rotateY(180deg)">
+        <div style="font-size:1.4rem;margin-bottom:.4rem">📋</div>
+        <div style="color:#fbbf24;font-weight:700;font-size:.8rem;text-align:center">Written Instructions</div>
+        <div style="color:#fde68a;font-size:.75rem;margin-top:.5rem;text-align:center;line-height:1.5">Lightest intervention. Doesn't change the employee — just tells them what to do.</div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function flipCard(card){var inner=card.querySelector('div');var flipped=inner.style.transform==='rotateY(180deg)';inner.style.transform=flipped?'':'rotateY(180deg)';}
+</script>
+
+<hr>
+<h2>Part 2: Under the Hood — How It Actually Works</h2>
+<p>You don&#39;t need to be a researcher to understand the training loop. But you do need to understand it well enough to debug when it breaks.</p>
+<h3>The Core Training Loop</h3>
+<pre><code>Your curated dataset (input → expected output pairs)
+        ↓
+Feed through the model → get predicted output
+        ↓
+Compute loss (cross-entropy: how wrong was the prediction?)
+        ↓
+Backpropagate gradients → update weights
+        ↓
+Repeat until loss converges on validation set
+</code></pre>
+<p>Every iteration, the model is being gently reshaped by your data. The question is: <em>which weights do you update?</em></p>
+<h3>Full Fine-Tuning vs. PEFT — The Practical Reality</h3>
+<table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>What Changes</th>
+<th>Hardware Required</th>
+<th>Approx. Cost</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Full Fine-Tuning</td>
+<td>All ~7B–70B parameters</td>
+<td>Multi-GPU cluster</td>
+<td>Very High</td>
+</tr>
+<tr>
+<td>PEFT / LoRA</td>
+<td>~0.1–1% of parameters (adapter layers)</td>
+<td>Single consumer GPU</td>
+<td>Low–Medium</td>
+</tr>
+<tr>
+<td>QLoRA</td>
+<td>LoRA + 4-bit quantization</td>
+<td>Single 16GB GPU</td>
+<td>Very Low</td>
+</tr>
+</tbody></table>
+<p><strong>LoRA (Low-Rank Adaptation)</strong> is the dominant approach in 2025–2026. Instead of rewriting the full weight matrices, it injects two small trainable matrices <em>alongside</em> the frozen original weights:</p>
+<pre><code class="language-python"># Conceptually:
+W_updated = W_original + (A × B)
+# A and B are tiny. W_original never changes.
+</code></pre>
+<p>You train only A and B. The base model is frozen. This is how you fine-tune a 7-billion parameter model on a single RTX 4090.</p>
+<p><strong>QLoRA</strong> pushes this further — it quantizes the base model to 4-bit precision (shrinking memory by ~4x) and applies LoRA on top. This is what democratized fine-tuning. Without QLoRA, this technique would be locked behind enterprise GPU clusters.</p>
+<hr>
+<div style="background:#0a0f1a;border:1px solid #1e293b;border-radius:14px;padding:1.75rem;margin:2rem 0">
+  <div style="text-align:center;color:#38bdf8;font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.5rem">LoRA Weight Matrix Visualizer</div>
+  <div style="display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem">
+    <div style="text-align:center">
+      <div style="color:#475569;font-size:.7rem;margin-bottom:.4rem;font-family:monospace">W_original (frozen)</div>
+      <div id="lora-w" style="width:80px;height:80px;background:#1e293b;border:2px solid #334155;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.75rem;color:#475569">7B params</div>
+    </div>
+    <div style="color:#475569;font-size:1.25rem">+</div>
+    <div style="text-align:center">
+      <div style="color:#60a5fa;font-size:.7rem;margin-bottom:.4rem;font-family:monospace">A matrix (trainable)</div>
+      <div id="lora-a" style="width:80px;background:#0c1a3a;border:2px solid #2563eb;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#60a5fa;transition:height .4s,font-size .4s"></div>
+    </div>
+    <div style="color:#475569;font-size:1.25rem">×</div>
+    <div style="text-align:center">
+      <div style="color:#a78bfa;font-size:.7rem;margin-bottom:.4rem;font-family:monospace">B matrix (trainable)</div>
+      <div id="lora-b" style="height:80px;background:#1e1b4b;border:2px solid #6d28d9;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#a78bfa;transition:width .4s,font-size .4s"></div>
+    </div>
+    <div style="color:#475569;font-size:1.25rem">=</div>
+    <div style="text-align:center">
+      <div style="color:#34d399;font-size:.7rem;margin-bottom:.4rem;font-family:monospace">W_updated</div>
+      <div style="width:80px;height:80px;background:#022c22;border:2px solid #065f46;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#34d399">adapted</div>
+    </div>
+  </div>
+  <div style="max-width:380px;margin:0 auto">
+    <div style="display:flex;justify-content:space-between;font-size:.75rem;color:#94a3b8;margin-bottom:.4rem">
+      <label for="lora-rank-slider">Rank <strong id="lora-rank-val" style="color:#60a5fa">r = 16</strong></label>
+      <span id="lora-param-count" style="color:#4ade80">~0.01% of params</span>
+    </div>
+    <input id="lora-rank-slider" type="range" min="1" max="64" value="16" style="width:100%;accent-color:#2563eb" oninput="loraUpdate(this.value)">
+    <div style="display:flex;justify-content:space-between;font-size:.68rem;color:#334155;margin-top:.25rem"><span>r=1 (minimal)</span><span>r=64 (expressive)</span></div>
+  </div>
+  <div id="lora-hint" style="text-align:center;margin-top:1rem;font-size:.775rem;color:#64748b;font-style:italic"></div>
+</div>
+<script>
+function loraUpdate(r){
+  r=parseInt(r);
+  document.getElementById('lora-rank-val').textContent='r = '+r;
+  var h=Math.max(16,Math.round(r/64*72)+8);
+  var w=Math.max(16,Math.round(r/64*72)+8);
+  var la=document.getElementById('lora-a');
+  var lb=document.getElementById('lora-b');
+  la.style.height=h+'px';
+  la.style.width='80px';
+  la.style.fontSize=r<8?'.6rem':'.7rem';
+  la.textContent=r+'×d';
+  lb.style.width=w+'px';
+  lb.style.height='80px';
+  lb.style.fontSize=r<8?'.6rem':'.7rem';
+  lb.textContent='d×'+r;
+  var pct=(r/64*0.1).toFixed(3);
+  document.getElementById('lora-param-count').textContent='~'+pct+'% of params';
+  var hints={1:'Extremely lightweight. May underfit complex domains.',8:'Good for style/tone adaptation.',16:'Sweet spot for most tasks. Start here.',32:'Higher expressiveness. Use if r=16 underfits.',64:'Max expressiveness. Risk of overfitting on small datasets.'};
+  var keys=[1,8,16,32,64];
+  var closest=keys.reduce(function(p,c){return Math.abs(c-r)<Math.abs(p-r)?c:p;});
+  document.getElementById('lora-hint').textContent=hints[closest];
+}
+loraUpdate(16);
+</script>
+
+<hr>
+<h3>Alignment: Beyond Supervised Fine-Tuning</h3>
+<p>Here&#39;s where it gets philosophically interesting. Supervised fine-tuning (SFT) teaches the model to <em>imitate</em> your examples. But what if you want the model to <em>prefer</em> certain behaviors over others?</p>
+<p>Enter <strong>RLHF</strong> and <strong>DPO</strong>.</p>
+<p><strong>RLHF (Reinforcement Learning from Human Feedback)</strong> — the classic OpenAI approach:</p>
+<ol>
+<li>SFT on demonstrations</li>
+<li>Train a <em>separate reward model</em> on human preference pairs (which response was better, A or B?)</li>
+<li>Use PPO (a reinforcement learning algorithm) to optimize the LLM against the reward model</li>
+</ol>
+<p>It works. It&#39;s also complex, expensive, and unstable. Which is why most teams in 2026 are moving to:</p>
+<p><strong>DPO (Direct Preference Optimization)</strong> — elegant in its simplicity:</p>
+<ul>
+<li>Provide preference pairs directly: <code>(prompt, chosen_response, rejected_response)</code></li>
+<li>DPO reformulates the RL objective into a direct classification loss</li>
+<li>No separate reward model. No PPO instability. Faster, more stable, increasingly preferred.</li>
+</ul>
+<p>For financial services specifically: DPO is how you encode &quot;this model should never recommend investment products without a disclaimer&quot; — not as a prompt rule, but as a <em>baked-in preference</em>.</p>
+<hr>
+<div style="background:#0a0f1a;border:1px solid #1e293b;border-radius:14px;padding:1.75rem;margin:2rem 0">
+  <div style="display:flex;justify-content:center;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap">
+    <button onclick="showPipeline('rlhf')" id="btn-rlhf" style="background:#1e293b;color:#f87171;border:1px solid #7f1d1d;border-radius:8px;padding:.5rem 1.25rem;font-size:.8rem;font-weight:600;cursor:pointer">RLHF Pipeline</button>
+    <button onclick="showPipeline('dpo')" id="btn-dpo" style="background:#0c1a3a;color:#60a5fa;border:1px solid #1e40af;border-radius:8px;padding:.5rem 1.25rem;font-size:.8rem;font-weight:600;cursor:pointer">DPO Pipeline</button>
+  </div>
+  <div id="pipeline-rlhf">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:.5rem">
+      <div style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.7rem 2rem;color:#e2e8f0;font-size:.825rem;font-weight:500;text-align:center">📚 Labeled Demonstrations</div>
+      <div style="color:#475569;font-size:.9rem">↓</div>
+      <div class="rlhf-step" style="background:#1c1209;border:2px solid #f59e0b;border-radius:8px;padding:.7rem 2rem;color:#fde68a;font-size:.825rem;font-weight:600;text-align:center;animation:pulseBorder 2s infinite">① Supervised Fine-Tuning (SFT)</div>
+      <div style="color:#475569;font-size:.9rem">↓</div>
+      <div class="rlhf-step" style="background:#450a0a;border:2px solid #ef4444;border-radius:8px;padding:.7rem 2rem;color:#fca5a5;font-size:.825rem;font-weight:600;text-align:center;animation:pulseBorder 2s infinite .5s">② Reward Model Training<br><span style="font-size:.72rem;color:#f87171;font-weight:400">Separate model — human preference pairs (A vs B)</span></div>
+      <div style="color:#475569;font-size:.9rem">↓</div>
+      <div class="rlhf-step" style="background:#2d1515;border:2px solid #dc2626;border-radius:8px;padding:.7rem 2rem;color:#fca5a5;font-size:.825rem;font-weight:600;text-align:center;animation:pulseBorder 2s infinite 1s">③ PPO Optimization<br><span style="font-size:.72rem;color:#f87171;font-weight:400">Reinforcement learning — complex, expensive, unstable</span></div>
+      <div style="color:#475569;font-size:.9rem">↓</div>
+      <div style="background:#022c22;border:1px solid #065f46;border-radius:8px;padding:.7rem 2rem;color:#34d399;font-size:.825rem;font-weight:600;text-align:center">✓ Aligned Model</div>
+    </div>
+    <div style="margin-top:1rem;padding:.6rem 1rem;background:#1c0a0a;border:1px solid #7f1d1d;border-radius:8px;color:#fca5a5;font-size:.775rem;text-align:center">⚠️ 3 stages · separate reward model · PPO instability · high complexity</div>
+  </div>
+  <div id="pipeline-dpo" style="display:none">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:.5rem">
+      <div style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.7rem 2rem;color:#e2e8f0;font-size:.825rem;font-weight:500;text-align:center">📋 Preference Pairs<br><span style="font-size:.72rem;color:#94a3b8">(prompt, chosen, rejected)</span></div>
+      <div style="color:#475569;font-size:.9rem">↓</div>
+      <div style="background:#0c1a3a;border:2px solid #2563eb;border-radius:8px;padding:.7rem 2rem;color:#93c5fd;font-size:.825rem;font-weight:600;text-align:center">Direct Classification Loss<br><span style="font-size:.72rem;color:#60a5fa;font-weight:400">No reward model. RL objective reformulated directly.</span></div>
+      <div style="color:#475569;font-size:.9rem">↓</div>
+      <div style="background:#022c22;border:1px solid #065f46;border-radius:8px;padding:.7rem 2rem;color:#34d399;font-size:.825rem;font-weight:600;text-align:center">✓ Aligned Model</div>
+    </div>
+    <div style="margin-top:1rem;padding:.6rem 1rem;background:#022c22;border:1px solid #065f46;border-radius:8px;color:#86efac;font-size:.775rem;text-align:center">✅ 1 stage · no reward model · stable · fast · preferred in 2026</div>
+  </div>
+</div>
+<style>@keyframes pulseBorder{0%,100%{opacity:1}50%{opacity:.6}}</style>
+<script>
+function showPipeline(p){
+  document.getElementById('pipeline-rlhf').style.display=p==='rlhf'?'block':'none';
+  document.getElementById('pipeline-dpo').style.display=p==='dpo'?'block':'none';
+  document.getElementById('btn-rlhf').style.background=p==='rlhf'?'#450a0a':'#1e293b';
+  document.getElementById('btn-dpo').style.background=p==='dpo'?'#0c1a3a':'#1e293b';
+}
+</script>
+
+<hr>
+<h2>Part 3: The Implementation Pipeline</h2>
+<p>This is where most tutorials hand you code and walk away. As a Principal Engineer, you need to understand each step <em>well enough to own it</em>.</p>
+<h3>Step 1: Dataset Preparation (80% of the Real Work)</h3>
+<pre><code class="language-json">{
+  &quot;instruction&quot;: &quot;Explain why a BGP route is being dropped&quot;,
+  &quot;input&quot;: &quot;Router logs show: BGP: 10.0.0.1 Active, holdtime 90 seconds&quot;,
+  &quot;output&quot;: &quot;The BGP session to peer 10.0.0.1 is in the Active state,
+             meaning the router is attempting to establish a connection
+             but has not yet received an OPEN message...&quot;
+}
+</code></pre>
+<p>For a network engineering context, your training data might come from:</p>
+<ul>
+<li>Incident post-mortems → structured root cause analyses</li>
+<li>Network config snippets → natural language explanations</li>
+<li>Internal runbooks → Q&amp;A pairs</li>
+<li>Ticket resolutions → diagnostic reasoning chains</li>
+</ul>
+<p><strong>The uncomfortable truth:</strong> data quality utterly dominates data quantity. 500 expertly curated examples routinely outperform 50,000 scraped ones. The data curation step is where a senior engineer&#39;s domain expertise creates irreplaceable value that no tool can automate.</p>
+<h3>Step 2: Model Selection</h3>
+<table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Recommended Model</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>General instruction following</td>
+<td>Llama 3.1 8B / Mistral 7B</td>
+</tr>
+<tr>
+<td>Code generation</td>
+<td>DeepSeek Coder, CodeLlama</td>
+</tr>
+<tr>
+<td>Long context (documents, runbooks)</td>
+<td>Mistral 7B 32k, Llama 3.1 128k</td>
+</tr>
+<tr>
+<td>Hosted, no infra</td>
+<td>OpenAI fine-tuning API, Google Vertex AI</td>
+</tr>
+</tbody></table>
+<h3>Step 3: QLoRA Training (Practical Implementation)</h3>
+<pre><code class="language-python">from transformers import AutoModelForCausalLM, TrainingArguments
+from peft import LoraConfig, get_peft_model
+from trl import SFTTrainer
+
+# Load base model in 4-bit (QLoRA)
+model = AutoModelForCausalLM.from_pretrained(
+    &quot;meta-llama/Meta-Llama-3-8B&quot;,
+    load_in_4bit=True,
+    device_map=&quot;auto&quot;
+)
+
+# LoRA config — only adapt attention layers
+lora_config = LoraConfig(
+    r=16,                                    # Rank of the low-rank matrices
+    lora_alpha=32,                           # Scaling factor
+    target_modules=[&quot;q_proj&quot;, &quot;v_proj&quot;],    # Which layers to adapt
+    lora_dropout=0.05,
+    bias=&quot;none&quot;,
+    task_type=&quot;CAUSAL_LM&quot;
+)
+
+model = get_peft_model(model, lora_config)
+
+trainer = SFTTrainer(
+    model=model,
+    train_dataset=your_dataset,
+    args=TrainingArguments(
+        output_dir=&quot;./fine-tuned-model&quot;,
+        num_train_epochs=3,
+        per_device_train_batch_size=4,
+        learning_rate=2e-4,
+    )
+)
+trainer.train()
+</code></pre>
+<p>The hyperparameters here are not arbitrary. <code>r=16</code> means rank-16 matrices. Lower r = fewer trainable parameters = faster training, but potentially less expressive adaptation. <code>lora_alpha=32</code> controls scaling. <code>target_modules</code> determines which transformer layers receive the LoRA treatment — attention layers (q_proj, v_proj) are the most common choice.</p>
+<p>Want to know which r to use? Start at 16. If the model underfits on your validation set, try 32 or 64. If it overfits, try 8. The empirics matter more than the theory here.</p>
+<h3>Step 4: Evaluation (The Step Everyone Rushes)</h3>
+<p>Never skip this. Not because it&#39;s a best practice checkbox — because fine-tuning can silently degrade general capability while improving task-specific performance. This is called <strong>catastrophic forgetting</strong>, and it&#39;s subtle enough to ship to production.</p>
+<p>Your eval suite should include:</p>
+<ul>
+<li><strong>Perplexity</strong> on held-out domain data (lower is better)</li>
+<li><strong>Task-specific metrics</strong> (precision/recall on structured outputs)</li>
+<li><strong>Human eval</strong> for open-ended generation quality</li>
+<li><strong>Regression tests</strong> on general capability — can it still do math? Can it still reason?</li>
+</ul>
+<h3>Step 5: Serving</h3>
+<pre><code>Options:
+1. Merge LoRA weights → deploy as standalone model (Ollama, vLLM, TGI)
+2. Serve base model + LoRA adapter separately (hot-swappable adapters)
+3. Upload to Hugging Face Hub (private repo)
+4. Deploy via managed API (OpenAI fine-tune endpoints, Vertex AI)
+</code></pre>
+<p>Option 2 — hot-swappable adapters — is increasingly interesting for multi-tenant enterprise environments. One base model, multiple fine-tuned adapters for different teams or use cases. The economics are compelling.</p>
+<hr>
+<div style="background:#0a0f1a;border:1px solid #1e293b;border-radius:14px;padding:1.5rem;margin:2rem 0">
+  <div style="color:#475569;font-size:.75rem;font-style:italic;margin-bottom:1rem;text-align:center">👆 Hover any highlighted line to see why that parameter matters</div>
+  <pre style="margin:0;background:#1e293b;border-radius:8px;padding:1.25rem;overflow-x:auto;font-size:.82rem;line-height:1.8;position:relative"><code id="annotated-code" style="font-family:monospace;color:#e2e8f0"><span style="color:#64748b">from transformers import AutoModelForCausalLM, TrainingArguments</span>
+<span style="color:#64748b">from peft import LoraConfig, get_peft_model</span>
+<span style="color:#64748b">from trl import SFTTrainer</span>
+
+<p><span class="aline" data-ann="load_in_4bit: quantizes the base model to 4-bit precision, shrinking VRAM by ~4x. This is what lets you run 7B–13B models on a single consumer GPU. Without this, you'd need a multi-GPU server." style="cursor:pointer;display:block;border-radius:4px;padding:0 .25rem;transition:background .15s">model = AutoModelForCausalLM.from_pretrained(<span style="color:#4ade80">load_in_4bit=True</span>, device_map=<span style="color:#fbbf24">&quot;auto&quot;</span>)</span></p>
+<p><span class="aline" data-ann="r=16: the rank of the low-rank matrices A and B. Controls how many parameters you're training. r=16 is the standard starting point — expressive enough for most domain adaptation without overfitting." style="cursor:pointer;display:block;border-radius:4px;padding:0 .25rem;transition:background .15s">lora_config = LoraConfig(<span style="color:#60a5fa">r=16</span>,</span>
+<span class="aline" data-ann="lora_alpha=32: scaling factor applied to the LoRA output. A common rule of thumb is alpha = 2×r. Higher alpha = stronger LoRA influence relative to the frozen weights." style="cursor:pointer;display:block;border-radius:4px;padding:0 .25rem;transition:background .15s">                         <span style="color:#a78bfa">lora_alpha=32</span>,</span>
+<span class="aline" data-ann="target_modules: which transformer layers receive LoRA adapters. q_proj and v_proj (query and value attention projections) are the most impactful — they control how the model attends to context." style="cursor:pointer;display:block;border-radius:4px;padding:0 .25rem;transition:background .15s">                         <span style="color:#f97316">target_modules=[&quot;q_proj&quot;, &quot;v_proj&quot;]</span>,</span>
+<span class="aline" data-ann="lora_dropout=0.05: small dropout on the LoRA layers to prevent overfitting. Important when your dataset is small (hundreds of examples). Set to 0 for large datasets." style="cursor:pointer;display:block;border-radius:4px;padding:0 .25rem;transition:background .15s">                         <span style="color:#34d399">lora_dropout=0.05</span>,</span>
+<span style="color:#e2e8f0">                         task_type=<span style="color:#fbbf24">&quot;CAUSAL_LM&quot;</span>)</span></p>
+<p><span class="aline" data-ann="learning_rate=2e-4: higher than typical full fine-tuning (1e-5). LoRA adapters are freshly initialized — they need a larger step size. If loss oscillates, try 1e-4." style="cursor:pointer;display:block;border-radius:4px;padding:0 .25rem;transition:background .15s">        <span style="color:#f87171">learning_rate=2e-4</span>,</span>
+<span class="aline" data-ann="num_train_epochs=3: typically 2-5 epochs for fine-tuning. More epochs = more domain specialization but higher risk of catastrophic forgetting. Monitor validation loss." style="cursor:pointer;display:block;border-radius:4px;padding:0 .25rem;transition:background .15s">        <span style="color:#fbbf24">num_train_epochs=3</span>,</span>
+</code></pre>
+  <div id="ann-tooltip" style="display:none;position:fixed;z-index:9000;max-width:320px;background:rgba(15,23,42,.97);border:1px solid #2563eb;border-radius:10px;padding:1rem;font-size:.8rem;color:#cbd5e1;line-height:1.55;backdrop-filter:blur(8px);box-shadow:0 8px 32px rgba(0,0,0,.5)"></div></p>
+</div>
+<script>
+(function(){
+  var tt=document.getElementById('ann-tooltip');
+  document.querySelectorAll('.aline').forEach(function(el){
+    el.addEventListener('mouseenter',function(e){
+      tt.textContent=el.getAttribute('data-ann');
+      tt.style.display='block';
+      el.style.background='rgba(37,99,235,.15)';
+      positionTt(e);
+    });
+    el.addEventListener('mousemove',positionTt);
+    el.addEventListener('mouseleave',function(){
+      tt.style.display='none';
+      el.style.background='';
+    });
+  });
+  function positionTt(e){
+    var x=e.clientX+16,y=e.clientY-10;
+    if(x+330>window.innerWidth)x=e.clientX-340;
+    if(y+120>window.innerHeight)y=e.clientY-130;
+    tt.style.left=x+'px';
+    tt.style.top=y+'px';
+  }
+})();
+</script>
+
+<hr>
+<h2>Part 4: The Most Important Question — When <em>Not</em> To Fine-Tune</h2>
+<p>I&#39;ve seen more engineering time wasted on premature fine-tuning than almost any other AI mistake. Here&#39;s the decision framework I use:</p>
+<pre><code>Do you have a clear, repeatable task with consistent I/O patterns?
+│
+├── NO → Use RAG or prompt engineering first
+│
+└── YES → Does prompt engineering + RAG already solve it well enough?
+           │
+           ├── YES → Don&#39;t fine-tune. Ship the simpler solution.
+           │
+           └── NO → Do you have 500+ high-quality labeled examples?
+                      │
+                      ├── NO → Collect data first. Fine-tuning without data = waste.
+                      │
+                      └── YES → Fine-tune.
+</code></pre>
+<p><strong>The &quot;Prompt Engineering First&quot; principle is non-negotiable.</strong> Fine-tuning is a commitment — a training run, an infrastructure decision, a maintenance burden. You don&#39;t reach for it casually.</p>
+<p>The right escalation order:</p>
+<ol>
+<li>Zero-shot prompting</li>
+<li>Few-shot prompting (examples in the prompt)</li>
+<li>RAG (retrieval-augmented generation for knowledge injection)</li>
+<li>System prompt + structured output enforcement</li>
+<li>Fine-tuning — only if 1–4 don&#39;t meet your bar</li>
+</ol>
+<h3>When Fine-Tuning Genuinely Wins</h3>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Why Fine-Tuning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Proprietary terminology in outputs</td>
+<td>Base model doesn&#39;t know your internal vocabulary</td>
+</tr>
+<tr>
+<td>Strict output format every time</td>
+<td>Prompting is fragile for format adherence at scale</td>
+</tr>
+<tr>
+<td>Latency is a hard requirement</td>
+<td>Smaller fine-tuned model beats a large model with a 2000-token system prompt</td>
+</tr>
+<tr>
+<td>Cost at scale</td>
+<td>Fine-tuned 7B destroys GPT-4 on TCO at 10k+ queries/day</td>
+</tr>
+<tr>
+<td>Style/tone consistency</td>
+<td>Brand voice needs to be baked in, not instructed</td>
+</tr>
+<tr>
+<td>On-premises deployment</td>
+<td>Data residency regulations — no cloud egress allowed</td>
+</tr>
+</tbody></table>
+<p>That last row is the one that matters most in regulated industries. When you can&#39;t send data to an external API — and in financial services, you often can&#39;t — a fine-tuned model running on-prem isn&#39;t a luxury. It&#39;s the only option.</p>
+<hr>
+<div style="background:#0a0f1a;border:1px solid #1e293b;border-radius:14px;padding:1.75rem;margin:2rem 0">
+  <div style="text-align:center;color:#38bdf8;font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.5rem">💰 Fine-Tuning TCO Calculator</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem;margin-bottom:1.5rem">
+    <div>
+      <label style="color:#94a3b8;font-size:.75rem;display:block;margin-bottom:.3rem">Queries per day: <strong id="tco-qpd-val" style="color:#e2e8f0">10,000</strong></label>
+      <input type="range" min="100" max="100000" step="100" value="10000" style="width:100%;accent-color:#2563eb" oninput="tcoUpdate('qpd',this.value)">
+    </div>
+    <div>
+      <label style="color:#94a3b8;font-size:.75rem;display:block;margin-bottom:.3rem">Avg tokens / query (prompt+completion): <strong id="tco-tok-val" style="color:#e2e8f0">2,000</strong></label>
+      <input type="range" min="200" max="8000" step="100" value="2000" style="width:100%;accent-color:#2563eb" oninput="tcoUpdate('tok',this.value)">
+    </div>
+    <div>
+      <label style="color:#94a3b8;font-size:.75rem;display:block;margin-bottom:.3rem">GPT-4o cost per 1K tokens ($): <strong id="tco-gpt-val" style="color:#e2e8f0">$0.010</strong></label>
+      <input type="range" min="1" max="60" step="1" value="10" style="width:100%;accent-color:#ef4444" oninput="tcoUpdate('gpt',this.value)">
+    </div>
+    <div>
+      <label style="color:#94a3b8;font-size:.75rem;display:block;margin-bottom:.3rem">Fine-tuned 7B inference cost per 1K tokens ($): <strong id="tco-ft-val" style="color:#e2e8f0">$0.001</strong></label>
+      <input type="range" min="1" max="20" step="1" value="1" style="width:100%;accent-color:#4ade80" oninput="tcoUpdate('ft',this.value)">
+    </div>
+    <div style="grid-column:1/-1">
+      <label style="color:#94a3b8;font-size:.75rem;display:block;margin-bottom:.3rem">One-time training cost ($): <strong id="tco-train-val" style="color:#e2e8f0">$500</strong></label>
+      <input type="range" min="50" max="10000" step="50" value="500" style="width:100%;accent-color:#a78bfa" oninput="tcoUpdate('train',this.value)">
+    </div>
+  </div>
+  <canvas id="tco-canvas" height="200" style="width:100%;border-radius:8px;background:#0f172a"></canvas>
+  <div id="tco-summary" style="margin-top:1rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem;font-size:.8rem"></div>
+</div>
+<script>
+(function(){
+  var state={qpd:10000,tok:2000,gpt:10,ft:1,train:500};
+  window.tcoUpdate=function(k,v){
+    state[k]=parseFloat(v);
+    document.getElementById('tco-qpd-val').textContent=Number(state.qpd).toLocaleString();
+    document.getElementById('tco-tok-val').textContent=Number(state.tok).toLocaleString();
+    document.getElementById('tco-gpt-val').textContent='$'+(state.gpt/1000).toFixed(3);
+    document.getElementById('tco-ft-val').textContent='$'+(state.ft/1000).toFixed(3);
+    document.getElementById('tco-train-val').textContent='$'+Number(state.train).toLocaleString();
+    draw();
+  };
+  function monthlyCost(costPer1k){return state.qpd*(state.tok/1000)*costPer1k*30;}
+  function draw(){
+    var canvas=document.getElementById('tco-canvas');
+    var ctx=canvas.getContext('2d');
+    canvas.width=canvas.offsetWidth*window.devicePixelRatio||600;
+    canvas.height=200*window.devicePixelRatio||200;
+    ctx.scale(window.devicePixelRatio||1,window.devicePixelRatio||1);
+    var W=canvas.offsetWidth||600,H=200;
+    ctx.clearRect(0,0,W,H);
+    var months=12;
+    var gptM=monthlyCost(state.gpt/1000);
+    var ftM=monthlyCost(state.ft/1000);
+    var gptData=[],ftData=[];
+    var breakeven=-1;
+    for(var i=0;i<=months;i++){
+      gptData.push(gptM*i);
+      ftData.push(state.train+ftM*i);
+      if(breakeven===-1&&i>0&&ftData[i]<=gptData[i])breakeven=i;
+    }
+    var maxVal=Math.max.apply(null,gptData.concat(ftData));
+    var pad={t:20,r:20,b:35,l:60};
+    var cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+    function px(m){return pad.l+m*(cw/months);}
+    function py(v){return pad.t+ch-(v/maxVal)*ch;}
+    ctx.strokeStyle='#1e293b';ctx.lineWidth=1;
+    for(var g=0;g<=4;g++){
+      var yy=pad.t+g*(ch/4);
+      ctx.beginPath();ctx.moveTo(pad.l,yy);ctx.lineTo(pad.l+cw,yy);ctx.stroke();
+      ctx.fillStyle='#475569';ctx.font='10px monospace';ctx.textAlign='right';
+      ctx.fillText('$'+Math.round(maxVal*(1-g/4)).toLocaleString(),pad.l-6,yy+4);
+    }
+    for(var m=0;m<=months;m+=3){
+      ctx.fillStyle='#475569';ctx.font='10px monospace';ctx.textAlign='center';
+      ctx.fillText('Mo '+m,px(m),H-8);
+    }
+    ctx.lineWidth=2.5;ctx.strokeStyle='#ef4444';
+    ctx.beginPath();
+    gptData.forEach(function(v,i){i===0?ctx.moveTo(px(i),py(v)):ctx.lineTo(px(i),py(v));});
+    ctx.stroke();
+    ctx.strokeStyle='#4ade80';
+    ctx.beginPath();
+    ftData.forEach(function(v,i){i===0?ctx.moveTo(px(i),py(v)):ctx.lineTo(px(i),py(v));});
+    ctx.stroke();
+    if(breakeven>0&&breakeven<=months){
+      ctx.strokeStyle='#fbbf24';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
+      ctx.beginPath();ctx.moveTo(px(breakeven),pad.t);ctx.lineTo(px(breakeven),pad.t+ch);ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#fbbf24';ctx.font='bold 10px sans-serif';ctx.textAlign='center';
+      ctx.fillText('break-even',px(breakeven),pad.t+10);
+    }
+    ctx.fillStyle='#ef4444';ctx.font='bold 10px sans-serif';ctx.textAlign='left';
+    ctx.fillText('▬ GPT-4o',pad.l+4,pad.t+16);
+    ctx.fillStyle='#4ade80';
+    ctx.fillText('▬ Fine-tuned 7B',pad.l+70,pad.t+16);
+    var summary=document.getElementById('tco-summary');
+    var ann=monthlyCost(state.gpt/1000)*12;
+    var ftAnn=state.train+monthlyCost(state.ft/1000)*12;
+    var saving=ann-ftAnn;
+    summary.innerHTML='<div style="background:#1e293b;border-radius:8px;padding:.75rem"><div style="color:#94a3b8;font-size:.7rem;margin-bottom:.25rem">GPT-4o Annual Cost</div><div style="color:#f87171;font-size:1.1rem;font-weight:700">$'+Math.round(ann).toLocaleString()+'</div></div>'+
+      '<div style="background:#1e293b;border-radius:8px;padding:.75rem"><div style="color:#94a3b8;font-size:.7rem;margin-bottom:.25rem">Fine-tuned 7B Annual Cost</div><div style="color:#4ade80;font-size:1.1rem;font-weight:700">$'+Math.round(ftAnn).toLocaleString()+'</div></div>'+
+      '<div style="background:'+(saving>0?'#022c22':'#1c0a0a')+';border-radius:8px;padding:.75rem"><div style="color:#94a3b8;font-size:.7rem;margin-bottom:.25rem">'+(saving>0?'Annual Savings':'Fine-tuning costs more')+'</div><div style="color:'+(saving>0?'#34d399':'#f87171')+';font-size:1.1rem;font-weight:700">'+(saving>0?'$'+Math.round(saving).toLocaleString():'-$'+Math.round(-saving).toLocaleString())+'</div></div>'+
+      (breakeven>0&&breakeven<=months?'<div style="background:#1c1209;border-radius:8px;padding:.75rem"><div style="color:#94a3b8;font-size:.7rem;margin-bottom:.25rem">Break-even</div><div style="color:#fbbf24;font-size:1.1rem;font-weight:700">Month '+breakeven+'</div></div>':'');
+  }
+  draw();
+  window.addEventListener('resize',draw);
+})();
+</script>
+
+<hr>
+<h2>Part 5: Fine-Tuning vs. Prompt Engineering — The Honest Comparison</h2>
+<p>Most comparisons you&#39;ll read are strawman arguments. Here&#39;s the honest one:</p>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Prompt Engineering</th>
+<th>Fine-Tuning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Time to value</strong></td>
+<td>Hours to days</td>
+<td>Days to weeks</td>
+</tr>
+<tr>
+<td><strong>Data required</strong></td>
+<td>None</td>
+<td>500–50,000 examples</td>
+</tr>
+<tr>
+<td><strong>Output consistency</strong></td>
+<td>Moderate</td>
+<td>High</td>
+</tr>
+<tr>
+<td><strong>Handles proprietary knowledge</strong></td>
+<td>Only via context window</td>
+<td>Baked into weights</td>
+</tr>
+<tr>
+<td><strong>Latency</strong></td>
+<td>Higher (long prompts)</td>
+<td>Lower (no prompt overhead)</td>
+</tr>
+<tr>
+<td><strong>Cost at scale</strong></td>
+<td>High (token cost per call)</td>
+<td>Lower (smaller model, no long prompts)</td>
+</tr>
+<tr>
+<td><strong>Maintenance</strong></td>
+<td>Easy (just edit the prompt)</td>
+<td>Higher (retrain on new data)</td>
+</tr>
+<tr>
+<td><strong>Catastrophic forgetting risk</strong></td>
+<td>None</td>
+<td>Real — can lose general capability</td>
+</tr>
+</tbody></table>
+<p>The key insight most engineers miss: <strong>these techniques are not mutually exclusive</strong>. The most powerful enterprise pattern combines all three layers:</p>
+<pre><code>User Query
+    ↓
+RAG: Retrieve relevant documents, configs, runbooks
+    ↓
+Prompt: Inject context + task-specific instructions
+    ↓
+Fine-Tuned Model: Respond in domain-appropriate style and format
+</code></pre>
+<p>Fine-tune for <em>style, format, and vocabulary</em>. Use prompts for <em>task-specific dynamic instructions</em>. Use RAG for <em>real-time knowledge retrieval</em>. Each layer does what it does best.</p>
+<hr>
+<div style="background:#0a0f1a;border:1px solid #1e293b;border-radius:14px;padding:1.75rem;margin:2rem 0">
+  <div style="color:#475569;font-size:.75rem;text-align:center;margin-bottom:1.25rem;font-style:italic">Click any layer to expand details</div>
+  <div style="display:grid;grid-template-columns:1fr;gap:.5rem;max-width:520px;margin:0 auto">
+    <div id="layer-rag" onclick="toggleLayer('rag')" style="background:#0c1a3a;border:1px solid #1e40af;border-radius:10px;padding:1rem 1.25rem;cursor:pointer;transition:border-color .2s">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <span style="font-size:1.2rem">🔍</span>
+          <div><div style="color:#60a5fa;font-weight:700;font-size:.875rem">Layer 1: RAG</div><div style="color:#475569;font-size:.72rem">Retrieval-Augmented Generation</div></div>
+        </div>
+        <span id="layer-rag-arrow" style="color:#475569;transition:transform .2s">▼</span>
+      </div>
+      <div id="layer-rag-detail" style="display:none;margin-top:.875rem;padding-top:.875rem;border-top:1px solid #1e3a5f">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;font-size:.775rem">
+          <div><div style="color:#94a3b8;font-size:.7rem;margin-bottom:.3rem">DOES</div><div style="color:#93c5fd;line-height:1.5">Injects current, private, or domain-specific knowledge at query time. No retraining needed.</div></div>
+          <div><div style="color:#94a3b8;font-size:.7rem;margin-bottom:.3rem">CAN'T DO ALONE</div><div style="color:#64748b;line-height:1.5">Change output style, tone, or format. Doesn't bake in vocabulary or reasoning patterns.</div></div>
+          <div style="grid-column:1/-1"><div style="color:#94a3b8;font-size:.7rem;margin-bottom:.3rem">COST</div><div style="color:#4ade80">Low — embedding storage + retrieval latency (~50–200ms)</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;color:#334155;font-size:.85rem">↓</div>
+    <div id="layer-prompt" onclick="toggleLayer('prompt')" style="background:#1e1b4b;border:1px solid #4338ca;border-radius:10px;padding:1rem 1.25rem;cursor:pointer;transition:border-color .2s">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <span style="font-size:1.2rem">✍️</span>
+          <div><div style="color:#a78bfa;font-weight:700;font-size:.875rem">Layer 2: Prompt</div><div style="color:#475569;font-size:.72rem">Task-specific dynamic instructions</div></div>
+        </div>
+        <span id="layer-prompt-arrow" style="color:#475569;transition:transform .2s">▼</span>
+      </div>
+      <div id="layer-prompt-detail" style="display:none;margin-top:.875rem;padding-top:.875rem;border-top:1px solid #4338ca">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;font-size:.775rem">
+          <div><div style="color:#94a3b8;font-size:.7rem;margin-bottom:.3rem">DOES</div><div style="color:#c4b5fd;line-height:1.5">Guides task behavior, output format, and constraints for this specific request.</div></div>
+          <div><div style="color:#94a3b8;font-size:.7rem;margin-bottom:.3rem">CAN'T DO ALONE</div><div style="color:#64748b;line-height:1.5">Handle proprietary vocab or consistent style at scale. Long prompts increase latency and cost.</div></div>
+          <div style="grid-column:1/-1"><div style="color:#94a3b8;font-size:.7rem;margin-bottom:.3rem">COST</div><div style="color:#fbbf24">Medium — tokens cost money. Every call pays the full prompt overhead.</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;color:#334155;font-size:.85rem">↓</div>
+    <div id="layer-ft" onclick="toggleLayer('ft')" style="background:#022c22;border:1px solid #065f46;border-radius:10px;padding:1rem 1.25rem;cursor:pointer;transition:border-color .2s">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <span style="font-size:1.2rem">🎯</span>
+          <div><div style="color:#34d399;font-weight:700;font-size:.875rem">Layer 3: Fine-Tuned Model</div><div style="color:#475569;font-size:.72rem">Domain-baked style, vocab &amp; format</div></div>
+        </div>
+        <span id="layer-ft-arrow" style="color:#475569;transition:transform .2s">▼</span>
+      </div>
+      <div id="layer-ft-detail" style="display:none;margin-top:.875rem;padding-top:.875rem;border-top:1px solid #065f46">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;font-size:.775rem">
+          <div><div style="color:#94a3b8;font-size:.7rem;margin-bottom:.3rem">DOES</div><div style="color:#86efac;line-height:1.5">Bakes in domain vocabulary, consistent output format, and organization-specific reasoning patterns.</div></div>
+          <div><div style="color:#94a3b8;font-size:.7rem;margin-bottom:.3rem">CAN'T DO ALONE</div><div style="color:#64748b;line-height:1.5">Stay current with real-time data. Needs RAG for live knowledge. Static until retrained.</div></div>
+          <div style="grid-column:1/-1"><div style="color:#94a3b8;font-size:.7rem;margin-bottom:.3rem">COST</div><div style="color:#4ade80">Lowest per-query — smaller model, no long prompts. High upfront training cost.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function toggleLayer(id){
+  var detail=document.getElementById('layer-'+id+'-detail');
+  var arrow=document.getElementById('layer-'+id+'-arrow');
+  var open=detail.style.display==='block';
+  detail.style.display=open?'none':'block';
+  arrow.style.transform=open?'':'rotate(180deg)';
+}
+</script>
+
+<hr>
+<h2>Part 6: Tooling That Actually Matters in 2026</h2>
+<p>The course covers four major areas. Here&#39;s how to think about each as a practitioner:</p>
+<p><strong>LoRA/QLoRA</strong> — Your baseline technique. Understand the hyperparameters (<code>r</code>, <code>lora_alpha</code>, <code>target_modules</code>) at an intuitive level. These aren&#39;t knobs to randomly tune; they directly control the expressiveness of the adaptation.</p>
+<p><strong>DPO</strong> — More important than RLHF for most teams today. If you&#39;re building an assistant that needs to operate within policy constraints — which in financial services is essentially every assistant — DPO lets you encode those preferences without a complex reward model pipeline. This is where safety and helpfulness get balanced.</p>
+<p><strong>Unsloth / Axolotl</strong> — Production tooling that matters. Unsloth provides roughly 2x training speedup with the same memory footprint. Axolotl is the config-driven trainer most enterprises adopt so teams aren&#39;t writing raw HuggingFace training loops — configurations are version-controlled, reproducible, and reviewable.</p>
+<p><strong>Enterprise APIs (OpenAI, Vertex AI)</strong> — The path of least infrastructure resistance for regulated industries. OpenAI&#39;s fine-tuning API and Google&#39;s Vertex AI both support supervised fine-tuning on their models — fully managed, no GPU infrastructure to operate, compliance certifications already in place. The tradeoff is vendor lock-in and less control over the training process.</p>
+<hr>
+<h2>Part 7: The Principal Engineer Conversation</h2>
+<p>When you bring fine-tuning to an architecture review or leadership discussion, the framing matters as much as the technical content. Here&#39;s the structure I use:</p>
+<h3>TCO Analysis (Always Lead With This)</h3>
+<pre><code>Prompt Engineering Annual Cost:
+= tokens_per_request × cost_per_token × requests_per_day × 365
+
+Fine-Tuning Total Cost:
+= training_run_cost + (inference_cost × requests_per_day × 365)
+
+Break-even: typically 3–6 months at moderate scale
+</code></pre>
+<p>Numbers make decisions. Come with the numbers.</p>
+<h3>Risk Profile Analysis</h3>
+<pre><code>Data sovereignty:
+  Fine-tuned on-prem model = zero data egress to external APIs
+
+Model drift:
+  Base model API updates don&#39;t affect your fine-tuned version
+  (but you also don&#39;t get capability improvements automatically)
+
+Vendor dependency:
+  Proprietary API fine-tuning (OpenAI, Vertex) creates lock-in
+  Open-source fine-tuning (Llama + LoRA) preserves optionality
+</code></pre>
+<p>This framing — TCO + risk profile — is what separates a Principal Engineer recommendation from a developer recommendation. Developers propose solutions. Principal Engineers propose solutions <em>with a decision framework</em> that survives scrutiny from legal, security, and finance.</p>
+<hr>
+<div id="risk-matrix-widget" style="background:#0a0f1a;border:1px solid #1e293b;border-radius:14px;padding:1.75rem;margin:2rem 0">
+  <div style="text-align:center;color:#38bdf8;font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem">Fine-Tuning Risk Matrix</div>
+  <div style="text-align:center;color:#475569;font-size:.75rem;margin-bottom:1.25rem;font-style:italic">Drag risk items into the quadrants to build your assessment</div>
+  <div style="display:flex;gap:1rem;flex-wrap:wrap">
+    <div style="flex:1;min-width:260px">
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem" id="risk-pool">
+        <div class="risk-chip" draggable="true" id="rc-sovereignty" style="background:#1e293b;border:1px solid #334155;border-radius:20px;padding:.35rem .85rem;font-size:.75rem;color:#e2e8f0;cursor:grab;user-select:none">🔒 Data Sovereignty</div>
+        <div class="risk-chip" draggable="true" id="rc-lockin" style="background:#1e293b;border:1px solid #334155;border-radius:20px;padding:.35rem .85rem;font-size:.75rem;color:#e2e8f0;cursor:grab;user-select:none">🔗 Vendor Lock-in</div>
+        <div class="risk-chip" draggable="true" id="rc-drift" style="background:#1e293b;border:1px solid #334155;border-radius:20px;padding:.35rem .85rem;font-size:.75rem;color:#e2e8f0;cursor:grab;user-select:none">📉 Model Drift</div>
+        <div class="risk-chip" draggable="true" id="rc-forget" style="background:#1e293b;border:1px solid #334155;border-radius:20px;padding:.35rem .85rem;font-size:.75rem;color:#e2e8f0;cursor:grab;user-select:none">🧠 Catastrophic Forgetting</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+        <div class="risk-quadrant" id="rq-high-high" data-q="high-high" style="background:#1c0a0a;border:1px dashed #7f1d1d;border-radius:8px;padding:.75rem;min-height:80px">
+          <div style="font-size:.65rem;color:#ef4444;font-weight:700;margin-bottom:.4rem">HIGH IMPACT · HIGH LIKELIHOOD</div>
+        </div>
+        <div class="risk-quadrant" id="rq-high-low" data-q="high-low" style="background:#1c1209;border:1px dashed #92400e;border-radius:8px;padding:.75rem;min-height:80px">
+          <div style="font-size:.65rem;color:#f59e0b;font-weight:700;margin-bottom:.4rem">HIGH IMPACT · LOW LIKELIHOOD</div>
+        </div>
+        <div class="risk-quadrant" id="rq-low-high" data-q="low-high" style="background:#0c1a3a;border:1px dashed #1e40af;border-radius:8px;padding:.75rem;min-height:80px">
+          <div style="font-size:.65rem;color:#60a5fa;font-weight:700;margin-bottom:.4rem">LOW IMPACT · HIGH LIKELIHOOD</div>
+        </div>
+        <div class="risk-quadrant" id="rq-low-low" data-q="low-low" style="background:#022c22;border:1px dashed #065f46;border-radius:8px;padding:.75rem;min-height:80px">
+          <div style="font-size:.65rem;color:#34d399;font-weight:700;margin-bottom:.4rem">LOW IMPACT · LOW LIKELIHOOD</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="risk-mitigation" style="display:none;margin-top:1rem;padding:.875rem 1rem;background:#0f172a;border:1px solid #334155;border-radius:8px;font-size:.8rem;color:#cbd5e1;line-height:1.6"></div>
+</div>
+<script>
+(function(){
+  var mitigations={
+    'rc-sovereignty':'Mitigation: Use open-source models (Llama, Mistral) fine-tuned on-prem. Zero data leaves your network. Combine with a private model registry.',
+    'rc-lockin':'Mitigation: Prefer open-source fine-tuning pipelines (QLoRA + Axolotl) over proprietary APIs. Keep model weights in your own storage.',
+    'rc-drift':'Mitigation: Version your base model. Pin to a specific checkpoint. Only upgrade intentionally after re-evaluation.',
+    'rc-forget':'Mitigation: Always eval on a general capability holdout set after every training run. Use LoRA (not full fine-tuning) to minimize forgetting.'
+  };
+  document.querySelectorAll('.risk-chip').forEach(function(chip){
+    chip.addEventListener('dragstart',function(e){e.dataTransfer.setData('text/plain',chip.id);chip.style.opacity='.4';});
+    chip.addEventListener('dragend',function(){chip.style.opacity='1';});
+  });
+  document.querySelectorAll('.risk-quadrant').forEach(function(q){
+    q.addEventListener('dragover',function(e){e.preventDefault();q.style.boxShadow='0 0 0 2px #2563eb';});
+    q.addEventListener('dragleave',function(){q.style.boxShadow='';});
+    q.addEventListener('drop',function(e){
+      e.preventDefault();q.style.boxShadow='';
+      var id=e.dataTransfer.getData('text/plain');
+      var chip=document.getElementById(id);
+      if(chip){
+        q.appendChild(chip);
+        chip.style.marginTop='.35rem';
+        var mit=document.getElementById('risk-mitigation');
+        mit.style.display='block';
+        mit.innerHTML='<strong style="color:#38bdf8">'+chip.textContent+'</strong><br>'+mitigations[id];
+      }
+    });
+  });
+})();
+</script>
+
+<hr>
+<h2>The Summary Layer</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Technique</th>
+<th>When to Use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>No ML overhead</td>
+<td>Prompt engineering + few-shot</td>
+<td>Always first</td>
+</tr>
+<tr>
+<td>Dynamic knowledge</td>
+<td>RAG</td>
+<td>When you need current or private data</td>
+</tr>
+<tr>
+<td>Style + format + vocab</td>
+<td>Supervised Fine-Tuning (LoRA/QLoRA)</td>
+<td>Consistent task, enough data, prompting insufficient</td>
+</tr>
+<tr>
+<td>Alignment to policy</td>
+<td>DPO</td>
+<td>When behavior needs to reflect org values/constraints</td>
+</tr>
+<tr>
+<td>Full control, on-prem</td>
+<td>Full pipeline (QLoRA + DPO + vLLM)</td>
+<td>Regulated environment, high scale, data residency</td>
+</tr>
+</tbody></table>
+<hr>
+
+      </div>
+      
+    <aside style="margin-top:3rem;padding-top:2rem;border-top:1px solid #334155">
+      <h3 style="font-size:1.05rem;font-weight:600;margin-bottom:.75rem">Related Posts</h3>
+      <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.6rem">
+        <li><a href="/blog/posts/2026-03-15-databases-a-lead-engineers-field-guide/" style="color:#2563eb;font-weight:500;text-decoration:none">Databases: A Lead Engineer's Field Guide to Picking the Right Tool</a> <span style="color:#6b7280;font-size:.8rem">— March 15, 2026</span></li>
+        <li><a href="/blog/posts/2026-03-14-subdomain-vs-path-based-routing/" style="color:#2563eb;font-weight:500;text-decoration:none">Subdomains vs Path-Based Routing: The Architecture Decision Nobody Talks About</a> <span style="color:#6b7280;font-size:.8rem">— March 14, 2026</span></li>
+      </ul>
+    </aside>
+    </article>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script>
+    function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'☀️':'🌙';}
+    document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';
+  </script>
+
+</body>
+</html>
