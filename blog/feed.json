@@ -1,5 +1,18 @@
 [
   {
+    "slug": "2026-03-16-llm-fine-tuning",
+    "title": "LLM Fine-Tuning: What Nobody Tells You Until You've Burned the GPU Budget",
+    "date": "2026-03-16",
+    "tags": [
+      "llm",
+      "fine-tuning",
+      "machine-learning",
+      "ai"
+    ],
+    "description": "A Principal Engineer's honest field guide to LLM fine-tuning — from LoRA and QLoRA mechanics to DPO, dataset curation, and the decision framework for when not to fine-tune.",
+    "url": "/blog/posts/2026-03-16-llm-fine-tuning/"
+  },
+  {
     "slug": "2026-03-15-databases-a-lead-engineers-field-guide",
     "title": "Databases: A Lead Engineer's Field Guide to Picking the Right Tool",
     "date": "2026-03-15",

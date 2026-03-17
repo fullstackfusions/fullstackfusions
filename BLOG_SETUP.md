@@ -40,6 +40,39 @@ Reference them in Markdown with a relative path:
 ![Alt text](./photo.jpg)
 ```
 
+### Inline HTML, CSS & JavaScript in Markdown posts
+
+`marked` (the Markdown-to-HTML converter used by the build script) passes raw HTML blocks through verbatim. This means you can embed interactive widgets — CSS-styled cards, `<canvas>` charts, `<script>` blocks — directly in the `.md` file and they will appear in the generated `index.html` unchanged.
+
+**Golden rule: any interactive CSS/JS that must survive a rebuild must live in the `.md` source file, not in the generated `index.html`.**
+
+If you add JavaScript or styled HTML directly to a generated `blog/posts/<slug>/index.html` and then re-run `node scripts/build-blog.js`, that file will be completely overwritten and your additions will be lost.
+
+**How to add a widget inline:**
+
+```markdown
+Some Markdown paragraph above...
+
+<div style="background:#0f172a;border-radius:12px;padding:1.5rem">
+  <p style="color:#e2e8f0">My styled widget goes here.</p>
+  <button id="my-btn" onclick="doThing()" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:.5rem 1rem;cursor:pointer">Click me</button>
+</div>
+<script>
+function doThing(){ document.getElementById('my-btn').textContent = 'Done!'; }
+</script>
+
+More Markdown below...
+```
+
+**Rules to follow:**
+- Leave a blank line before and after any HTML block so `marked` treats it as a block-level element, not inline.
+- Keep `<script>` tags at the end of the widget block. Avoid `type="module"` — inline scripts in marked output run in the global scope.
+- Use scoped `id` names (e.g., `my-widget-btn` not `btn`) to avoid collisions if multiple widgets appear on the same page.
+- Do not reference external post-specific `.js` or `.css` files from a Markdown post — those sidecar files only work with hand-authored HTML posts (see section 2 below). Keep everything inline.
+- The subdomain-vs-path-based-routing post and the llm-fine-tuning post are both good real-world examples of this pattern.
+
+---
+
 ### Frontmatter
 
 Every `.md` file must start with a frontmatter block:

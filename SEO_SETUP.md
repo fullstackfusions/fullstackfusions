@@ -311,3 +311,61 @@ Look for a record starting with `google-site-verification=` in the output.
 | Core Web Vitals | SLA — performance as a ranking signal |
 | Search Console | Observability layer — query and coverage monitoring |
 | GA4 | Application metrics — traffic, engagement, attribution |
+
+---
+
+## Enterprise Network Access — Enterprise Web Access Block
+
+### What Happened
+
+This is a **Symantec Web Categorization** block, not a technical issue with your site. The blog URL `https://fullstackfusions.com/blog` was flagged because it's **uncategorized** — Symantec hadn't classified it yet, so Enterprise's Internet Access Policy defaulted to blocking it.
+
+---
+
+### Why Only `/blog` and Not Other Pages?
+
+Symantec categorizes at the **URL/path level**, not just the domain. The rest of the site got categorized under something benign (e.g., *Personal Pages*, *Technology*), but `/blog` is a separate evaluation target.
+
+**Possible causes (verbose):**
+
+- **Path-level categorization gap** — Symantec evaluates each URL path independently. `/`, `/projects`, and `/experience` may have been crawled and classified earlier, while `/blog` was treated as a new, unrecognized path.
+- **Blog paths are high-risk signals** — Paths like `/blog` are commonly associated with content farms, spam sites, and phishing campaigns. Symantec's heuristics flag them for manual review until proven otherwise, even on otherwise clean domains.
+- **Recently added route** — The blog section was added after the root domain may have already received a benign classification. New paths don't inherit the parent domain's category automatically — they go into a pending/uncategorized state until Symantec's crawler visits them.
+- **No category = default block** — Enterprise's Internet Access Policy (and most enterprise proxy policies) treat `none`/uncategorized URLs as blocked by default. This is a security posture decision — unknown is treated as untrusted.
+- **Low traffic signal** — Symantec's categorization engine also uses traffic and engagement signals. A new personal blog with low external traffic may not have been prioritized for crawl and classification yet.
+- **Domain vs. path split** — The root domain `https://fullstackfusions.com` and `https://fullstackfusions.com/blog` are treated as two separate classification targets in Symantec's database. It's possible the root domain had a standing categorization while the `/blog` path had none.
+
+---
+
+### How to Fix It
+
+#### Option 1 — Self-Service via Blocked Page (Fastest, ~24hrs)
+From the blocked page itself:
+1. Select an appropriate category from the dropdown (e.g., **"Personal Pages"** or **"Technology/Internet"**)
+2. Click **Submit / Soumettre**
+3. Symantec reviews and categorizes within 24 hours
+
+#### Option 2 — Submit via Broadcom Site Review Tool (Proactive)
+Go to [https://sitereview.broadcom.com](https://sitereview.broadcom.com) and submit:
+- `https://fullstackfusions.com` — root domain
+- `https://fullstackfusions.com/blog` — blog path specifically
+
+Select **Filtering Service:** `Symantec WebFilter`.
+
+Submitting the root domain ensures all sub-routes inherit classification, not just individually visited paths.
+
+#### Option 3 — Email Broadcom Directly
+Send to `site.review@broadcom.com`
+- **Subject:** `Urgent request for Symantec Categorization`
+- **Body:** Include URL `https://fullstackfusions.com/blog` and request categorization as a personal/tech blog
+
+#### Option 4 — Escalate Internally at Enterprise (if unresolved after 4hrs)
+Submit a **General Consultation Request** to Enterprise's Internet Security team via the internal portal.
+
+---
+
+### Status
+
+- [ ] Submitted `https://fullstackfusions.com` to [sitereview.broadcom.com](https://sitereview.broadcom.com)
+- [ ] Submitted `https://fullstackfusions.com/blog` to [sitereview.broadcom.com](https://sitereview.broadcom.com)
+- [ ] Confirmed blog is accessible from Enterprise network after categorization
