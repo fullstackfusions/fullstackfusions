@@ -125,4 +125,3 @@ See [BLOG_SETUP.md](BLOG_SETUP.md) for the full authoring reference.
 | 📧 Email | [fullstackfusions@gmail.com](mailto:fullstackfusions@gmail.com) |
 | 💼 LinkedIn | [linkedin.com/in/fullstackfusions](https://linkedin.com/in/fullstackfusions) |
 | 🎥 YouTube | [youtube.com/@fullstackfusions](https://www.youtube.com/@fullstackfusions) |
-| ✍️ Substack | [fullstackfusions.substack.com](https://fullstackfusions.substack.com/) |
