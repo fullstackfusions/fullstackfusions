@@ -1,5 +1,18 @@
 [
   {
+    "slug": "2026-03-18-importance-of-llm-observability",
+    "title": "The Invisible Engine: What LLM Observability Actually Looks Like in Production",
+    "date": "2026-03-18",
+    "tags": [
+      "observability",
+      "llm",
+      "ai",
+      "distributed-systems"
+    ],
+    "description": "Classic observability was built for deterministic systems. LLMs are not deterministic. Here's the complete engineering picture — five distinct lenses, six production challenges, and the metric every AI team should be tracking but isn't.",
+    "url": "/blog/posts/2026-03-18-importance-of-llm-observability/"
+  },
+  {
     "slug": "2026-03-16-llm-fine-tuning",
     "title": "LLM Fine-Tuning: What Nobody Tells You Until You've Burned the GPU Budget",
     "date": "2026-03-16",
@@ -28,7 +41,6 @@
     "date": "2026-03-14",
     "tags": [
       "security",
-      "web-development",
       "system-design"
     ],
     "description": "One routing choice quietly shapes your security posture, deployment pipeline, and scaling strategy. Here's how banks, hospitals, and big tech think about it — and how you should too.",

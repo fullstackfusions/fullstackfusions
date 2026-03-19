@@ -2,7 +2,7 @@
 title: "Subdomains vs Path-Based Routing: The Architecture Decision Nobody Talks About"
 date: 2026-03-14
 description: "One routing choice quietly shapes your security posture, deployment pipeline, and scaling strategy. Here's how banks, hospitals, and big tech think about it — and how you should too."
-tags: ["security", "web-development", "system-design"]
+tags: ["security", "system-design"]
 ---
 
 ## The Hospital That Got Hacked

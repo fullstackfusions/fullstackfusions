@@ -5,12 +5,6 @@ description: "A Principal Engineer's honest field guide to LLM fine-tuning — f
 tags: ["llm", "fine-tuning", "machine-learning", "ai"]
 ---
 
-# LLM Fine-Tuning: What Nobody Tells You Until You've Burned the GPU Budget
-
-*A Principal Engineer's honest field guide — from theory to production*
-
----
-
 > "The first time I recommended fine-tuning to leadership, I was wrong. Not about the technology — about the timing. We hadn't exhausted the simpler options yet. That mistake taught me more about engineering judgment than any training run ever did."
 >
 > — Perspective of a Principal Engineer, Financial Services Infrastructure

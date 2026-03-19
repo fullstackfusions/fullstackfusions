@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWCQ7T2CM8"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QWCQ7T2CM8');
+  </script>
+  <meta name="description" content="Classic observability was built for deterministic systems. LLMs are not deterministic. Here's the complete engineering picture — five distinct lenses, six production challenges, and the metric every AI team should be tracking but isn't." />
+  <title>The Invisible Engine: What LLM Observability Actually Looks Like in Production — fullstackfusions</title>
+  <link rel="canonical" href="https://fullstackfusions.com/blog/posts/2026-03-18-importance-of-llm-observability/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The Invisible Engine: What LLM Observability Actually Looks Like in Production" />
+  <meta property="og:description" content="Classic observability was built for deterministic systems. LLMs are not deterministic. Here's the complete engineering picture — five distinct lenses, six production challenges, and the metric every AI team should be tracking but isn't." />
+  <meta property="og:url" content="https://fullstackfusions.com/blog/posts/2026-03-18-importance-of-llm-observability/" />
+  <meta property="og:site_name" content="fullstackfusions" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The Invisible Engine: What LLM Observability Actually Looks Like in Production" />
+  <meta name="twitter:description" content="Classic observability was built for deterministic systems. LLMs are not deterministic. Here's the complete engineering picture — five distinct lenses, six production challenges, and the metric every AI team should be tracking but isn't." />
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="fullstackfusions" href="https://fullstackfusions.com/feed.xml" />
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"The Invisible Engine: What LLM Observability Actually Looks Like in Production","author":{"@type":"Person","name":"Mihir"},"datePublished":"2026-03-18","description":"Classic observability was built for deterministic systems. LLMs are not deterministic. Here's the complete engineering picture — five distinct lenses, six production challenges, and the metric every AI team should be tracking but isn't.","url":"https://fullstackfusions.com/blog/posts/2026-03-18-importance-of-llm-observability/"}</script>
+
+  <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/tailwind.css" />
+  <link rel="stylesheet" href="/blog/assets/blog.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" />
+  <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();</script>
+  <style>body{font-family:"Inter",ui-sans-serif,system-ui,sans-serif}.section-heading{position:relative;padding-bottom:.6rem}.section-heading::after{content:"";position:absolute;left:0;bottom:0;width:36px;height:3px;background:#3b82f6;border-radius:2px}#theme-toggle{position:fixed;bottom:1rem;right:1rem;z-index:999;width:2.25rem;height:2.25rem;border-radius:50%;border:none;background:#2563eb;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .2s}#theme-toggle:hover{background:#3b82f6}html.dark #theme-toggle{background:#2563eb;border:none}html.dark #theme-toggle:hover{background:#3b82f6}html.dark{color-scheme:dark}html.dark body{background-color:#0f172a;color:#e2e8f0}html.dark .bg-gray-50{background-color:#0f172a}html.dark .bg-white{background-color:#1e293b}html.dark .bg-gray-900{background-color:#020617}html.dark .text-gray-900{color:#f1f5f9}html.dark .text-gray-800{color:#e2e8f0}html.dark .text-gray-700{color:#cbd5e1}html.dark .text-gray-600{color:#94a3b8}html.dark .text-gray-500{color:#64748b}html.dark .border-gray-200{border-color:#334155}html.dark .shadow-sm{box-shadow:0 1px 2px rgba(0,0,0,.5)}html.dark .text-blue-600{color:#60a5fa}html.dark .section-heading::after{background:#60a5fa}</style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode"><span id="theme-icon">&#x1F319;</span></button>
+
+  
+  <div id="site-nav"></div>
+  <script src="/components/navbar.js"></script>
+
+  <main class="blog-container">
+    <a class="back-link" href="/blog">&#8592; All posts</a>
+
+    <article>
+      <header class="post-header">
+        <div class="post-meta">March 18, 2026</div>
+        <h1 class="text-3xl font-bold mt-2">The Invisible Engine: What LLM Observability Actually Looks Like in Production</h1>
+        <p class="text-gray-600 mt-2">Classic observability was built for deterministic systems. LLMs are not deterministic. Here's the complete engineering picture — five distinct lenses, six production challenges, and the metric every AI team should be tracking but isn't.</p>
+        <div class="post-tags"><span class="tag">observability</span><span class="tag">llm</span><span class="tag">ai</span><span class="tag">distributed-systems</span></div>
+      </header>
+
+      <div class="post-content">
+        <blockquote>
+<p><em>&quot;You cannot improve what you cannot see. In AI systems, you cannot even debug what you cannot see.&quot;</em></p>
+</blockquote>
+<hr>
+<h2>Why Classic Observability Breaks for LLMs</h2>
+<p>Traditional software observability was built on a foundational contract: <strong>function in, deterministic output out</strong>. A request hits your API, you trace it through a known call graph, and if something breaks, the stack trace points you to the exact line. Every debugging session is reproducible by construction.</p>
+<p>LLM-powered systems shatter this contract entirely.</p>
+<p>A single user query today can spawn a non-deterministic, multi-model, multi-hop workflow spanning guardrails, classifiers, agents, tool calls, MCP servers, re-rankers, reasoning models, formatters, and output validators — often with different LLMs at each stage, and no two runs producing identical intermediate states. The system is no longer a function. <strong>It is a living pipeline.</strong></p>
+<p>In 2026, as enterprises across financial services, healthcare, and technology run AI assistants in production at scale, observability isn&#39;t a nice-to-have. It is the engineering discipline that separates teams shipping reliable AI from teams shipping regrets.</p>
+<p>The first mistake engineers make when approaching this: treating LLM observability like microservice observability with a &quot;model&quot; label added. It isn&#39;t. The architecture is fundamentally different, the failure modes are fundamentally different, and the instrumentation requirements are fundamentally different.</p>
+<p>This post is about what you actually need to see — and why most teams are blind to the most important signals until something breaks in production.</p>
+<hr>
+<h2>Part I — The Five Observability Lenses</h2>
+<p>LLM observability needs <strong>five distinct lenses</strong>, not three. The classic pillars — Logs, Metrics, and Traces — are necessary but not sufficient. Two new pillars emerge specifically from AI workloads, and the teams that skip them are the ones that get burned in production.</p>
+<div class="lenses-grid-container">
+<div class="lenses-grid">
+<div class="lens-card"><div class="lens-card-number">01</div><div class="lens-card-icon">🔗</div><div class="lens-card-title">Distributed Traces</div><div class="lens-card-subtitle">The Spine</div><ul class="lens-card-points"><li>OTel GenAI span attributes per model call</li><li>W3C <code>traceparent</code> across every agent hop</li><li>Agent iteration spans, not log lines</li></ul></div>
+<div class="lens-card"><div class="lens-card-number">02</div><div class="lens-card-icon">📊</div><div class="lens-card-title">Metrics</div><div class="lens-card-subtitle">The Dashboard</div><ul class="lens-card-points"><li>p50/p95/p99 latency histograms per model</li><li>Token economics and USD cost counters</li><li><code>llm_finish_reason_total</code> as canary metric</li></ul></div>
+<div class="lens-card"><div class="lens-card-number">03</div><div class="lens-card-icon">📋</div><div class="lens-card-title">Logs</div><div class="lens-card-subtitle">The Evidence Trail</div><ul class="lens-card-points"><li>Sanitized prompts with PII stripped at ingest</li><li>Agent reasoning journal with timestamps</li><li>ClickHouse hot/warm/cold tiering required</li></ul></div>
+<div class="lens-card"><div class="lens-card-number">04</div><div class="lens-card-icon">⚡</div><div class="lens-card-title">OTel Events</div><div class="lens-card-subtitle">The Timeline</div><ul class="lens-card-points"><li><code>gen_ai.content.prompt</code> exact payload</li><li><code>gen_ai.content.completion</code> exact response</li><li>Causally attached to spans — no correlation guesswork</li></ul></div>
+<div class="lens-card"><div class="lens-card-number">05</div><div class="lens-card-icon">🧠</div><div class="lens-card-title">Behavioral Signals</div><div class="lens-card-subtitle">The AI-Specific Layer</div><ul class="lens-card-points"><li>Reasoning confidence histograms</li><li>Semantic drift vs golden baseline</li><li>Guardrail false-positive rate tracking</li></ul></div>
+</div>
+</div>
+<style>
+.lenses-grid-container{margin:2rem 0;}
+.lenses-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;}
+@media(max-width:1100px){.lenses-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:640px){.lenses-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:400px){.lenses-grid{grid-template-columns:1fr;}}
+.lens-card{background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:1.25rem 1rem;cursor:default;transition:transform 0.2s ease,box-shadow 0.2s ease,border-color 0.2s ease;position:relative;overflow:hidden;}
+.lens-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--card-accent,#3b82f6);border-radius:12px 12px 0 0;}
+.lens-card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(0,0,0,0.1);border-color:var(--card-accent,#3b82f6);}
+.lens-card-number{font-size:0.68rem;font-weight:700;letter-spacing:0.1em;color:var(--card-accent,#3b82f6);margin-bottom:0.45rem;font-family:ui-monospace,monospace;}
+.lens-card-icon{font-size:1.55rem;margin-bottom:0.45rem;line-height:1;}
+.lens-card-title{font-size:0.92rem;font-weight:700;color:#1e293b;margin-bottom:0.15rem;line-height:1.25;}
+.lens-card-subtitle{font-size:0.7rem;font-weight:600;color:var(--card-accent,#3b82f6);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.06em;}
+.lens-card-points{list-style:none!important;padding:0!important;margin:0!important;}
+.lens-card-points li{font-size:0.76rem;color:#475569;padding:0.22rem 0 0.22rem 1rem;position:relative;line-height:1.45;border-bottom:none!important;margin:0!important;}
+.lens-card-points li::before{content:"›";position:absolute;left:0;color:var(--card-accent,#3b82f6);font-weight:700;font-size:0.9rem;}
+.lens-card-points li code{font-size:0.7rem;background:#f1f5f9;padding:0.05rem 0.28rem;border-radius:3px;color:#334155;font-family:ui-monospace,monospace;}
+html.dark .lens-card{background:#1e293b;border-color:#334155;}
+html.dark .lens-card:hover{border-color:var(--card-accent,#60a5fa);box-shadow:0 14px 30px rgba(0,0,0,0.45);}
+html.dark .lens-card-title{color:#f1f5f9;}
+html.dark .lens-card-points li{color:#94a3b8;}
+html.dark .lens-card-points li code{background:#0f172a;color:#cbd5e1;}
+</style>
+<script>
+(function(){
+  var accents=["#3b82f6","#10b981","#f59e0b","#8b5cf6","#ec4899"];
+  document.querySelectorAll(".lens-card").forEach(function(card,i){card.style.setProperty("--card-accent",accents[i]);});
+})();
+</script>
+
+<hr>
+<h3>Lens 1 — Distributed Traces (The Spine)</h3>
+<p>Every user query is a <strong>trace</strong>. Every meaningful operation within that query is a <strong>span</strong>. This is the same conceptual foundation as microservice observability — but with three critical extensions that most teams miss when they first instrument LLM systems.</p>
+<p><strong>Extension A — LLM Call Spans with OTel GenAI Attributes</strong></p>
+<p>The OpenTelemetry GenAI Semantic Conventions (stable, 2025) define a standardized attribute namespace that works across providers. You attach attributes like <code>gen_ai.system</code> (anthropic, openai, google), <code>gen_ai.request.model</code>, <code>gen_ai.usage.input_tokens</code>, <code>gen_ai.usage.output_tokens</code>, and critically, <code>gen_ai.response.finish_reason</code> to every LLM call span. This is your contract with every model provider. Model-agnostic dashboards become possible. You stop writing one-off instrumentation per provider.</p>
+<div class="fd-card" id="fd-ext-a">
+<div class="fd-card-top-bar"></div>
+<div class="fd-card-inner">
+<div class="fd-card-eyebrow">EXT &middot; A</div>
+<div class="fd-card-heading">OTel GenAI Span Attributes</div>
+<div class="fd-card-sub">Standard vs Reasoning Call</div>
+<div class="fd-flow-section">
+<div class="fd-flow-label">Standard call</div>
+<div class="fd-flow-rail">
+<div class="fd-fnode fd-fnode-blue"><div class="fd-fn-title">Query</div><div class="fd-fn-meta">~340 tok</div></div>
+<div class="fd-farrow"></div>
+<div class="fd-fnode fd-fnode-green"><div class="fd-fn-title">LLM</div><div class="fd-fn-meta">claude-3-5-sonnet</div></div>
+<div class="fd-farrow"></div>
+<div class="fd-fchips"><span class="fd-chip fd-chip-blue">in &middot; 340</span><span class="fd-chip fd-chip-green">out &middot; 812</span><span class="fd-chip fd-chip-yellow">finish &middot; stop</span></div>
+</div>
+</div>
+<div class="fd-row-divider"></div>
+<div class="fd-flow-section">
+<div class="fd-flow-label">Reasoning call</div>
+<div class="fd-flow-rail">
+<div class="fd-fnode fd-fnode-blue"><div class="fd-fn-title">Query</div><div class="fd-fn-meta">~280 tok</div></div>
+<div class="fd-farrow"></div>
+<div class="fd-fnode fd-fnode-green"><div class="fd-fn-title">LLM</div><div class="fd-fn-meta">o3-mini</div></div>
+<div class="fd-farrow"></div>
+<div class="fd-fnode fd-fnode-purple"><div class="fd-fn-title">Thinking</div><div class="fd-fn-meta">1,240 tok &middot; hidden</div></div>
+<div class="fd-farrow"></div>
+<div class="fd-fchips"><span class="fd-chip fd-chip-blue">in &middot; 280</span><span class="fd-chip fd-chip-purple">reasoning &middot; 1,240</span><span class="fd-chip fd-chip-green">out &middot; 195</span><span class="fd-chip fd-chip-yellow">finish &middot; stop</span></div>
+</div>
+</div>
+<div class="fd-attr-strip"><span class="fd-attr-label">span attrs</span><code>gen_ai.system</code><code>gen_ai.request.model</code><code>gen_ai.usage.input_tokens</code><code>gen_ai.usage.output_tokens</code><code>gen_ai.usage.reasoning_tokens</code><code>gen_ai.response.finish_reason</code></div>
+</div>
+</div>
+<style>
+.fd-card{background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;overflow:hidden;margin:1.5rem 0;cursor:default;transition:transform 0.2s ease,box-shadow 0.2s ease,border-color 0.2s ease;position:relative;}
+.fd-card-top-bar{height:3px;background:var(--fd-accent,#3b82f6);}
+.fd-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,0.09);border-color:var(--fd-accent,#3b82f6);}
+.fd-card-inner{padding:1.25rem 1.35rem 1.1rem;}
+.fd-card-eyebrow{font-size:0.62rem;font-weight:700;letter-spacing:0.12em;color:var(--fd-accent,#3b82f6);font-family:ui-monospace,monospace;margin-bottom:0.3rem;}
+.fd-card-heading{font-size:0.97rem;font-weight:700;color:#1e293b;line-height:1.25;margin-bottom:0.1rem;}
+.fd-card-sub{font-size:0.7rem;font-weight:600;color:var(--fd-accent,#3b82f6);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem;}
+.fd-flow-section{margin-bottom:0;}
+.fd-flow-label{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;font-family:ui-monospace,monospace;margin-bottom:0.45rem;}
+.fd-flow-rail{display:flex;align-items:center;overflow-x:auto;padding-bottom:0.1rem;gap:0;}
+.fd-fnode{border-radius:8px;padding:0.45rem 0.85rem;text-align:center;min-width:90px;border:1.5px solid transparent;flex-shrink:0;}
+.fd-fn-title{font-size:0.77rem;font-weight:700;color:#1e293b;line-height:1.2;}
+.fd-fn-meta{font-size:0.61rem;color:#64748b;margin-top:0.12rem;font-family:ui-monospace,monospace;white-space:nowrap;}
+.fd-farrow{width:28px;height:2px;background:#cbd5e1;position:relative;flex-shrink:0;margin:0 3px;}
+.fd-farrow::after{content:"";position:absolute;right:-1px;top:-4px;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid #cbd5e1;}
+.fd-fchips{display:flex;flex-direction:column;gap:0.2rem;flex-shrink:0;margin-left:8px;}
+.fd-chip{font-size:0.62rem;font-weight:600;padding:0.14rem 0.55rem;border-radius:999px;font-family:ui-monospace,monospace;white-space:nowrap;}
+.fd-row-divider{height:1px;background:#f1f5f9;margin:0.85rem 0;}
+.fd-fnode-blue{background:#eff6ff;border-color:#93c5fd;}
+.fd-fnode-green{background:#f0fdf4;border-color:#86efac;}
+.fd-fnode-purple{background:#faf5ff;border-color:#c4b5fd;}
+.fd-fnode-orange{background:#fff7ed;border-color:#fdba74;}
+.fd-chip-blue{background:#dbeafe;color:#1d4ed8;}
+.fd-chip-green{background:#dcfce7;color:#15803d;}
+.fd-chip-yellow{background:#fef9c3;color:#854d0e;}
+.fd-chip-purple{background:#ede9fe;color:#5b21b6;}
+.fd-chip-red{background:#fee2e2;color:#991b1b;}
+.fd-chip-orange{background:#ffedd5;color:#9a3412;}
+.fd-attr-strip{display:flex;flex-wrap:wrap;align-items:center;gap:0.3rem;margin-top:1rem;padding-top:0.7rem;border-top:1px dashed #e2e8f0;}
+.fd-attr-label{font-size:0.57rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;font-family:ui-monospace,monospace;}
+.fd-attr-strip code{font-size:0.63rem;background:#f8fafc;border:1px solid #e2e8f0;padding:0.1rem 0.35rem;border-radius:4px;color:#334155;font-family:ui-monospace,monospace;}
+.fd-trace-id{font-size:0.63rem;color:#64748b;font-family:ui-monospace,monospace;margin-bottom:1rem;}
+.fd-trace-id code{color:var(--fd-accent,#3b82f6);font-size:0.63rem;}
+.fd-hop-rail{display:flex;align-items:center;overflow-x:auto;padding-bottom:0.2rem;}
+.fd-hop{border-radius:8px;padding:0.55rem 0.9rem;text-align:center;border:1.5px solid transparent;flex-shrink:0;min-width:96px;}
+.fd-hop-badge{font-size:0.52rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;font-family:ui-monospace,monospace;margin-bottom:0.2rem;}
+.fd-hop-name{font-size:0.78rem;font-weight:700;color:#1e293b;line-height:1.2;}
+.fd-hop-note{font-size:0.59rem;color:#94a3b8;font-family:ui-monospace,monospace;margin-top:0.15rem;}
+.fd-hop-note code{font-size:0.59rem;background:rgba(0,0,0,0.05);padding:0.05rem 0.2rem;border-radius:3px;}
+.fd-hop-agent{background:#eff6ff;border-color:#93c5fd;}
+.fd-hop-tool{background:#f0fdf4;border-color:#86efac;}
+.fd-hop-mcp{background:#faf5ff;border-color:#c4b5fd;}
+.fd-hop-db{background:#fff7ed;border-color:#fdba74;}
+.fd-hop-conn{display:flex;flex-direction:column;align-items:center;flex-shrink:0;padding:0 0.1rem;}
+.fd-hop-line{width:44px;height:2px;background:#94a3b8;position:relative;margin-bottom:0.18rem;}
+.fd-hop-line::after{content:"";position:absolute;right:-1px;top:-4px;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid #94a3b8;}
+.fd-hop-tp{font-size:0.55rem;white-space:nowrap;}
+.fd-hop-tp code{font-size:0.55rem;color:var(--fd-accent,#3b82f6);background:#eff6ff;padding:0.05rem 0.2rem;border-radius:3px;font-family:ui-monospace,monospace;}
+.fd-outcome-row{display:flex;gap:0.6rem;margin-top:1rem;padding-top:0.75rem;border-top:1px dashed #e2e8f0;flex-wrap:wrap;}
+.fd-outcome{display:flex;align-items:center;gap:0.35rem;font-size:0.7rem;padding:0.28rem 0.75rem;border-radius:6px;font-weight:500;}
+.fd-outcome-bad{background:#fef2f2;color:#991b1b;}
+.fd-outcome-good{background:#f0fdf4;color:#14532d;}
+.fd-trace-root{display:flex;align-items:center;gap:0.55rem;font-size:0.67rem;font-family:ui-monospace,monospace;color:#475569;margin-bottom:0.65rem;}
+.fd-trace-root code{color:var(--fd-accent,#3b82f6);font-size:0.67rem;}
+.fd-root-dot{width:10px;height:10px;border-radius:50%;background:var(--fd-accent,#3b82f6);flex-shrink:0;box-shadow:0 0 0 3px #dbeafe;}
+.fd-iters{padding-left:1.1rem;border-left:2px solid #e2e8f0;margin-left:4px;display:flex;flex-direction:column;gap:0.25rem;}
+.fd-iter{display:flex;align-items:center;gap:0.5rem;padding:0.36rem 0.7rem;border-radius:7px;border:1px solid transparent;position:relative;}
+.fd-iter::before{content:"";position:absolute;left:-1.15rem;top:50%;width:0.9rem;height:2px;background:#e2e8f0;}
+.fd-iter-ok{background:#f8fafc;border-color:#e2e8f0;}
+.fd-iter-end{background:#fef2f2;border-color:#fecaca;}
+.fd-iter-num{font-size:0.6rem;font-weight:700;color:#94a3b8;font-family:ui-monospace,monospace;min-width:34px;flex-shrink:0;}
+.fd-iter-sid{font-size:0.57rem;color:#cbd5e1;font-family:ui-monospace,monospace;}
+.fd-iter-tool{font-size:0.65rem;font-weight:600;color:#475569;font-family:ui-monospace,monospace;background:#f1f5f9;padding:0.08rem 0.38rem;border-radius:4px;flex-shrink:0;}
+.fd-iter-badge{font-size:0.61rem;font-weight:600;padding:0.1rem 0.42rem;border-radius:999px;font-family:ui-monospace,monospace;flex-shrink:0;}
+.fd-badge-fail{background:#fee2e2;color:#991b1b;}
+.fd-badge-warn{background:#fef9c3;color:#854d0e;}
+.fd-iter-final-tag{font-size:0.57rem;font-weight:800;color:#dc2626;text-transform:uppercase;letter-spacing:0.08em;margin-left:auto;font-family:ui-monospace,monospace;}
+.fd-insight{margin-top:1rem;font-size:0.71rem;color:#64748b;padding:0.55rem 0.9rem;background:#f8fafc;border-left:3px solid var(--fd-accent,#3b82f6);border-radius:0 6px 6px 0;line-height:1.6;}
+html.dark .fd-card{background:#1e293b;border-color:#334155;}
+html.dark .fd-card:hover{box-shadow:0 12px 28px rgba(0,0,0,0.4);border-color:var(--fd-accent,#60a5fa);}
+html.dark .fd-card-heading{color:#f1f5f9;}
+html.dark .fd-fn-title{color:#f1f5f9;}
+html.dark .fd-fn-meta{color:#64748b;}
+html.dark .fd-farrow{background:#475569;}
+html.dark .fd-farrow::after{border-left-color:#475569;}
+html.dark .fd-fnode-blue{background:#1e3a5f;border-color:#2563eb;}
+html.dark .fd-fnode-green{background:#14532d;border-color:#16a34a;}
+html.dark .fd-fnode-purple{background:#2e1065;border-color:#7c3aed;}
+html.dark .fd-fnode-orange{background:#431407;border-color:#c2410c;}
+html.dark .fd-row-divider{background:#334155;}
+html.dark .fd-attr-strip{border-top-color:#334155;}
+html.dark .fd-attr-strip code{background:#0f172a;border-color:#334155;color:#94a3b8;}
+html.dark .fd-chip-blue{background:#1e3a5f;color:#93c5fd;}
+html.dark .fd-chip-green{background:#14532d;color:#6ee7b7;}
+html.dark .fd-chip-yellow{background:#422006;color:#fde68a;}
+html.dark .fd-chip-purple{background:#2e1065;color:#c4b5fd;}
+html.dark .fd-chip-red{background:#450a0a;color:#fca5a5;}
+html.dark .fd-chip-orange{background:#431407;color:#fb923c;}
+html.dark .fd-trace-id code{color:#60a5fa;}
+html.dark .fd-hop-name{color:#f1f5f9;}
+html.dark .fd-hop-note{color:#64748b;}
+html.dark .fd-hop-note code{background:rgba(255,255,255,0.05);}
+html.dark .fd-hop-agent{background:#1e3a5f;border-color:#2563eb;}
+html.dark .fd-hop-tool{background:#14532d;border-color:#16a34a;}
+html.dark .fd-hop-mcp{background:#2e1065;border-color:#7c3aed;}
+html.dark .fd-hop-db{background:#431407;border-color:#c2410c;}
+html.dark .fd-hop-line{background:#475569;}
+html.dark .fd-hop-line::after{border-left-color:#475569;}
+html.dark .fd-hop-tp code{background:#1e3a5f;color:#60a5fa;}
+html.dark .fd-outcome-row{border-top-color:#334155;}
+html.dark .fd-outcome-bad{background:#450a0a;color:#fca5a5;}
+html.dark .fd-outcome-good{background:#14532d;color:#86efac;}
+html.dark .fd-trace-root{color:#64748b;}
+html.dark .fd-trace-root code{color:#60a5fa;}
+html.dark .fd-root-dot{background:#60a5fa;box-shadow:0 0 0 3px #1e3a5f;}
+html.dark .fd-iters{border-left-color:#334155;}
+html.dark .fd-iter::before{background:#334155;}
+html.dark .fd-iter-ok{background:#0f172a;border-color:#334155;}
+html.dark .fd-iter-end{background:#450a0a;border-color:#ef4444;}
+html.dark .fd-iter-tool{background:#0f172a;color:#94a3b8;}
+html.dark .fd-iter-sid{color:#334155;}
+html.dark .fd-badge-fail{background:#450a0a;color:#fca5a5;}
+html.dark .fd-badge-warn{background:#422006;color:#fde68a;}
+html.dark .fd-insight{background:#0f172a;color:#64748b;}
+</style>
+
+<p><strong>Extension B — W3C Context Propagation Across Agent Hops</strong></p>
+<p>When Agent A calls Tool B, which calls MCP Server C, which calls Database D — the <code>traceparent</code> header must flow through every boundary. Without it, you get four orphaned traces instead of one connected trace. You lose causality entirely. You cannot answer &quot;why did this response take 3.2 seconds?&quot; because you can&#39;t see across the hop boundaries. For MCP specifically, the convention is to inject the trace context via the <code>_meta</code> field in the MCP protocol payload.</p>
+<div class="fd-card" id="fd-ext-b">
+<div class="fd-card-top-bar"></div>
+<div class="fd-card-inner">
+<div class="fd-card-eyebrow">EXT &middot; B</div>
+<div class="fd-card-heading">W3C Context Propagation</div>
+<div class="fd-card-sub">traceparent Across Every Hop</div>
+<div class="fd-trace-id">trace_id: <code>4bf92f3577b34da6a0b2d5e8c9f1a342</code></div>
+<div class="fd-hop-rail">
+<div class="fd-hop fd-hop-agent"><div class="fd-hop-badge">root span</div><div class="fd-hop-name">Agent A</div></div>
+<div class="fd-hop-conn"><div class="fd-hop-line"></div><div class="fd-hop-tp"><code>traceparent</code></div></div>
+<div class="fd-hop fd-hop-tool"><div class="fd-hop-badge">child span</div><div class="fd-hop-name">Tool B</div></div>
+<div class="fd-hop-conn"><div class="fd-hop-line"></div><div class="fd-hop-tp"><code>traceparent</code></div></div>
+<div class="fd-hop fd-hop-mcp"><div class="fd-hop-badge">child span</div><div class="fd-hop-name">MCP Server C</div><div class="fd-hop-note">via <code>_meta</code></div></div>
+<div class="fd-hop-conn"><div class="fd-hop-line"></div><div class="fd-hop-tp"><code>traceparent</code></div></div>
+<div class="fd-hop fd-hop-db"><div class="fd-hop-badge">child span</div><div class="fd-hop-name">Database D</div></div>
+</div>
+<div class="fd-outcome-row">
+<div class="fd-outcome fd-outcome-bad">&#x2717; without propagation &mdash; 4 orphaned traces, causality lost</div>
+<div class="fd-outcome fd-outcome-good">&#x2713; with propagation &mdash; 1 connected trace, root to leaf</div>
+</div>
+</div>
+</div>
+
+<p><strong>Extension C — Agent Iteration Spans</strong></p>
+<p>Agents are loops. LangGraph, CrewAI, AutoGen — they all iterate, retry, and self-correct. Each iteration must be a child span, not a note in a log line. When an agent retries six times because a tool is failing silently, you need to see all six spans with their intermediate states. The final failure isn&#39;t the only data point that matters — the pattern of retries tells you <em>why</em> it failed.</p>
+<div class="fd-card" id="fd-ext-c">
+<div class="fd-card-top-bar"></div>
+<div class="fd-card-inner">
+<div class="fd-card-eyebrow">EXT &middot; C</div>
+<div class="fd-card-heading">Agent Iteration Spans</div>
+<div class="fd-card-sub">Each Retry a Child Span</div>
+<div class="fd-trace-root"><div class="fd-root-dot"></div><span><code>trace:</code> user_query &nbsp;&middot;&nbsp; <code>span:</code> agent_run [tool silently failing]</span></div>
+<div class="fd-iters">
+<div class="fd-iter fd-iter-ok"><span class="fd-iter-num">iter 1</span><span class="fd-iter-sid">a1b2c3d4</span><span class="fd-iter-tool">tool_call</span><span class="fd-iter-badge fd-badge-fail">&#x2717; timeout</span></div>
+<div class="fd-iter fd-iter-ok"><span class="fd-iter-num">iter 2</span><span class="fd-iter-sid">e5f6a7b8</span><span class="fd-iter-tool">tool_call</span><span class="fd-iter-badge fd-badge-fail">&#x2717; timeout</span></div>
+<div class="fd-iter fd-iter-ok"><span class="fd-iter-num">iter 3</span><span class="fd-iter-sid">c9d0e1f2</span><span class="fd-iter-tool">tool_call</span><span class="fd-iter-badge fd-badge-warn">&#x2717; empty response</span></div>
+<div class="fd-iter fd-iter-ok"><span class="fd-iter-num">iter 4</span><span class="fd-iter-sid">a3b4c5d6</span><span class="fd-iter-tool">tool_call</span><span class="fd-iter-badge fd-badge-fail">&#x2717; timeout</span></div>
+<div class="fd-iter fd-iter-ok"><span class="fd-iter-num">iter 5</span><span class="fd-iter-sid">e7f8a9b0</span><span class="fd-iter-tool">tool_call</span><span class="fd-iter-badge fd-badge-fail">&#x2717; timeout</span></div>
+<div class="fd-iter fd-iter-end"><span class="fd-iter-num">iter 6</span><span class="fd-iter-sid">c1d2e3f4</span><span class="fd-iter-tool">tool_call</span><span class="fd-iter-badge fd-badge-fail">&#x2717; timeout</span><span class="fd-iter-final-tag">&#x2191; final failure</span></div>
+</div>
+<div class="fd-insight">The pattern across all 6 child spans reveals the tool was silently failing every iteration. A single &ldquo;agent failed&rdquo; log line would never surface this &mdash; the retry pattern is only visible when each iteration is its own span.</div>
+</div>
+</div>
+<script>
+(function(){
+  var fdAccents={"fd-ext-a":"#3b82f6","fd-ext-b":"#10b981","fd-ext-c":"#8b5cf6"};
+  Object.keys(fdAccents).forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.style.setProperty("--fd-accent",fdAccents[id]);
+  });
+})();
+</script>
+
+<hr>
+<h3>Lens 2 — Metrics (The Dashboard)</h3>
+<p>Metrics answer the question: <strong>&quot;Is the system healthy right now?&quot;</strong> In LLM systems, the metric families you need are significantly different from what you&#39;d define for a REST API.</p>
+<p><strong>Latency metrics</strong> should be histograms, not averages — and they should be broken down by model and by operation. Request duration at p50/p95/p99 per model, agent orchestration duration per agent name, and tool call duration per MCP server. The p99 is where your regressions will hide.</p>
+<p><strong>Token economics</strong> are a new class of metric with no equivalent in traditional systems. You need total token counters broken out by model and by direction (input vs output). You need a cost counter in USD per model per environment. This is how you get PnL accountability at the infrastructure level — not &quot;we spent $X on AI last month,&quot; but &quot;this specific agent workflow costs $0.003 per user session and we have 50,000 daily actives.&quot;</p>
+<p><strong>Reliability metrics</strong> are where the most valuable signals live. Track guardrail violation counters by policy and action, agent retry counters by reason, and — this one is the canary in the coal mine — <code>llm_finish_reason_total</code> broken out by reason.</p>
+<blockquote>
+<p><strong>If more than 5% of your LLM calls are finishing with reason <code>max_tokens</code>, your context window budget is wrong.</strong> Your prompts are growing unbounded, or your chain-of-thought instructions are too verbose. The model never tells you this with an error. It just stops mid-sentence. The metric is the only thing that surfaces it.</p>
+</blockquote>
+<hr>
+<h3>Lens 3 — Logs (The Evidence Trail)</h3>
+<p>Logs answer: <strong>&quot;What exactly happened in this specific request?&quot;</strong></p>
+<p>LLM logs are architecturally different from traditional logs in one critical way: they contain <em>reasoning</em> — the intermediate steps an agent took, why it chose a tool, what it considered and rejected. This is enormously valuable for debugging, but it creates two new problems teams aren&#39;t prepared for.</p>
+<p><strong>What to log per request:</strong> the sanitized prompt (PII stripped before storage — critical for regulatory compliance), tool call inputs and outputs at appropriate truncation, the agent&#39;s reasoning journal with timestamps, the guardrail verdict, and correlation IDs linking <code>trace_id</code>, <code>session_id</code>, and hashed customer identifier. These five things together let you reconstruct any request fully after the fact.</p>
+<p><strong>The volume problem:</strong> LLM log volumes are 10 to 100 times higher than traditional API logs. A single complex query with chain-of-thought reasoning can generate 50KB of structured log data. Storing this in Elasticsearch at full ingest is a cost trap — you will pay orders of magnitude more than the model inference itself. The right architecture is ClickHouse or OpenSearch with hot/warm/cold tiering, sized against your actual query patterns.</p>
+<hr>
+<h3>Lens 4 — OTel Events (The Timeline of What Was Actually Sent)</h3>
+<p>OTel Events are the pillar most teams discover only after a production incident. In the OTel GenAI specification, events are span-attached records that capture what was actually sent to the model and what it actually returned.</p>
+<p>The key event types are <code>gen_ai.content.prompt</code> — the exact payload sent to the model, <code>gen_ai.content.completion</code> — the exact response, <code>gen_ai.tool_call</code> — each tool invocation with full input and output, and <code>mcp.notification</code> — server-sent events from MCP servers.</p>
+<p>What makes events different from logs is that they are <strong>causal</strong> — they are attached to a specific span in a specific trace. When you see a bad LLM output in your quality dashboard, you click through to the Tempo trace, expand the span, and see the exact prompt that produced it. No hunting through Kibana with regex patterns. No trying to correlate a log line timestamp with a trace ID. The prompt and the span are the same object.</p>
+<p>This is the foundational data model that Langfuse and Arize Phoenix are both built around. It&#39;s also the raw material for building prompt evaluation datasets, regression test suites, and model upgrade validation pipelines.</p>
+<hr>
+<h3>Lens 5 — Behavioral Signals (The AI-Specific Layer)</h3>
+<p>This lens has no equivalent in traditional observability. It covers quality and safety signals that emerge from the AI behavior itself — not from infrastructure metrics or log entries.</p>
+<p><strong>Confidence and reasoning quality signals:</strong> reasoning confidence histograms extracted from structured model output, intent classification scores per intent type, and the spread between your re-ranker&#39;s top score and bottom score. A collapsing spread is a signal that your retrieval quality is degrading.</p>
+<p><strong>Drift and degradation signals:</strong> semantic similarity scores comparing current responses against a golden baseline, prompt token growth rate over time (growing prompts are often a sign of context pollution accumulating across sessions), and hallucination detection rate evaluated by a judge model running in a separate evaluation pipeline.</p>
+<p><strong>Guardrail signals:</strong> PII entity counts by entity type (this tells you what your users are actually submitting — a compliance and product insight simultaneously), toxicity score distributions over time, and per-policy compliance check pass/fail rates.</p>
+<p>These signals feed directly into your LLM evaluation pipeline — separate from your production metrics stack, but correlated to it. The behavioral signal layer is what transforms your monitoring from &quot;is the system up?&quot; to &quot;is the system <em>good</em>?&quot;</p>
+<blockquote>
+<p><strong>Curiosity question:</strong> How would you detect that your model started degrading in output quality three weeks into a production deployment — without user complaints? What signal would surface it first?</p>
+</blockquote>
+<hr>
+<h2>Part II — The Production Challenges Nobody Warns You About</h2>
+<blockquote>
+<p><em>Traditional observability assumes your system behaves the same way every time. LLMs assume it won&#39;t.</em></p>
+</blockquote>
+<hr>
+<h3>Challenge 1 — Non-Determinism Breaks the Concept of Replay</h3>
+<p>In traditional debugging, you replay a request with the same inputs to reproduce the bug. The test is deterministic. If it happened once, you can make it happen again.</p>
+<p>With LLMs, <code>temperature &gt; 0</code> means the same input produces different outputs on every call. The exact bug you saw in production may not reproduce on demand. You cannot unit test your way to confidence without addressing this architectural reality.</p>
+<p><strong>The engineering response:</strong> You must log the full context window snapshot at the moment of inference — system prompt version, full conversation history, all tool results, and the user message — not just the user query string. This snapshot is what allows you to replay the exact model call in an offline evaluation harness, even if the live system would produce a different answer.</p>
+<p>This approach is expensive. At 10,000 requests per day with an average context of 2,000 tokens, selective sampling is not optional — it is the architecture. Sample 100% of failure cases, 100% of guardrail triggers, and a statistically meaningful portion of normal traffic. Everything else gets dropped at ingest.</p>
+<hr>
+<h3>Challenge 2 — The Context Window Is a Black Box by Default</h3>
+<p>The model&#39;s working memory — the context window — is entirely opaque unless you instrument it explicitly. From the outside, you cannot tell whether you are at 30% or 90% capacity, what sections are consuming the most tokens, or whether the context is growing across conversation turns.</p>
+<p>An agent running for 50 iterations on a long-lived task can exhaust its context budget by iteration 30. When it does, the model begins silently forgetting earlier context. There is no error in your logs. There is no exception thrown. You simply see degraded, inconsistent output with no obvious cause.</p>
+<p><strong>The engineering response:</strong> Build context window monitoring that wraps every LLM call and emits per-section token consumption before the request is made. Track fill percentage by section (system prompt, tool results, conversation history, new input), total token counts per request, and the growth rate of context across turns in a session. Alert when any session crosses 80% utilization — that is your early warning threshold.</p>
+<blockquote>
+<p><strong>Curiosity question:</strong> Do you know right now whether any of your running agents are at risk of context exhaustion mid-session? How would you find out?</p>
+</blockquote>
+<hr>
+<h3>Challenge 3 — Prompts as Unversioned Code</h3>
+<p>Your system prompts are code. They encode behavior, constraints, tone, tool usage rules, and output format. They can be changed by any engineer with repository access, deployed without a pipeline, and rolled back only if someone remembers what the previous version was.</p>
+<p>This creates a class of production incidents that are invisible to your observability stack. A developer updates a system prompt on Friday afternoon. By Monday morning, your reasoning confidence metrics have dropped 12%, agent retries are up 40%, and two compliance checks are failing intermittently. You spend three hours looking at infrastructure metrics before someone checks Git and finds the Friday prompt change.</p>
+<p><strong>The engineering response:</strong> Hash every system prompt and include that hash as an attribute on every LLM span. This gives you the ability to query &quot;what were my quality metrics at prompt version <code>a3f891c</code> vs <code>b4d902e</code>?&quot; in any trace analytics system. Treat prompt deployments as first-class deployments — they belong in feature flags with canary rollout capabilities and documented rollback procedures. Langfuse&#39;s prompt management module is the dedicated tool for this specific problem. For teams in production, it is incident prevention infrastructure, not a developer experience improvement.</p>
+<hr>
+<h3>Challenge 4 — Multi-Model Pipelines Hide Their Own Cost</h3>
+<p>A production LLM pipeline typically looks like: fast classifier model (Haiku class) → orchestrator model (Sonnet class) → reasoning model with extended thinking → synthesis model → output formatter. Each stage has its own cost per call, its own latency profile, and its own quality contribution.</p>
+<p>Without explicit cost attribution at the span level, you get one number at the end: total inference cost per request. That number is not actionable. You cannot tell whether you should optimize the classifier, reduce the reasoning model&#39;s context, or replace the formatter with a deterministic template.</p>
+<p><strong>The engineering response:</strong> Every LLM call span should carry an estimated cost attribute (calculated from token counts multiplied by the model&#39;s per-token rate) and a pipeline stage attribute identifying its role in the workflow. When you aggregate cost by stage across thousands of requests, you will often find one stage consuming 60% of budget while contributing 10% of output quality. That is the optimization target — and you cannot see it without per-span cost tagging.</p>
+<hr>
+<h3>Challenge 5 — Tool Calls Are Distributed Systems Problems in Disguise</h3>
+<p>MCP servers, external APIs, database tools — tool calls look like function calls from the agent&#39;s perspective, but they are synchronous blocking network calls inside an asynchronous agent loop. They inherit every distributed systems failure mode: timeouts, partial failures, retry storms, cascading degradation, and back-pressure.</p>
+<p>The difference from a normal microservice dependency is the failure behavior. When a tool call fails inside an agent iteration, it does not return an HTTP 503 to a client. It returns an error payload to the language model, which makes a decision about what to do next. It might retry. It might hallucinate a plausible-looking response. It might enter a recovery loop that looks functionally correct from the outside until it isn&#39;t.</p>
+<p><strong>The engineering response:</strong> Instrument every tool call the same way you instrument a service dependency — with duration histograms, success rate counters, retry counters by reason, and error type categorization. And add circuit breaker logic at the tool call boundary. A tool with a 10% error rate should trigger degraded-mode behavior from the agent, not an unbounded retry loop that burns tokens while the tool remains unavailable.</p>
+<hr>
+<h3>Challenge 6 — Guardrails Are Themselves Observable Systems</h3>
+<p>Teams implement guardrails — PII detection, toxicity scoring, compliance checks — and then measure whether the AI system passes them. What they rarely measure is whether the guardrails themselves are performing correctly.</p>
+<p>What is your PII detector&#39;s false positive rate on your specific user population? Is your toxicity classifier blocking valid technical responses because they contain sensitive-domain terminology? Is your compliance check accepting outputs it should be rejecting?</p>
+<p>Guardrail failures in either direction are invisible without instrumentation on the guardrail layer itself. A PII detector blocking legitimate responses at a 2% rate is a product reliability problem masquerading as a safety feature. You only discover it if you are measuring it.</p>
+<blockquote>
+<p><strong>Curiosity question:</strong> If your input sanitizer started over-redacting at a 5% rate today, how long would it take your team to detect it?</p>
+</blockquote>
+<hr>
+<h2>Part III — How AI Coding Tools Observe Themselves</h2>
+<blockquote>
+<p><em>When the AI is operating on your codebase, the codebase is the context. And codebases are large, structured, versioned, and deeply relational — none of which traditional LLM observability was designed for.</em></p>
+</blockquote>
+<hr>
+<h3>The Core Architectural Difference</h3>
+<p>When you ask Claude Code &quot;add pagination to the user list endpoint,&quot; you are not sending a text query into a chat interface. You are initiating a multi-phase agentic workflow that operates on a structured artifact — your codebase — with type dependencies, test suites, build system contracts, and version history. The observability requirements are architecturally distinct from conversational AI.</p>
+<hr>
+<h3>The Four-Phase Pipeline</h3>
+<p>Claude Code, GitHub Copilot Workspace, and Windsurf Cascade all share this common architecture with minor variations:</p>
+<p><strong>Phase 1 — Context Harvesting (typically 200-400ms)</strong></p>
+<p>Before the model receives any input, a pre-processing pipeline runs. It performs a file tree scan to detect structure, language, and framework. It runs an embedding similarity search against the user&#39;s query to select the 10-20 most relevant files. It extracts Abstract Syntax Trees to resolve symbol references — answering questions like &quot;what other functions depend on <code>getUserList</code>?&quot; It pulls recent commit history for files it identified as relevant.</p>
+<p>This phase is heavily observable as infrastructure — cache hit rates on embeddings, retrieval latency, the ratio of files scanned to files selected, and the embedding similarity threshold that determines relevance cutoffs. These are the metrics that determine whether the model starts with the right context window contents.</p>
+<p><strong>Phase 2 — Reasoning and Planning</strong></p>
+<p>The model receives the structured context and generates a plan — a sequence of edits — before making any of them. This is chain-of-thought reasoning applied to code. Observable signals here include the number of file edits planned, the estimated scope of change, and the model&#39;s self-assessed confidence extracted from its structured output.</p>
+<p><strong>Phase 3 — Execution with Verification</strong></p>
+<p>Each planned edit is a tool call against the filesystem: replace a string in a file, create a new file, execute a bash command to run the test suite or type checker. The critical observable signal in this phase is the verification loop — how many edit attempts were required before all tests passed? A task completing on the first attempt is qualitatively different from a task that required seven iterations with test failures at each step, even if both end with green tests.</p>
+<p><strong>Phase 4 — Outcome Capture</strong></p>
+<p>Every accepted edit, every reverted edit, and every follow-up edit the developer makes immediately after the AI&#39;s edit is recorded as outcome telemetry. This is not observability for debugging — it is observability as training data. The acceptance rate on AI suggestions, broken down by file type, framework, and edit type, is the ground truth quality signal that drives model improvements.</p>
+<p>Windsurf Cascade added real-time diff streaming in late 2025 — each edit streams token-by-token with immediate syntax validation, requiring streaming span events to track partial edit quality. GitHub Copilot Workspace added explicit &quot;speculation spans&quot; — when a model proposes a change below a confidence threshold, it emits a signal that triggers mandatory human review before application.</p>
+<hr>
+<h3>The Tiered Context Problem</h3>
+<p>The single hardest engineering problem in AI coding tools: a production codebase is 100,000+ lines and a context window is 200,000 tokens. They do not fit. The solution is tiered context retrieval, and it is directly observable through retrieval spans.</p>
+<p>Tier 1 — open files and cursor position — always enters the context. Tier 2 — the top 20 files by embedding similarity to the user&#39;s query — fills the bulk of the remaining budget. Tier 3 — AST-resolved symbol dependencies for referenced but not selected files — provides structural scaffolding without full file content. Tier 4 — docstrings and function signatures only — covers the rest of the codebase at minimal token cost.</p>
+<p>The metric <code>context_window_tokens_by_tier</code> is the single most diagnostic number for understanding why a particular AI coding session produced poor output. If tier 1 alone consumes 60% of the context budget — because you&#39;re working in a very large file — the model is working with half the repo coverage it would normally have. Retrieval quality degrades measurably.</p>
+<blockquote>
+<p><strong>Curiosity question:</strong> When an AI coding tool generates an edit that&#39;s wrong because it didn&#39;t see a relevant file, is that a model quality problem or a retrieval quality problem? How would you instrument for the distinction?</p>
+</blockquote>
+<hr>
+<h2>Part IV — Inside an Enterprise AI Pipeline at Scale</h2>
+<blockquote>
+<p><em>When you ask for &quot;a Blade Runner-style image of a jazz musician in neon rain,&quot; you don&#39;t know you just triggered a 7-model, 4-service, 3-second pipeline. The engineering team sees every millisecond of it.</em></p>
+</blockquote>
+<hr>
+<h3>A Real Multi-Model Pipeline, Step by Step</h3>
+<p>Enterprise AI products are not single-model systems. They are orchestrated pipelines of specialized models, and every stage is independently observable.</p>
+<p><strong>Step 1 — Intent Classification (under 50ms)</strong>
+A fast, lightweight classifier model determines what kind of request this is — image generation, text response, code execution, data analysis — and routes to the appropriate downstream pipeline. Observable signals: detected intent, classification confidence, and routing target. A confidence score below 0.7 here is a signal that the query is ambiguous or falls outside the classifier&#39;s training distribution.</p>
+<p><strong>Step 2 — Prompt Enrichment (100-200ms)</strong>
+A text model silently rewrites the user&#39;s prompt into an optimized version for the downstream model. For image generation, this means expanding style references, adding technical quality directives, and checking the enriched result against content policy before it moves forward. The user never sees this transformation. Observable signals: input token count, enriched token count (a proxy for how much the model extended the prompt), enrichment model used, and the safety pre-check result on the enriched version.</p>
+<p><strong>Step 3 — Content Policy Evaluation (parallel, 70-90ms)</strong>
+A dedicated safety classifier evaluates the enriched prompt across multiple policy dimensions in parallel with Step 2. In mature implementations, this runs concurrently — you do not pay the latency twice. Observable signals: per-dimension toxicity scores, policy verdict, and evaluation latency. The policy verdict is one of the most important events in the entire pipeline because a false positive block means the user resubmits, increasing both user friction and downstream compute cost.</p>
+<p><strong>Step 4 — Primary Model Inference (1,200-2,800ms)</strong>
+The dominant latency component of the pipeline. Observable signals: model version, resolution requested, inference duration, GPU memory consumed, and the VRAM utilization at peak. GPU memory as a span attribute is underutilized in most observability stacks — but it is the signal that tells you when you are approaching model serving capacity limits before the latency spikes happen.</p>
+<p><strong>Step 5 — AI Quality Evaluation (300-500ms)</strong>
+A secondary model evaluates the primary model&#39;s output against the original prompt. An AI judging an AI. Observable signals: prompt adherence score, aesthetic quality score, artifact detection flag, and the resulting action — accept and deliver, or regenerate. The regenerate rate is a first-order signal for both model quality and prompt enrichment quality. A rising regenerate rate is a quality regression.</p>
+<p><strong>Step 6 — Post-Processing and Delivery</strong>
+Upscaling, C2PA watermark injection (mandatory under EU AI Act 2025 for AI-generated content identification), CDN upload, and signed URL generation. Observable signals: upscaling applied, watermark status, CDN upload latency, and total end-to-end pipeline duration.</p>
+<hr>
+<h3>Sampling at 100 Million Requests per Day</h3>
+<p>OpenAI in 2026 processes over 100 million requests per day. A complex multimodal pipeline with 12 spans per trace generates 1.2 billion spans daily. At 500 bytes per span, that is 600GB of trace data per day before any sampling is applied. Storing all of it is not an engineering decision — it is an accounting decision with the answer no.</p>
+<p>The sampling strategies that work at this scale:</p>
+<p><strong>Head-based sampling</strong> makes the keep/drop decision at ingestion time. Use a deterministic hash of the user ID to consistently track a fixed percentage of users at full fidelity — so any individual user&#39;s session can be debugged end-to-end when needed. Always keep 100% of error traces.</p>
+<p><strong>Tail-based sampling</strong> evaluates the complete trace after it finishes and makes the keep/drop decision on richer signal. Keep every trace where a safety policy triggered a block. Keep every trace in the p99+ latency tail. Keep a baseline percentage of everything else. The OTel Tail Sampling Processor implements this with configurable policies.</p>
+<p><strong>Canary population tracing</strong> is the third tier — a small, consent-based cohort of users for whom every span, every event, and every token is captured. This is the population used for model A/B testing and quality regression measurement.</p>
+<hr>
+<h3>Time-To-Good-Output: The Metric Worth Tracking</h3>
+<p>Every AI product team tracks latency. Very few track the metric that actually correlates with product quality: <strong>Time-To-Good-Output (TTGO)</strong>.</p>
+<p>TTGO measures the elapsed time from when a user submits a request to when they see a result they don&#39;t immediately modify, retry, or discard. It is not pipeline latency. It is pipeline latency multiplied by the regeneration rate.</p>
+<p>The compounding effect is significant. A model that is 30% faster but causes 40% more regenerations has a <em>worse</em> TTGO than the slower model. A guardrail that blocks 3% of valid requests forces 3% of users to resubmit, adding a full additional pipeline latency to those sessions. Prompt enrichment that produces high-quality results on the first pass reduces TTGO by eliminating the regeneration loop entirely.</p>
+<p>Computing TTGO requires frontend and backend trace correlation — linking the client-side user action (accepted, regenerated, abandoned) back to the corresponding server-side trace. The mechanism is W3C trace context propagation into the frontend: the same <code>traceparent</code> header that flows through the backend pipeline is passed to the client, which emits the user&#39;s outcome as a span event back to the same trace ID. This is why AI companies instrument their web clients with the same distributed tracing primitives as their backend services.</p>
+<blockquote>
+<p><strong>Curiosity question:</strong> What would it take for your team to compute TTGO today? What data would be missing, and at which layer?</p>
+</blockquote>
+<hr>
+<h3>How Claude Observes Claude</h3>
+<p>Anthropic&#39;s pipeline for Claude.ai follows the same observability foundations but adds a layer unique to a safety-first architecture: <strong>Constitutional AI evaluation spans</strong>.</p>
+<p>For every response Claude generates, a background evaluation pipeline runs three checks in parallel without blocking delivery: a reward model scores helpfulness, a Constitutional AI classifier evaluates harmlessness against Anthropic&#39;s published principles, and a factual consistency checker cross-references the response against any retrieved context that informed it.</p>
+<p>These evaluations do not make the response wait. They complete asynchronously and write their verdicts to an evaluation store. Over millions of conversations, these evaluation results become the RLHF training signal that shapes the next model version.</p>
+<p>The architectural insight here is profound: <strong>the evaluation pipeline is the observability system for model quality</strong>, and the observability system is simultaneously the training data pipeline for model improvement. The feedback loop is not an add-on to the architecture — it is the architecture.</p>
+<hr>
+<h2>The Three Things That Actually Matter</h2>
+<p>The teams building reliable AI in 2026 are not the ones with the most dashboards. They are the ones who internalized three things early:</p>
+<div class="matters-grid">
+<div class="lens-card pcard">
+<div class="lens-card-number">01</div><div class="pcard-icon">🎯</div>
+<div class="lens-card-title">Observability is upstream of reliability</div>
+<div class="lens-card-subtitle">Defend before you instrument</div>
+<div class="pcard-viz">
+<div class="pcv-row"><span class="pcv-label">Instrumenting system</span><span class="pcv-mono-badge" id="pcv01-pct">0%</span></div>
+<div class="pcv-bar-track"><div class="pcv-bar-fill" id="pcv01-bar"></div></div>
+<div class="pcv-row pcv-mt4"><span class="pcv-dimtext">SLO status</span><span class="pcv-sv pcv-sv-grey" id="pcv01-slo">unknown</span></div>
+</div>
+<p class="pcard-desc">You cannot set SLOs for systems you cannot measure. Instrument with specific intent — start with what you are defending before you decide what to instrument.</p>
+</div>
+<div class="lens-card pcard">
+<div class="lens-card-number">02</div><div class="pcard-icon">🔄</div>
+<div class="lens-card-title">The feedback loop is the architecture</div>
+<div class="lens-card-subtitle">Traces become training data</div>
+<div class="pcard-viz">
+<div class="pcv-cycle">
+<div class="pcv-cnode" id="pcv02-n0">Traces</div><div class="pcv-carr">→</div>
+<div class="pcv-cnode" id="pcv02-n1">Eval</div><div class="pcv-carr">→</div>
+<div class="pcv-cnode" id="pcv02-n2">Train</div><div class="pcv-carr">→</div>
+<div class="pcv-cnode" id="pcv02-n3">Model</div>
+</div>
+<div class="pcv-loop-label">↩ loops back to production traces</div>
+</div>
+<p class="pcard-desc">Production traces, behavioral signals, and evaluation events are not debugging artifacts. Teams that wire observability into their fine-tuning pipelines compound in quality faster than teams treating monitoring as a separate concern.</p>
+</div>
+<div class="lens-card pcard">
+<div class="lens-card-number">03</div><div class="pcard-icon">🪟</div>
+<div class="lens-card-title">The context window is the unit of work</div>
+<div class="lens-card-subtitle">Not the request — the context</div>
+<div class="pcard-viz">
+<div class="pcv-row"><span class="pcv-label">Context window fill</span><span class="pcv-mono-badge" id="pcv03-turn">Turn 1 / 6</span></div>
+<div class="pcv-win-track">
+<div class="pcv-win-seg pcv-seg-sys" id="pcv03-sys"></div>
+<div class="pcv-win-seg pcv-seg-hist" id="pcv03-hist"></div>
+<div class="pcv-win-seg pcv-seg-tools" id="pcv03-tools"></div>
+<div class="pcv-win-seg pcv-seg-inp" id="pcv03-inp"></div>
+</div>
+<div class="pcv-legend">
+<span><i class="pcv-dot pcv-dot-sys"></i>system</span>
+<span><i class="pcv-dot pcv-dot-hist"></i>history</span>
+<span><i class="pcv-dot pcv-dot-tools"></i>tools</span>
+<span><i class="pcv-dot pcv-dot-inp"></i>input</span>
+</div>
+<div class="pcv-row pcv-mt4"><span class="pcv-sv" id="pcv03-pct">18% full</span><button class="pcv-btn" id="pcv03-btn" onclick="pcv03Step()">Next turn →</button></div>
+<div class="pcv-warn-bar" id="pcv03-warn"></div>
+</div>
+<p class="pcard-desc">In LLM systems, the context window — its contents, its fill level, its growth across turns — is the unit of analysis. Observing it is the foundational act of LLM observability that everything else builds on.</p>
+</div>
+</div>
+<style>
+.matters-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin:1.5rem 0;}
+@media(max-width:900px){.matters-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:560px){.matters-grid{grid-template-columns:1fr;}}
+.pcard-icon{font-size:1.55rem;margin-bottom:0.4rem;line-height:1;}
+.pcard-desc{font-size:0.77rem;color:#475569;line-height:1.65;margin:0.7rem 0 0;padding:0;}
+html.dark .pcard-desc{color:#94a3b8;}
+.pcard-viz{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:0.65rem 0.75rem;margin:0.55rem 0 0;}
+html.dark .pcard-viz{background:#0f172a;border-color:#1e293b;}
+.pcv-row{display:flex;align-items:center;justify-content:space-between;gap:0.4rem;}
+.pcv-mt4{margin-top:0.42rem;}
+.pcv-label{font-size:0.59rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;font-family:ui-monospace,monospace;}
+.pcv-dimtext{font-size:0.61rem;color:#94a3b8;font-family:ui-monospace,monospace;}
+.pcv-mono-badge{font-size:0.6rem;font-weight:700;font-family:ui-monospace,monospace;color:var(--card-accent,#3b82f6);background:color-mix(in srgb,var(--card-accent,#3b82f6) 10%,transparent);padding:0.08rem 0.38rem;border-radius:4px;}
+.pcv-bar-track{height:7px;background:#e2e8f0;border-radius:4px;margin-top:0.42rem;overflow:hidden;}
+html.dark .pcv-bar-track{background:#1e293b;}
+.pcv-bar-fill{height:100%;width:0%;background:var(--card-accent,#3b82f6);border-radius:4px;transition:background 0.5s;}
+.pcv-sv{font-size:0.61rem;font-weight:600;padding:0.1rem 0.42rem;border-radius:999px;font-family:ui-monospace,monospace;}
+.pcv-sv-grey{background:#f1f5f9;color:#94a3b8;}
+.pcv-sv-warn{background:#fef9c3;color:#854d0e;}
+.pcv-sv-ok{background:#dcfce7;color:#15803d;}
+html.dark .pcv-sv-grey{background:#1e293b;color:#475569;}
+html.dark .pcv-sv-warn{background:#422006;color:#fde68a;}
+html.dark .pcv-sv-ok{background:#14532d;color:#86efac;}
+.pcv-cycle{display:flex;align-items:center;gap:0.22rem;overflow-x:auto;padding-bottom:0.05rem;}
+.pcv-cnode{font-size:0.63rem;font-weight:600;padding:0.22rem 0.55rem;border-radius:6px;background:#f1f5f9;color:#64748b;font-family:ui-monospace,monospace;flex-shrink:0;transition:background 0.25s,color 0.25s,transform 0.2s;}
+.pcv-cnode.pcv-cnode-active{background:var(--card-accent,#3b82f6);color:#fff;transform:translateY(-1px);}
+html.dark .pcv-cnode{background:#1e293b;color:#475569;}
+html.dark .pcv-cnode.pcv-cnode-active{color:#fff;}
+.pcv-carr{font-size:0.68rem;color:#cbd5e1;flex-shrink:0;}
+.pcv-loop-label{font-size:0.57rem;color:#94a3b8;font-family:ui-monospace,monospace;margin-top:0.32rem;text-align:right;}
+.pcv-win-track{height:12px;background:#e2e8f0;border-radius:6px;margin-top:0.42rem;overflow:hidden;display:flex;}
+html.dark .pcv-win-track{background:#1e293b;}
+.pcv-win-seg{height:100%;width:0%;transition:width 0.5s ease;flex-shrink:0;}
+.pcv-seg-sys{background:#818cf8;}.pcv-seg-hist{background:#34d399;}.pcv-seg-tools{background:#fb923c;}.pcv-seg-inp{background:#60a5fa;}
+.pcv-legend{display:flex;gap:0.55rem;margin-top:0.32rem;flex-wrap:wrap;}
+.pcv-legend span{font-size:0.57rem;color:#94a3b8;display:flex;align-items:center;gap:0.2rem;font-family:ui-monospace,monospace;}
+.pcv-dot{display:inline-block;width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.pcv-dot-sys{background:#818cf8;}.pcv-dot-hist{background:#34d399;}.pcv-dot-tools{background:#fb923c;}.pcv-dot-inp{background:#60a5fa;}
+.pcv-btn{font-size:0.62rem;font-weight:700;color:var(--card-accent,#3b82f6);background:none;border:1.5px solid var(--card-accent,#3b82f6);border-radius:5px;padding:0.16rem 0.52rem;cursor:pointer;font-family:ui-monospace,monospace;transition:background 0.15s,color 0.15s;}
+.pcv-btn:hover{background:var(--card-accent,#3b82f6);color:#fff;}
+html.dark .pcv-btn{color:var(--card-accent,#60a5fa);border-color:var(--card-accent,#60a5fa);}
+html.dark .pcv-btn:hover{background:var(--card-accent,#60a5fa);color:#0f172a;}
+.pcv-warn-bar{font-size:0.6rem;color:#dc2626;font-family:ui-monospace,monospace;margin-top:0.3rem;min-height:0.85rem;transition:opacity 0.35s;}
+html.dark .pcv-warn-bar{color:#fca5a5;}
+</style>
+<script>
+(function(){
+  var pcAccents=["#3b82f6","#10b981","#f59e0b"];
+  document.querySelectorAll(".pcard").forEach(function(c,i){c.style.setProperty("--card-accent",pcAccents[i]);});
+  var b=document.getElementById('pcv01-bar'),p=document.getElementById('pcv01-pct'),s=document.getElementById('pcv01-slo');
+  if(b){var v=0;function run01(){if(v>104){setTimeout(function(){v=0;run01();},2200);return;}var pv=Math.min(v,100);b.style.width=pv+'%';p.textContent=pv+'%';if(pv<30){s.textContent='unknown';s.className='pcv-sv pcv-sv-grey';}else if(pv<70){s.textContent='partial data';s.className='pcv-sv pcv-sv-warn';}else{s.textContent='active \u2713';s.className='pcv-sv pcv-sv-ok';}v++;setTimeout(run01,42);}run01();}
+  var nids=['pcv02-n0','pcv02-n1','pcv02-n2','pcv02-n3'];
+  var ns=nids.map(function(id){return document.getElementById(id);});
+  if(ns[0]){var ci=0;setInterval(function(){ns.forEach(function(n){if(n)n.classList.remove('pcv-cnode-active');});if(ns[ci])ns[ci].classList.add('pcv-cnode-active');ci=(ci+1)%4;},750);}
+  var turns=[{t:'Turn 1 / 6',sys:8,hist:0,tools:3,inp:7,total:18,warn:''},{t:'Turn 2 / 6',sys:8,hist:9,tools:5,inp:7,total:29,warn:''},{t:'Turn 3 / 6',sys:8,hist:18,tools:11,inp:7,total:44,warn:''},{t:'Turn 4 / 6',sys:8,hist:28,tools:15,inp:7,total:58,warn:''},{t:'Turn 5 / 6',sys:8,hist:38,tools:18,inp:7,total:71,warn:'approaching 80% \u2014 alert threshold'},{t:'Turn 6 / 6',sys:8,hist:48,tools:18,inp:7,total:81,warn:'\u26a0 81% full \u2014 agent risks context exhaustion'}];
+  var ti=0;
+  function pcv03Render(d){['sys','hist','tools','inp'].forEach(function(k){var el=document.getElementById('pcv03-'+k);if(el)el.style.width=d[k]+'%';});var pe=document.getElementById('pcv03-pct');if(pe){pe.textContent=d.total+'% full';pe.style.background='';pe.style.color='';pe.className='pcv-sv '+(d.total>=80?'pcv-sv-warn':d.total>=60?'pcv-sv-warn':'pcv-sv-grey');if(d.total>=80){pe.style.background='#fee2e2';pe.style.color='#991b1b';}}var te=document.getElementById('pcv03-turn');if(te)te.textContent=d.t;var we=document.getElementById('pcv03-warn');if(we)we.textContent=d.warn;var btn=document.getElementById('pcv03-btn');if(btn)btn.textContent=ti>=turns.length-1?'Reset \u21ba':'Next turn \u2192';}
+  window.pcv03Step=function(){ti=ti>=turns.length-1?0:ti+1;pcv03Render(turns[ti]);};
+  if(document.getElementById('pcv03-sys'))pcv03Render(turns[0]);
+})();
+</script>
+
+<hr>
+<h2>Reference — The 2026 LLM Observability Stack</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Tool</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Trace backend</td>
+<td>Grafana Tempo</td>
+<td>Distributed traces, span storage, trace search</td>
+</tr>
+<tr>
+<td>Metrics backend</td>
+<td>Prometheus + Grafana</td>
+<td>Time-series metrics, alerting, dashboards</td>
+</tr>
+<tr>
+<td>Log backend</td>
+<td>ClickHouse</td>
+<td>High-cardinality LLM log storage, SQL querying</td>
+</tr>
+<tr>
+<td>LLM evaluation</td>
+<td>Langfuse</td>
+<td>Prompt management, evaluation datasets, cost tracking</td>
+</tr>
+<tr>
+<td>LLM quality</td>
+<td>Arize Phoenix</td>
+<td>Drift detection, hallucination scoring, embedding monitoring</td>
+</tr>
+<tr>
+<td>OTel collector</td>
+<td>OpenTelemetry Collector</td>
+<td>Neutral aggregation layer, pipeline routing</td>
+</tr>
+<tr>
+<td>Sampling</td>
+<td>OTel Tail Sampling Processor</td>
+<td>Intelligent trace sampling at scale</td>
+</tr>
+<tr>
+<td>Context propagation</td>
+<td>W3C Trace Context</td>
+<td>Cross-service and cross-model trace continuity</td>
+</tr>
+<tr>
+<td>Safety signals</td>
+<td>Microsoft Presidio</td>
+<td>PII detection and redaction</td>
+</tr>
+<tr>
+<td>Semantic conventions</td>
+<td>OTel GenAI spec (stable 2025)</td>
+<td>Standardized <code>gen_ai.*</code> attribute namespace</td>
+</tr>
+</tbody></table>
+
+      </div>
+      
+    <aside style="margin-top:3rem;padding-top:2rem;border-top:1px solid #334155">
+      <h3 style="font-size:1.05rem;font-weight:600;margin-bottom:.75rem">Related Posts</h3>
+      <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.6rem">
+        <li><a href="/blog/posts/2026-03-16-llm-fine-tuning/" style="color:#2563eb;font-weight:500;text-decoration:none">LLM Fine-Tuning: What Nobody Tells You Until You've Burned the GPU Budget</a> <span style="color:#6b7280;font-size:.8rem">— March 16, 2026</span></li>
+        <li><a href="/blog/posts/2026-03-15-databases-a-lead-engineers-field-guide/" style="color:#2563eb;font-weight:500;text-decoration:none">Databases: A Lead Engineer's Field Guide to Picking the Right Tool</a> <span style="color:#6b7280;font-size:.8rem">— March 15, 2026</span></li>
+      </ul>
+    </aside>
+    </article>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script>
+    function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'☀️':'🌙';}
+    document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';
+  </script>
+
+</body>
+</html>

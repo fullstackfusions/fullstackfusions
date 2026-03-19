@@ -141,7 +141,12 @@ body {
   margin-bottom: 0.25rem;
 }
 
-.post-content strong { font-weight: 700; }
+.post-content strong {
+  font-weight: 700;
+  color: #0369a1;
+}
+
+html.dark .post-content strong { color: #7dd3fc; }
 .post-content em     { font-style: italic; }
 
 .post-content a {
@@ -207,17 +212,19 @@ body {
 
 /* Inline code (not inside a pre) */
 .post-content code:not(.hljs) {
-  background: #f3f4f6;
-  color: #1e293b;
-  padding: 0.15rem 0.45rem;
+  background: #dbeafe;
+  color: #1d4ed8;
+  padding: 0.15rem 0.5rem;
   border-radius: 4px;
   font-size: 0.875em;
   font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  border: 1px solid #bfdbfe;
 }
 
 html.dark .post-content code:not(.hljs) {
-  background: #1e293b;
-  color: #e2e8f0;
+  background: #172554;
+  color: #93c5fd;
+  border: 1px solid #1e40af;
 }
 
 .post-content img {
@@ -227,10 +234,12 @@ html.dark .post-content code:not(.hljs) {
 }
 
 .post-content blockquote {
-  border-left: 4px solid #e5e7eb;
-  margin: 1.5rem 0;
-  padding: 0.5rem 0 0.5rem 1.25rem;
-  color: #6b7280;
+  border-left: 4px solid #3b82f6;
+  background: #f0f6ff;
+  margin: 1.75rem 0;
+  padding: 0.85rem 1.25rem;
+  border-radius: 0 8px 8px 0;
+  color: #334155;
   font-style: italic;
 }
 
@@ -279,15 +288,17 @@ html.dark .post-meta { color: #94a3b8; }
 html.dark .post-title a { color: #e2e8f0; }
 html.dark .tag { background: #1e293b; color: #94a3b8; border: 1px solid #334155; }
 html.dark .post-header { border-color: #334155; }
-html.dark .post-content h1,
-html.dark .post-content h2,
-html.dark .post-content h3,
-html.dark .post-content h4 { color: #f1f5f9; }
+html.dark .post-content h1 { color: #f8fafc; }
+html.dark .post-content h2 { color: #f1f5f9; }
+html.dark .post-content h3 { color: #7dd3fc; }
+html.dark .post-content h4 { color: #93c5fd; }
+html.dark .post-content h5,
+html.dark .post-content h6 { color: #a5b4fc; }
 html.dark .post-content p,
 html.dark .post-content li { color: #cbd5e1; }
 html.dark .post-content a { color: #60a5fa; }
 html.dark .post-content a:hover { color: #93c5fd; }
-html.dark .post-content blockquote { border-color: #475569; color: #94a3b8; }
+html.dark .post-content blockquote { border-color: #3b82f6; background: #1e2d45; color: #93c5fd; }
 html.dark .post-content code { background: #1e293b; color: #e2e8f0; }
 html.dark .post-content hr { border-color: #334155; }
 html.dark .post-content th,
@@ -297,6 +308,86 @@ html.dark .post-content thead th { color: #94a3b8; }
 html.dark .post-content tbody tr:nth-child(even) { background: #0f172a; }
 html.dark .post-content { color: #cbd5e1; }
 html.dark .back-link { color: #94a3b8; }
+
+/* ── Pagination ──────────────────────────────────────── */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  padding: 2rem 0 1rem;
+}
+
+.page-btn {
+  min-width: 2.2rem;
+  height: 2.2rem;
+  padding: 0 0.6rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  line-height: 1;
+}
+
+.page-btn:hover:not([disabled]) {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #2563eb;
+}
+
+.page-btn.page-active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+  cursor: default;
+}
+
+.page-btn[disabled],
+.page-btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-btn.page-nav {
+  padding: 0 0.75rem;
+  font-size: 0.8rem;
+}
+
+.page-ellipsis {
+  min-width: 2.2rem;
+  height: 2.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+html.dark .page-btn {
+  background: #1e293b;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+html.dark .page-btn:hover:not([disabled]) {
+  background: #1e3a5f;
+  border-color: #3b82f6;
+  color: #93c5fd;
+}
+
+html.dark .page-btn.page-active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+html.dark .page-ellipsis { color: #64748b; }
 html.dark .back-link:hover { color: #e2e8f0; }
 
 /* ── Blog index: search + tag filter ─────────────────── */
