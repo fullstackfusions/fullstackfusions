@@ -213,6 +213,7 @@ function indexTemplate(_posts) {
 
     <p id="no-results" class="no-results" hidden>No posts match your search.</p>
     <ul id="post-list" class="post-list"></ul>
+    <nav id="pagination" class="pagination" aria-label="Pagination" hidden></nav>
   </main>
 
   <script>
@@ -244,7 +245,9 @@ function indexTemplate(_posts) {
       }
 
       // \u2500\u2500 State \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+      const POSTS_PER_PAGE = 10;
       let allPosts = [];
+      let currentPage = 1;
       let activeTag = location.hash
         ? decodeURIComponent(location.hash.slice(1))
         : null;
@@ -269,10 +272,17 @@ function indexTemplate(_posts) {
         if (filtered.length === 0) {
           list.innerHTML = '';
           noResults.hidden = false;
+          renderPagination(0);
           return;
         }
         noResults.hidden = true;
-        list.innerHTML = filtered
+
+        const totalPages = Math.ceil(filtered.length / POSTS_PER_PAGE);
+        if (currentPage > totalPages) currentPage = totalPages;
+        const start = (currentPage - 1) * POSTS_PER_PAGE;
+        const pagePosts = filtered.slice(start, start + POSTS_PER_PAGE);
+
+        list.innerHTML = pagePosts
           .map(
             (post) => \`<li>
               <div class="post-meta">\${esc(formatDate(post.date))}</div>
@@ -292,6 +302,48 @@ function indexTemplate(_posts) {
 
         list.querySelectorAll('.tag-clickable').forEach((btn) => {
           btn.addEventListener('click', () => setTag(btn.dataset.tag));
+        });
+
+        renderPagination(filtered.length);
+      }
+
+      function renderPagination(total) {
+        const nav = document.getElementById('pagination');
+        const totalPages = Math.ceil(total / POSTS_PER_PAGE);
+        if (totalPages <= 1) { nav.hidden = true; return; }
+        nav.hidden = false;
+
+        const maxVisible = 7;
+        const pages = [];
+        if (totalPages <= maxVisible) {
+          for (let i = 1; i <= totalPages; i++) pages.push(i);
+        } else {
+          pages.push(1);
+          const left = Math.max(2, currentPage - 2);
+          const right = Math.min(totalPages - 1, currentPage + 2);
+          if (left > 2) pages.push('\u2026');
+          for (let i = left; i <= right; i++) pages.push(i);
+          if (right < totalPages - 1) pages.push('\u2026');
+          pages.push(totalPages);
+        }
+
+        let html = \`<button class="page-btn page-nav\${currentPage === 1 ? ' disabled' : ''}" data-page="\${currentPage - 1}" aria-label="Previous page"\${currentPage === 1 ? ' disabled' : ''}>&#8592; Prev</button>\`;
+        for (const p of pages) {
+          if (typeof p === 'string') {
+            html += \`<span class="page-ellipsis">\${p}</span>\`;
+          } else {
+            html += \`<button class="page-btn\${p === currentPage ? ' page-active' : ''}" data-page="\${p}" aria-label="Page \${p}">\${p}</button>\`;
+          }
+        }
+        html += \`<button class="page-btn page-nav\${currentPage === totalPages ? ' disabled' : ''}" data-page="\${currentPage + 1}" aria-label="Next page"\${currentPage === totalPages ? ' disabled' : ''}>Next &#8594;</button>\`;
+        nav.innerHTML = html;
+
+        nav.querySelectorAll('.page-btn:not([disabled])').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            currentPage = parseInt(btn.dataset.page, 10);
+            renderPosts();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
         });
       }
 
@@ -316,6 +368,7 @@ function indexTemplate(_posts) {
       // \u2500\u2500 Set active tag \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
       function setTag(tag) {
         activeTag = tag || null;
+        currentPage = 1;
         history.replaceState(
           null, '',
           activeTag ? '#' + encodeURIComponent(activeTag) : location.pathname
@@ -329,6 +382,7 @@ function indexTemplate(_posts) {
         activeTag = location.hash
           ? decodeURIComponent(location.hash.slice(1))
           : null;
+        currentPage = 1;
         renderTagBar();
         renderPosts();
       });
@@ -336,6 +390,7 @@ function indexTemplate(_posts) {
       // \u2500\u2500 Search input \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
       document.getElementById('search-input').addEventListener('input', (e) => {
         searchQuery = e.target.value;
+        currentPage = 1;
         renderPosts();
       });
 
@@ -514,8 +569,9 @@ function build() {
   fs.writeFileSync(BLOG_INDEX, indexTemplate(postMeta));
   console.log('✓ Built: blog/index.html');
 
-  // Write feed.json for homepage widget
-  const feed = postMeta.slice(0, 10).map(p => ({
+  // Write feed.json — all posts (blog index paginates client-side;
+  // homepage widget self-limits to slice(0,5))
+  const feed = postMeta.map(p => ({
     ...p,
     url: `/blog/posts/${p.slug}/`,
   }));
