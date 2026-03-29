@@ -22,6 +22,21 @@ const SITE_URL = 'https://fullstackfusions.com';
 const AUTHOR   = 'Mihir';
 const GA_ID    = 'G-QWCQ7T2CM8';
 
+// ── Custom heading renderer — adds id attributes for anchor links ─────────────
+const renderer = new marked.Renderer();
+renderer.heading = function ({ tokens, depth }) {
+  const text = this.parser.parseInline(tokens);
+  const raw  = tokens.map(t => t.raw || t.text || '').join('');
+  const slug = raw
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')   // strip non-word chars (except spaces/hyphens)
+    .replace(/\s+/g, '-')       // spaces → hyphens
+    .replace(/-+/g, '-')        // collapse consecutive hyphens
+    .replace(/^-|-$/g, '');     // trim leading/trailing hyphens
+  return `<h${depth} id="${slug}">${text}</h${depth}>\n`;
+};
+marked.use({ renderer });
+
 function gaTag() {
   return `
   <!-- Google Analytics -->
@@ -64,6 +79,18 @@ function renderTags(tags = []) {
   return tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
 }
 
+// ── Wrap H2 sections in collapsible <details> blocks ─────────────────────────
+function wrapH2Sections(html) {
+  // Split on every <h2 …> opening tag, keeping the delimiter in the following chunk
+  const parts = html.split(/(?=<h2[\s>])/);
+  return parts.map(part => {
+    const match = part.match(/^(<h2[\s\S]*?<\/h2>)([\s\S]*)$/);
+    if (!match) return part; // pre-h2 content (e.g. intro paragraphs)
+    const [, heading, content] = match;
+    return `<details open><summary>${heading}</summary><div class="details-content">${content}</div></details>\n`;
+  }).join('');
+}
+
 // ── Site nav ──────────────────────────────────────────────────────────────────
 // Navigation is rendered at runtime by /components/navbar.js.
 // To change links or styling, edit that file — no rebuild needed.
@@ -102,6 +129,8 @@ function postTemplate({ slug, title, date, tags = [], description = '', contentH
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Publish gate: redirect to /blog if visited before publish date -->
+  <script>(function(){var pub=new Date('${rawDate}');pub.setHours(0,0,0,0);if(new Date()<pub){window.location.replace('/blog');}})();<\/script>
   ${gaTag()}
   <meta name="description" content="${escapeHtml(description)}" />
   <title>${escapeHtml(title)} — fullstackfusions</title>
@@ -159,7 +188,9 @@ function postTemplate({ slug, title, date, tags = [], description = '', contentH
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"><\/script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"><\/script>
-  <script>hljs.highlightAll();<\/script>
+  <script>
+    try { hljs.highlightAll(); } catch(e) { console.warn('hljs error:', e); }
+  <\/script>
   <script>
     function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'\u2600\uFE0F':'\uD83C\uDF19';}
     document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'\u2600\uFE0F':'\uD83C\uDF19';
@@ -500,7 +531,7 @@ function build() {
     const raw               = fs.readFileSync(path.join(POSTS_SRC, file), 'utf8');
     const { data, content } = matter(raw);
     const slug              = slugFromFilename(file);
-    const contentHtml       = marked(content);
+    const contentHtml       = wrapH2Sections(marked(content));
     const rawDate           = (data.date instanceof Date)
       ? data.date.toISOString().slice(0, 10)
       : String(data.date || new Date().toISOString().slice(0, 10)).slice(0, 10);
@@ -562,6 +593,22 @@ function build() {
       })
     );
     console.log(`✓ Built: blog/posts/${slug}/index.html`);
+  }
+
+  // Stub redirect for any blog/posts/ directory with no index.html
+  // (e.g. pre-created future post folders that haven't been written yet)
+  if (fs.existsSync(POSTS_OUT)) {
+    for (const dir of fs.readdirSync(POSTS_OUT)) {
+      const dirPath  = path.join(POSTS_OUT, dir);
+      if (!fs.statSync(dirPath).isDirectory()) continue;
+      const htmlPath = path.join(dirPath, 'index.html');
+      if (!fs.existsSync(htmlPath)) {
+        fs.writeFileSync(htmlPath,
+          `<!DOCTYPE html><html><head><meta charset="UTF-8" /><meta http-equiv="refresh" content="0;url=/blog" /><title>Redirecting…</title></head><body><script>window.location.replace('/blog');<\/script></body></html>`
+        );
+        console.log(`↩ Stub redirect: blog/posts/${dir}/index.html`);
+      }
+    }
   }
 
   // Regenerate blog/index.html

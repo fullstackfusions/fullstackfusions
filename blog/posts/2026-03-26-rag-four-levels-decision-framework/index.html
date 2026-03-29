@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Publish gate: redirect to /blog if visited before publish date -->
+  <script>(function(){var pub=new Date('2026-03-26');pub.setHours(0,0,0,0);if(new Date()<pub){window.location.replace('/blog');}})();</script>
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWCQ7T2CM8"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QWCQ7T2CM8');
+  </script>
+  <meta name="description" content="L1 through L4 RAG — vanilla, hybrid, GraphRAG, and agentic — with a concrete decision framework for choosing the right retrieval level for any enterprise problem." />
+  <title>The Four RAG Levels — A Decision Framework for Enterprise Systems — fullstackfusions</title>
+  <link rel="canonical" href="https://fullstackfusions.com/blog/posts/2026-03-26-rag-four-levels-decision-framework/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The Four RAG Levels — A Decision Framework for Enterprise Systems" />
+  <meta property="og:description" content="L1 through L4 RAG — vanilla, hybrid, GraphRAG, and agentic — with a concrete decision framework for choosing the right retrieval level for any enterprise problem." />
+  <meta property="og:url" content="https://fullstackfusions.com/blog/posts/2026-03-26-rag-four-levels-decision-framework/" />
+  <meta property="og:site_name" content="fullstackfusions" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The Four RAG Levels — A Decision Framework for Enterprise Systems" />
+  <meta name="twitter:description" content="L1 through L4 RAG — vanilla, hybrid, GraphRAG, and agentic — with a concrete decision framework for choosing the right retrieval level for any enterprise problem." />
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="fullstackfusions" href="https://fullstackfusions.com/feed.xml" />
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"The Four RAG Levels — A Decision Framework for Enterprise Systems","author":{"@type":"Person","name":"Mihir"},"datePublished":"2026-03-26","description":"L1 through L4 RAG — vanilla, hybrid, GraphRAG, and agentic — with a concrete decision framework for choosing the right retrieval level for any enterprise problem.","url":"https://fullstackfusions.com/blog/posts/2026-03-26-rag-four-levels-decision-framework/"}</script>
+
+  <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/tailwind.css" />
+  <link rel="stylesheet" href="/blog/assets/blog.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" />
+  <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();</script>
+  <style>body{font-family:"Inter",ui-sans-serif,system-ui,sans-serif}.section-heading{position:relative;padding-bottom:.6rem}.section-heading::after{content:"";position:absolute;left:0;bottom:0;width:36px;height:3px;background:#3b82f6;border-radius:2px}#theme-toggle{position:fixed;bottom:1rem;right:1rem;z-index:999;width:2.25rem;height:2.25rem;border-radius:50%;border:none;background:#2563eb;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .2s}#theme-toggle:hover{background:#3b82f6}html.dark #theme-toggle{background:#2563eb;border:none}html.dark #theme-toggle:hover{background:#3b82f6}html.dark{color-scheme:dark}html.dark body{background-color:#0f172a;color:#e2e8f0}html.dark .bg-gray-50{background-color:#0f172a}html.dark .bg-white{background-color:#1e293b}html.dark .bg-gray-900{background-color:#020617}html.dark .text-gray-900{color:#f1f5f9}html.dark .text-gray-800{color:#e2e8f0}html.dark .text-gray-700{color:#cbd5e1}html.dark .text-gray-600{color:#94a3b8}html.dark .text-gray-500{color:#64748b}html.dark .border-gray-200{border-color:#334155}html.dark .shadow-sm{box-shadow:0 1px 2px rgba(0,0,0,.5)}html.dark .text-blue-600{color:#60a5fa}html.dark .section-heading::after{background:#60a5fa}</style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode"><span id="theme-icon">&#x1F319;</span></button>
+
+  
+  <div id="site-nav"></div>
+  <script src="/components/navbar.js"></script>
+
+  <main class="blog-container">
+    <a class="back-link" href="/blog">&#8592; All posts</a>
+
+    <article>
+      <header class="post-header">
+        <div class="post-meta">March 26, 2026</div>
+        <h1 class="text-3xl font-bold mt-2">The Four RAG Levels — A Decision Framework for Enterprise Systems</h1>
+        <p class="text-gray-600 mt-2">L1 through L4 RAG — vanilla, hybrid, GraphRAG, and agentic — with a concrete decision framework for choosing the right retrieval level for any enterprise problem.</p>
+        <div class="post-tags"><span class="tag">llm</span><span class="tag">ai</span><span class="tag">rag</span><span class="tag">distributed-systems</span><span class="tag">architecture</span></div>
+      </header>
+
+      <div class="post-content">
+        <p><em>This is Part 1 of the RAG Enterprise Series — the anchor post. Parts 2–5 apply this framework to Travel &amp; Tourism, Hospital Management, Wealth Management, and Personal Banking. Parts 6–8 cover the supporting stack, Mamba/SSMs, and PageIndex.</em></p>
+<blockquote>
+<p><strong>Scope</strong>: Four RAG sophistication levels applied across Travel &amp; Tourism, Hospital Management, Wealth Management, and Personal Banking. Each section covers real-world use cases, domain-specific challenges, how LLM + RAG architecture addresses them, and the full supporting stack including memory, prompt engineering, fine-tuning, and embedding improvements.</p>
+</blockquote>
+<p><em>Quick note: this article covers four domains, four RAG levels each, plus the full supporting stack. It is intentionally long — bookmark it, come back with coffee, or read it in sections.</em></p>
+<hr>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:2rem 0;font-family:Inter,sans-serif">
+
+<div style="background:linear-gradient(135deg,#0c2d4e 0%,#0f172a 100%);border:1px solid #1e4976;border-radius:12px;padding:1.25rem;position:relative;overflow:hidden">
+  <div style="position:absolute;top:-8px;right:-8px;font-size:3rem;opacity:.07;line-height:1">✈</div>
+  <div style="font-size:1.4rem;margin-bottom:.4rem">✈️</div>
+  <div style="color:#38bdf8;font-weight:700;font-size:.88rem;letter-spacing:.04em;text-transform:uppercase">Travel &amp; Tourism</div>
+  <div style="color:#7dd3fc;font-size:.75rem;margin:.35rem 0 .75rem;line-height:1.55;opacity:.85">Multi-source · Multilingual · Real-time pricing · Visa routing</div>
+  <div style="display:flex;gap:.3rem;flex-wrap:wrap">
+    <span style="background:rgba(56,189,248,.12);color:#38bdf8;font-size:.64rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1px solid rgba(56,189,248,.25)">GDS (Amadeus, Sabre)</span>
+    <span style="background:rgba(56,189,248,.12);color:#38bdf8;font-size:.64rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1px solid rgba(56,189,248,.25)">Visa DB</span>
+    <span style="background:rgba(56,189,248,.12);color:#38bdf8;font-size:.64rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1px solid rgba(56,189,248,.25)">Reviews</span>
+    <span style="background:rgba(56,189,248,.12);color:#38bdf8;font-size:.64rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1px solid rgba(56,189,248,.25)">Pricing APIs</span>
+  </div>
+  <div style="margin-top:.85rem;padding-top:.75rem;border-top:1px solid rgba(56,189,248,.18);font-size:.7rem;color:#7dd3fc"><strong style="color:#38bdf8">Stakes:</strong> Medium &nbsp;·&nbsp; <strong style="color:#38bdf8">Hallucination risk:</strong> Moderate</div>
+</div>
+
+<div style="background:linear-gradient(135deg,#3b0a0a 0%,#0f172a 100%);border:1px solid #7f1d1d;border-radius:12px;padding:1.25rem;position:relative;overflow:hidden">
+  <div style="position:absolute;top:-8px;right:-8px;font-size:3rem;opacity:.07;line-height:1">+</div>
+  <div style="font-size:1.4rem;margin-bottom:.4rem">🏥</div>
+  <div style="color:#fca5a5;font-weight:700;font-size:.88rem;letter-spacing:.04em;text-transform:uppercase">Hospital Management</div>
+  <div style="color:#fca5a5;font-size:.75rem;margin:.35rem 0 .75rem;line-height:1.55;opacity:.8">Highest-stakes · HIPAA/PHIPA · HL7 FHIR · Clinical precision</div>
+  <div style="display:flex;gap:.3rem;flex-wrap:wrap">
+    <span style="background:rgba(252,165,165,.12);color:#fca5a5;font-size:.64rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1px solid rgba(252,165,165,.25)">EHR (Epic, Cerner)</span>
+    <span style="background:rgba(252,165,165,.12);color:#fca5a5;font-size:.64rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1px solid rgba(252,165,165,.25)">HL7 FHIR</span>
+    <span style="background:rgba(252,165,165,.12);color:#fca5a5;font-size:.64rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1px solid rgba(252,165,165,.25)">DICOM</span>
+    <span style="background:rgba(252,165,165,.12);color:#fca5a5;font-size:.64rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1px solid rgba(252,165,165,.25)">SNOMED CT</span>
+  </div>
+  <div style="margin-top:.85rem;padding-top:.75rem;border-top:1px solid rgba(252,165,165,.18);font-size:.7rem;color:#fca5a5"><strong>Stakes:</strong> Life-critical &nbsp;·&nbsp; <strong>Hallucination tolerance:</strong> Zero</div>
+</div>
+
+<div style="background:linear-gradient(135deg,#052e16 0%,#0f172a 100%);border:1px solid #14532d;border-radius:12px;padding:1.25rem;position:relative;overflow:hidden">
+  <div style="position:absolute;top:-8px;right:-8px;font-size:3rem;opacity:.07;line-height:1">$</div>
+  <div style="font-size:1.4rem;margin-bottom:.4rem">📈</div>
+  <div style="color:#86efac;font-weight:700;font-size:.88rem;letter-spacing:.04em;text-transform:uppercase">Wealth Management</div>
+  <div style="color:#86efac;font-size:.75rem;margin:.35rem 0 .75rem;line-height:1.55;opacity:.8">Fiduciary duty · MiFID II/Reg BI · Suitability · Real-time markets</div>
+  <div style="display:flex;gap:.3rem;flex-wrap:wrap">
+    <span style="background:rgba(134,239,172,.12);color:#86efac;font-size:.64rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1px solid rgba(134,239,172,.25)">IPS Documents</span>
+    <span style="background:rgba(134,239,172,.12);color:#86efac;font-size:.64rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1px solid rgba(134,239,172,.25)">Bloomberg/Refinitiv</span>
+    <span style="background:rgba(134,239,172,.12);color:#86efac;font-size:.64rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1px solid rgba(134,239,172,.25)">KYC/AML</span>
+    <span style="background:rgba(134,239,172,.12);color:#86efac;font-size:.64rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1px solid rgba(134,239,172,.25)">SEC Filings</span>
+  </div>
+  <div style="margin-top:.85rem;padding-top:.75rem;border-top:1px solid rgba(134,239,172,.18);font-size:.7rem;color:#86efac"><strong>Stakes:</strong> Regulatory + financial &nbsp;·&nbsp; <strong>Risk:</strong> Suitability violation</div>
+</div>
+
+<div style="background:linear-gradient(135deg,#1e1152 0%,#0f172a 100%);border:1px solid #3730a3;border-radius:12px;padding:1.25rem;position:relative;overflow:hidden">
+  <div style="position:absolute;top:-8px;right:-8px;font-size:3rem;opacity:.07;line-height:1">⬡</div>
+  <div style="font-size:1.4rem;margin-bottom:.4rem">🏦</div>
+  <div style="color:#a5b4fc;font-weight:700;font-size:.88rem;letter-spacing:.04em;text-transform:uppercase">Personal Banking</div>
+  <div style="color:#a5b4fc;font-size:.75rem;margin:.35rem 0 .75rem;line-height:1.55;opacity:.8">Broadest audience · FINTRAC/AML · PCI-DSS · Transaction intelligence</div>
+  <div style="display:flex;gap:.3rem;flex-wrap:wrap">
+    <span style="background:rgba(165,180,252,.12);color:#a5b4fc;font-size:.64rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1px solid rgba(165,180,252,.25)">Core Banking</span>
+    <span style="background:rgba(165,180,252,.12);color:#a5b4fc;font-size:.64rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1px solid rgba(165,180,252,.25)">Transactions</span>
+    <span style="background:rgba(165,180,252,.12);color:#a5b4fc;font-size:.64rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1px solid rgba(165,180,252,.25)">Open Banking APIs</span>
+    <span style="background:rgba(165,180,252,.12);color:#a5b4fc;font-size:.64rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1px solid rgba(165,180,252,.25)">CRA Data</span>
+  </div>
+  <div style="margin-top:.85rem;padding-top:.75rem;border-top:1px solid rgba(165,180,252,.18);font-size:.7rem;color:#a5b4fc"><strong>Stakes:</strong> Consumer protection &nbsp;·&nbsp; <strong>Scale:</strong> 10M+ daily transactions</div>
+</div>
+
+</div>
+
+<details open><summary><h2 id="1-the-rag-levels-recap-and-framing">1. The RAG Levels — Recap and Framing</h2></summary><div class="details-content">
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Name</th>
+<th>Core Mechanism</th>
+<th>Accuracy Range</th>
+<th>Primary Constraint</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>L1</td>
+<td>Vanilla RAG</td>
+<td>Dense vector → top-k → prompt</td>
+<td>70–80%</td>
+<td>Single retrieval pass, semantic drift</td>
+</tr>
+<tr>
+<td>L2</td>
+<td>Hybrid RAG</td>
+<td>Dense (semantic) + Sparse (BM25) → rerank → prompt</td>
+<td>82–90%</td>
+<td>Static retrieval, no multi-document synthesis</td>
+</tr>
+<tr>
+<td>L3</td>
+<td>GraphRAG</td>
+<td>Vector + structured knowledge graph + ontology traversal</td>
+<td>92–99%</td>
+<td>Ontology investment, relationship modeling</td>
+</tr>
+<tr>
+<td>L4</td>
+<td>Agentic RAG</td>
+<td>Retrieve → reflect → re-query loop → multi-hop synthesis</td>
+<td>95–99%+</td>
+<td>Latency, cost, loop-control complexity</td>
+</tr>
+</tbody></table>
+<p><em>In plain terms: L1 guesses, L2 narrows, L3 reasons, L4 debates with itself until it&#39;s confident. Pick your complexity based on what the problem actually needs — not what the architecture diagram looks coolest.</em></p>
+<p><strong>A note on the retrieval assumption</strong>: All four levels above assume that retrieval works by <em>similarity</em> — embed the query, embed document chunks, find the nearest vectors. This is the right default for corpus-level search across thousands of documents. But for structured professional documents (financial filings, clinical guidelines, legal agreements, regulatory disclosures), there is an emerging alternative: reasoning-based retrieval, where the LLM navigates a document&#39;s structure directly instead of searching a vector space. Section 6.4 introduces this paradigm, and Section 10 applies it across all four domains.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0;font-family:Inter,sans-serif">
+
+<div style="background:#1e293b;border:1px solid #475569;border-radius:12px;padding:1.2rem;border-top:4px solid #64748b">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem">
+    <span style="background:#334155;color:#94a3b8;font-size:.68rem;font-weight:700;padding:.2rem .6rem;border-radius:6px;letter-spacing:.08em">L1</span>
+    <span style="color:#e2e8f0;font-weight:700;font-size:.95rem">Vanilla RAG</span>
+  </div>
+  <div style="margin-bottom:.7rem">
+    <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#94a3b8;margin-bottom:.28rem"><span>Accuracy</span><span style="color:#f1f5f9;font-weight:700">70–80%</span></div>
+    <div style="background:#0f172a;border-radius:99px;height:5px;overflow:hidden"><div style="background:linear-gradient(90deg,#475569,#64748b);width:75%;height:5px"></div></div>
+  </div>
+  <div style="font-size:.78rem;color:#94a3b8;line-height:1.5;margin-bottom:.6rem">Dense vector search → top-k → LLM prompt</div>
+  <div style="font-size:.7rem;color:#64748b;background:#0f172a;padding:.35rem .6rem;border-radius:6px">⚠ Single pass · semantic drift risk</div>
+</div>
+
+<div style="background:#1e293b;border:1px solid #1d4ed8;border-radius:12px;padding:1.2rem;border-top:4px solid #3b82f6">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem">
+    <span style="background:#1e3a5f;color:#60a5fa;font-size:.68rem;font-weight:700;padding:.2rem .6rem;border-radius:6px;letter-spacing:.08em">L2</span>
+    <span style="color:#e2e8f0;font-weight:700;font-size:.95rem">Hybrid RAG</span>
+  </div>
+  <div style="margin-bottom:.7rem">
+    <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#94a3b8;margin-bottom:.28rem"><span>Accuracy</span><span style="color:#f1f5f9;font-weight:700">82–90%</span></div>
+    <div style="background:#0f172a;border-radius:99px;height:5px;overflow:hidden"><div style="background:linear-gradient(90deg,#1d4ed8,#3b82f6);width:86%;height:5px"></div></div>
+  </div>
+  <div style="font-size:.78rem;color:#94a3b8;line-height:1.5;margin-bottom:.6rem">Dense + BM25 → RRF fusion → reranker → LLM</div>
+  <div style="font-size:.7rem;color:#60a5fa;background:#0f172a;padding:.35rem .6rem;border-radius:6px">✦ Exact + semantic · static retrieval</div>
+</div>
+
+<div style="background:#1e293b;border:1px solid #6d28d9;border-radius:12px;padding:1.2rem;border-top:4px solid #8b5cf6">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem">
+    <span style="background:#2e1065;color:#a78bfa;font-size:.68rem;font-weight:700;padding:.2rem .6rem;border-radius:6px;letter-spacing:.08em">L3</span>
+    <span style="color:#e2e8f0;font-weight:700;font-size:.95rem">GraphRAG</span>
+  </div>
+  <div style="margin-bottom:.7rem">
+    <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#94a3b8;margin-bottom:.28rem"><span>Accuracy</span><span style="color:#f1f5f9;font-weight:700">92–99%</span></div>
+    <div style="background:#0f172a;border-radius:99px;height:5px;overflow:hidden"><div style="background:linear-gradient(90deg,#6d28d9,#8b5cf6);width:95%;height:5px"></div></div>
+  </div>
+  <div style="font-size:.78rem;color:#94a3b8;line-height:1.5;margin-bottom:.6rem">Vector + knowledge graph + ontology traversal</div>
+  <div style="font-size:.7rem;color:#a78bfa;background:#0f172a;padding:.35rem .6rem;border-radius:6px">◈ Multi-hop · ontology investment required</div>
+</div>
+
+<div style="background:#1e293b;border:1px solid #b45309;border-radius:12px;padding:1.2rem;border-top:4px solid #f59e0b">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem">
+    <span style="background:#451a03;color:#fbbf24;font-size:.68rem;font-weight:700;padding:.2rem .6rem;border-radius:6px;letter-spacing:.08em">L4</span>
+    <span style="color:#e2e8f0;font-weight:700;font-size:.95rem">Agentic RAG</span>
+  </div>
+  <div style="margin-bottom:.7rem">
+    <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#94a3b8;margin-bottom:.28rem"><span>Accuracy</span><span style="color:#f1f5f9;font-weight:700">95–99%+</span></div>
+    <div style="background:#0f172a;border-radius:99px;height:5px;overflow:hidden"><div style="background:linear-gradient(90deg,#b45309,#f59e0b);width:97%;height:5px"></div></div>
+  </div>
+  <div style="font-size:.78rem;color:#94a3b8;line-height:1.5;margin-bottom:.6rem">Retrieve → reflect → re-query → synthesis loop</div>
+  <div style="font-size:.7rem;color:#fbbf24;background:#0f172a;padding:.35rem .6rem;border-radius:6px">⚡ Highest accuracy · 5–30s latency cost</div>
+</div>
+
+</div>
+
+<p><strong>Architectural framing</strong>: The levels are not milestones to progress through linearly — they are <em>tools</em>. A production system at a bank might use L1 for FAQ deflection, L2 for product search, L3 for compliance checks, and L4 for portfolio incident analysis. The architectural decision is: <em>which level of retrieval sophistication does this specific problem require, and can the organization afford the ontology and latency cost of higher levels?</em></p>
+<div id="rag26arch" style="background:#0f172a;border:1px solid #1e293b;border-radius:14px;padding:1.5rem;margin:1.5rem 0;font-family:Inter,sans-serif">
+  <div style="font-size:.72rem;color:#64748b;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.8rem">Retrieval Architecture — Select a Level</div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.3rem">
+    <button id="rag26arch-bl1" onclick="rag26archShow('l1')" style="cursor:pointer;font-family:Inter,sans-serif;background:#334155;color:#e2e8f0;border:2px solid #64748b;border-radius:8px;padding:.4rem 1rem;font-size:.8rem;font-weight:700">L1 Vanilla</button>
+    <button id="rag26arch-bl2" onclick="rag26archShow('l2')" style="cursor:pointer;font-family:Inter,sans-serif;background:#0f172a;color:#64748b;border:2px solid #334155;border-radius:8px;padding:.4rem 1rem;font-size:.8rem;font-weight:700">L2 Hybrid</button>
+    <button id="rag26arch-bl3" onclick="rag26archShow('l3')" style="cursor:pointer;font-family:Inter,sans-serif;background:#0f172a;color:#64748b;border:2px solid #334155;border-radius:8px;padding:.4rem 1rem;font-size:.8rem;font-weight:700">L3 GraphRAG</button>
+    <button id="rag26arch-bl4" onclick="rag26archShow('l4')" style="cursor:pointer;font-family:Inter,sans-serif;background:#0f172a;color:#64748b;border:2px solid #334155;border-radius:8px;padding:.4rem 1rem;font-size:.8rem;font-weight:700">L4 Agentic</button>
+  </div>
+  <div id="rag26arch-l1">
+    <div style="display:flex;align-items:flex-start;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem">
+      <div style="text-align:center"><div style="background:#1e293b;border:1px solid #475569;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#e2e8f0;font-weight:600;white-space:nowrap"><div style="color:#64748b;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Input</div>User Query</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#1e3a5f;border:1px solid #1d4ed8;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#60a5fa;font-weight:600;white-space:nowrap"><div style="color:#1d4ed8;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Encode</div>Embedding Model</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#1e3a5f;border:1px solid #1d4ed8;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#60a5fa;font-weight:600;white-space:nowrap"><div style="color:#1d4ed8;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Search</div>Vector DB cosine</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#1e293b;border:1px solid #475569;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#94a3b8;font-weight:600;white-space:nowrap"><div style="color:#64748b;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Retrieve</div>Top-K Chunks</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#2e1065;border:1px solid #6d28d9;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#a78bfa;font-weight:600;white-space:nowrap"><div style="color:#6d28d9;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Generate</div>LLM Prompt</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#14532d;border:1px solid #166534;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#86efac;font-weight:600;white-space:nowrap"><div style="color:#166534;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Output</div>Response</div></div>
+    </div>
+    <div style="background:#1e293b;border-radius:8px;padding:.8rem 1rem;font-size:.78rem;color:#94a3b8;line-height:1.6"><strong style="color:#64748b">Constraint:</strong> Single retrieval pass. No feedback loop. If the answer spans multiple documents or requires reasoning across facts, this pipeline fails silently — the LLM hallucinates a plausible but wrong answer.</div>
+  </div>
+  <div id="rag26arch-l2" style="display:none">
+    <div style="display:flex;align-items:flex-start;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem">
+      <div style="text-align:center"><div style="background:#1e293b;border:1px solid #475569;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#e2e8f0;font-weight:600;white-space:nowrap"><div style="color:#64748b;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Input</div>User Query</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#1e3a5f;border:1px solid #1d4ed8;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#60a5fa;font-weight:600"><div style="color:#1d4ed8;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Dual Encode</div>Dense + BM25</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#1e3a5f;border:1px solid #1d4ed8;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#60a5fa;font-weight:600;white-space:nowrap"><div style="color:#1d4ed8;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Merge</div>RRF Fusion</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#451a03;border:1px solid #b45309;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#fbbf24;font-weight:600;white-space:nowrap"><div style="color:#b45309;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Rerank</div>Cross-Encoder</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#2e1065;border:1px solid #6d28d9;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#a78bfa;font-weight:600;white-space:nowrap"><div style="color:#6d28d9;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Generate</div>LLM Prompt</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#14532d;border:1px solid #166534;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#86efac;font-weight:600;white-space:nowrap"><div style="color:#166534;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Output</div>Response</div></div>
+    </div>
+    <div style="background:#1e293b;border-radius:8px;padding:.8rem 1rem;font-size:.78rem;color:#94a3b8;line-height:1.6"><strong style="color:#60a5fa">Key advantage:</strong> BM25 enforces exact match on identifiers (IATA codes, drug names, tickers). RRF merges both rankings without tuning weights. Cross-encoder reranker adds 10–15% precision over bi-encoder alone. Still one retrieval pass — no synthesis across documents.</div>
+  </div>
+  <div id="rag26arch-l3" style="display:none">
+    <div style="display:flex;align-items:flex-start;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem">
+      <div style="text-align:center"><div style="background:#1e293b;border:1px solid #475569;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#e2e8f0;font-weight:600;white-space:nowrap"><div style="color:#64748b;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Input</div>User Query</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#1e3a5f;border:1px solid #1d4ed8;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#60a5fa;font-weight:600;white-space:nowrap"><div style="color:#1d4ed8;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Parallel</div>Vector + Graph</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#2e1065;border:1px solid #6d28d9;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#a78bfa;font-weight:600;white-space:nowrap"><div style="color:#6d28d9;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Traverse</div>Ontology Edges</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#2e1065;border:1px solid #6d28d9;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#a78bfa;font-weight:600;white-space:nowrap"><div style="color:#6d28d9;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Assemble</div>Multi-hop Results</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#2e1065;border:1px solid #6d28d9;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#a78bfa;font-weight:600;white-space:nowrap"><div style="color:#6d28d9;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Generate</div>LLM Synthesis</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#14532d;border:1px solid #166534;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#86efac;font-weight:600;white-space:nowrap"><div style="color:#166534;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Output</div>Response</div></div>
+    </div>
+    <div style="background:#1e293b;border-radius:8px;padding:.8rem 1rem;font-size:.78rem;color:#94a3b8;line-height:1.6"><strong style="color:#a78bfa">Key advantage:</strong> Graph traversal constructs facts that don't exist in any single document. "Canadian passport + Vietnam + Cambodia + Thailand + 14 days" = constructed from 3 visa rules + route feasibility + border crossing data. Ontology investment is the prerequisite — this is a data modeling problem, not a model problem.</div>
+  </div>
+  <div id="rag26arch-l4" style="display:none">
+    <div style="display:flex;align-items:flex-start;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem">
+      <div style="text-align:center"><div style="background:#1e293b;border:1px solid #475569;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#e2e8f0;font-weight:600;white-space:nowrap"><div style="color:#64748b;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Input</div>Complex Query</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#1e3a5f;border:1px solid #1d4ed8;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#60a5fa;font-weight:600;white-space:nowrap"><div style="color:#1d4ed8;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Step 1</div>Initial Retrieve</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#451a03;border:1px solid #b45309;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#fbbf24;font-weight:600;white-space:nowrap"><div style="color:#b45309;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Reflect</div>LLM: Sufficient?</div></div>
+      <div style="color:#fbbf24;font-size:.9rem;padding-top:.55rem;font-weight:700">↺</div>
+      <div style="text-align:center"><div style="background:#1e3a5f;border:1px solid #1d4ed8;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#60a5fa;font-weight:600;white-space:nowrap"><div style="color:#1d4ed8;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Re-query</div>Targeted Fetch</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#2e1065;border:1px solid #6d28d9;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#a78bfa;font-weight:600;white-space:nowrap"><div style="color:#6d28d9;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Synthesize</div>Multi-hop LLM</div></div>
+      <div style="color:#475569;font-size:1.2rem;padding-top:.55rem">→</div>
+      <div style="text-align:center"><div style="background:#14532d;border:1px solid #166534;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#86efac;font-weight:600;white-space:nowrap"><div style="color:#166534;font-size:.6rem;margin-bottom:.15rem;text-transform:uppercase">Output</div>Response</div></div>
+    </div>
+    <div style="background:#1e293b;border-radius:8px;padding:.8rem 1rem;font-size:.78rem;color:#94a3b8;line-height:1.6"><strong style="color:#fbbf24">Key advantage:</strong> The ↺ reflection loop is the defining feature. The agent asks "do I have enough?" after each retrieval turn, re-queries with a refined sub-question, and synthesizes across all turns. <strong style="color:#fca5a5">Key cost:</strong> 5–30s latency per query, token cost multiplies with loop depth, and loop termination logic is the hardest engineering problem.</div>
+  </div>
+</div>
+<script>
+function rag26archShow(level) {
+  var configs = {
+    l1: { bg: '#334155', color: '#e2e8f0', border: '#64748b' },
+    l2: { bg: '#1e3a5f', color: '#60a5fa', border: '#3b82f6' },
+    l3: { bg: '#2e1065', color: '#a78bfa', border: '#8b5cf6' },
+    l4: { bg: '#451a03', color: '#fbbf24', border: '#f59e0b' }
+  };
+  ['l1','l2','l3','l4'].forEach(function(l) {
+    var el = document.getElementById('rag26arch-' + l);
+    var btn = document.getElementById('rag26arch-b' + l);
+    if (l === level) {
+      el.style.display = 'block';
+      btn.style.background = configs[l].bg;
+      btn.style.color = configs[l].color;
+      btn.style.borderColor = configs[l].border;
+    } else {
+      el.style.display = 'none';
+      btn.style.background = '#0f172a';
+      btn.style.color = '#64748b';
+      btn.style.borderColor = '#334155';
+    }
+  });
+}
+rag26archShow('l1');
+</script>
+
+<hr>
+</div></details>
+<details open><summary><h2 id="decision-framework-which-level-for-which-problem">Decision Framework — Which Level for Which Problem?</h2></summary><div class="details-content">
+<p>Use this framework when designing a RAG system for any enterprise problem:</p>
+<pre><code>Question: Does the answer exist in a single document?
+  YES → L1 is sufficient
+  NO  → continue
+
+Question: Does the query contain exact identifiers (codes, tickers, drug names, amounts)?
+  YES → L2 minimum (hybrid required)
+  NO  → L1 may suffice if purely semantic
+
+Question: Does the answer require reasoning across multiple facts in relationship to each other?
+  YES → L3 (GraphRAG) if relationships are pre-definable
+  NO  → L2 sufficient
+
+Question: Is the relationship structure pre-known and consistent?
+  YES → L3 (invest in ontology)
+  NO  → L4 (let the agent discover the retrieval path)
+
+Question: Does answering require iterative refinement — &quot;I need more context before I can answer&quot;?
+  YES → L4 (agentic loop)
+  NO  → L3 sufficient
+
+Question: Is the latency tolerance under 2 seconds AND context per turn under 4,000 tokens?
+  YES → L1 or L2 with any backend
+  NO  → Evaluate Mamba-backed L3/L4 before concluding infeasible
+        (Mamba&#39;s 5× throughput + constant memory enables 3-5s L4 responses
+         in configurations where Transformers require 15-20s due to KV cache pressure)
+
+Question: Does answering require ingesting a document longer than 8,000 tokens in a single pass?
+  (examples: full offering memorandum, complete EHR summary, full insurance policy)
+  YES → Consider Mamba-based backend; chunk + average with Transformer will lose coherence
+  NO  → Standard Transformer backend sufficient
+
+Question: Is the answer in a specific known document with logical section structure?
+  (examples: SEC filing, clinical guideline, fare manual, mortgage agreement)
+  YES → Consider reasoning-based retrieval (PageIndex) instead of or alongside vector search
+        — eliminates chunking artifacts, follows cross-references, provides audit trail
+  NO  → Vector/hybrid retrieval is the right mechanism
+
+Question: Is accuracy life-critical or regulatory-binding?
+  YES → L3 minimum; L4 with human-in-the-loop for final decision
+  NO  → L1/L2 with appropriate hedging
+</code></pre>
+<h3 id="decision-matrix-by-domain-and-use-case">Decision Matrix by Domain and Use Case</h3>
+<table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Domain</th>
+<th>Recommended Level</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Policy FAQ</td>
+<td>All</td>
+<td>L1</td>
+<td>Single doc, static knowledge</td>
+</tr>
+<tr>
+<td>Exact identifier lookup</td>
+<td>Travel, Finance, Banking</td>
+<td>L2</td>
+<td>BM25 required</td>
+</tr>
+<tr>
+<td>Destination semantic search</td>
+<td>Travel</td>
+<td>L2</td>
+<td>Semantic + keyword fusion</td>
+</tr>
+<tr>
+<td>Clinical protocol lookup</td>
+<td>Healthcare</td>
+<td>L2</td>
+<td>Exact drug/code matching critical</td>
+</tr>
+<tr>
+<td>Drug interaction checking</td>
+<td>Healthcare</td>
+<td>L2–L3</td>
+<td>Exact names + relationship graph</td>
+</tr>
+<tr>
+<td>Differential diagnosis</td>
+<td>Healthcare</td>
+<td>L3</td>
+<td>Multi-symptom → multi-condition reasoning</td>
+</tr>
+<tr>
+<td>Visa route eligibility</td>
+<td>Travel</td>
+<td>L3</td>
+<td>Multi-hop nationality + route + transit rules</td>
+</tr>
+<tr>
+<td>Visa regulation navigation</td>
+<td>Travel</td>
+<td>L2 + PageIndex</td>
+<td>Known document, cross-referenced sections, conditional logic</td>
+</tr>
+<tr>
+<td>Fare rules interpretation</td>
+<td>Travel</td>
+<td>PageIndex</td>
+<td>Precise conditional logic in long fare manuals</td>
+</tr>
+<tr>
+<td>Itinerary planning</td>
+<td>Travel</td>
+<td>L3–L4</td>
+<td>Constraint satisfaction + multi-source</td>
+</tr>
+<tr>
+<td>Suitability assessment</td>
+<td>Wealth</td>
+<td>L3</td>
+<td>Regulatory rules as graph edges</td>
+</tr>
+<tr>
+<td>SEC filing analysis</td>
+<td>Wealth</td>
+<td>L2 + PageIndex</td>
+<td>Known document, cross-referenced notes, precise table extraction</td>
+</tr>
+<tr>
+<td>IPS compliance check</td>
+<td>Wealth</td>
+<td>L3 + PageIndex</td>
+<td>Portfolio state vs. constraint graph + IPS document navigation</td>
+</tr>
+<tr>
+<td>Proactive portfolio review</td>
+<td>Wealth</td>
+<td>L4</td>
+<td>Multi-client × multi-event synthesis</td>
+</tr>
+<tr>
+<td>Clinical guideline navigation</td>
+<td>Healthcare</td>
+<td>PageIndex</td>
+<td>Multi-constraint lookup across sections of a known guideline</td>
+</tr>
+<tr>
+<td>Cash flow diagnosis</td>
+<td>Banking</td>
+<td>L4</td>
+<td>Multi-hop transaction + income + product</td>
+</tr>
+<tr>
+<td>Benefits guide navigation</td>
+<td>Banking</td>
+<td>PageIndex</td>
+<td>Known document, cross-referenced coverage sections</td>
+</tr>
+<tr>
+<td>Mortgage prepayment analysis</td>
+<td>Banking</td>
+<td>PageIndex</td>
+<td>Known document, conditional penalty calculations</td>
+</tr>
+<tr>
+<td>Sepsis warning</td>
+<td>Healthcare</td>
+<td>L4</td>
+<td>Multi-source patient data temporal synthesis</td>
+</tr>
+<tr>
+<td>Incident post-mortem (network)</td>
+<td>Infra/Ops</td>
+<td>L4</td>
+<td>&quot;Which Q3 changes contributed to today&#39;s incident?&quot;</td>
+</tr>
+</tbody></table>
+<hr>
+</div></details>
+<details open><summary><h2 id="whats-next-in-this-series">What&#39;s Next in This Series</h2></summary><div class="details-content">
+<p>This post is the map. The rest of the series is the territory.</p>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Post</th>
+<th>Topic</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><em>You are here</em></td>
+<td>The Four RAG Levels — Decision Framework</td>
+</tr>
+<tr>
+<td>2</td>
+<td><a href="/blog/posts/2026-03-27-rag-travel-tourism-systems/">RAG in Travel &amp; Tourism Systems</a></td>
+<td>GDS, visa routing, itinerary planning</td>
+</tr>
+<tr>
+<td>3</td>
+<td><a href="/blog/posts/2026-03-28-rag-hospital-management-systems/">RAG in Hospital Management</a></td>
+<td>Zero hallucination tolerance, clinical precision</td>
+</tr>
+<tr>
+<td>4</td>
+<td><a href="/blog/posts/2026-03-29-rag-wealth-management-systems/">RAG in Wealth Management</a></td>
+<td>Fiduciary constraints, suitability, MiFID II</td>
+</tr>
+<tr>
+<td>5</td>
+<td><a href="/blog/posts/2026-03-30-rag-personal-banking-systems/">RAG in Personal Banking</a></td>
+<td>Scale, AML, transaction intelligence</td>
+</tr>
+<tr>
+<td>6</td>
+<td><a href="/blog/posts/2026-03-31-rag-supporting-stack-memory-embeddings/">The RAG Supporting Stack</a></td>
+<td>Memory, prompt engineering, fine-tuning, embeddings</td>
+</tr>
+<tr>
+<td>7</td>
+<td><a href="/blog/posts/2026-04-01-mamba-ssm-rag-generation-backbone/">Mamba and SSMs for RAG</a></td>
+<td>What the generation backbone change means</td>
+</tr>
+<tr>
+<td>8</td>
+<td><a href="/blog/posts/2026-04-02-pageindex-vectorless-rag-structured-documents/">PageIndex and Vectorless RAG</a></td>
+<td>Reasoning-based retrieval for professional documents</td>
+</tr>
+</tbody></table>
+</div></details>
+
+      </div>
+      
+    <aside style="margin-top:3rem;padding-top:2rem;border-top:1px solid #334155">
+      <h3 style="font-size:1.05rem;font-weight:600;margin-bottom:.75rem">Related Posts</h3>
+      <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.6rem">
+        <li><a href="/blog/posts/2026-03-29-rag-wealth-management-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Wealth Management — Fiduciary Constraints and Retrieval Design</a> <span style="color:#6b7280;font-size:.8rem">— March 29, 2026</span></li>
+        <li><a href="/blog/posts/2026-03-28-rag-hospital-management-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Hospital Management Systems — Zero Hallucination Tolerance</a> <span style="color:#6b7280;font-size:.8rem">— March 28, 2026</span></li>
+      </ul>
+    </aside>
+    </article>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"></script>
+  <script>
+    try { hljs.highlightAll(); } catch(e) { console.warn('hljs error:', e); }
+  </script>
+  <script>
+    function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'☀️':'🌙';}
+    document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';
+  </script>
+
+</body>
+</html>

@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Publish gate: redirect to /blog if visited before publish date -->
+  <script>(function(){var pub=new Date('2026-03-16');pub.setHours(0,0,0,0);if(new Date()<pub){window.location.replace('/blog');}})();</script>
   
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWCQ7T2CM8"></script>
@@ -67,7 +69,7 @@
 <p>— Perspective of a Principal Engineer, Financial Services Infrastructure</p>
 </blockquote>
 <hr>
-<h2>The Question That Changes Everything</h2>
+<details open><summary><h2 id="the-question-that-changes-everything">The Question That Changes Everything</h2></summary><div class="details-content">
 <p>Here&#39;s a question I want you to sit with before we go any further:</p>
 <p><strong>When a junior engineer asks &quot;should we fine-tune this model?&quot; — what separates a good answer from a Principal Engineer&#39;s answer?</strong></p>
 <p>The junior says: <em>&quot;Yes, fine-tuning will make it better at our domain.&quot;</em></p>
@@ -125,7 +127,8 @@ render();
 </script>
 
 <hr>
-<h2>Part 1: What Is Fine-Tuning, Really?</h2>
+</div></details>
+<details open><summary><h2 id="part-1-what-is-fine-tuning-really">Part 1: What Is Fine-Tuning, Really?</h2></summary><div class="details-content">
 <p>Let&#39;s start at first principles, because most explanations stop too early.</p>
 <p>A pre-trained LLM — Llama 3, Mistral, GPT-4 — has consumed trillions of tokens. It has absorbed the structure of language, the patterns of reasoning, and an enormous breadth of world knowledge. But here&#39;s what it <em>doesn&#39;t</em> know:</p>
 <ul>
@@ -208,9 +211,10 @@ function flipCard(card){var inner=card.querySelector('div');var flipped=inner.st
 </script>
 
 <hr>
-<h2>Part 2: Under the Hood — How It Actually Works</h2>
+</div></details>
+<details open><summary><h2 id="part-2-under-the-hood-how-it-actually-works">Part 2: Under the Hood — How It Actually Works</h2></summary><div class="details-content">
 <p>You don&#39;t need to be a researcher to understand the training loop. But you do need to understand it well enough to debug when it breaks.</p>
-<h3>The Core Training Loop</h3>
+<h3 id="the-core-training-loop">The Core Training Loop</h3>
 <pre><code>Your curated dataset (input → expected output pairs)
         ↓
 Feed through the model → get predicted output
@@ -222,7 +226,7 @@ Backpropagate gradients → update weights
 Repeat until loss converges on validation set
 </code></pre>
 <p>Every iteration, the model is being gently reshaped by your data. The question is: <em>which weights do you update?</em></p>
-<h3>Full Fine-Tuning vs. PEFT — The Practical Reality</h3>
+<h3 id="full-fine-tuning-vs-peft-the-practical-reality">Full Fine-Tuning vs. PEFT — The Practical Reality</h3>
 <table>
 <thead>
 <tr>
@@ -319,7 +323,7 @@ loraUpdate(16);
 </script>
 
 <hr>
-<h3>Alignment: Beyond Supervised Fine-Tuning</h3>
+<h3 id="alignment-beyond-supervised-fine-tuning">Alignment: Beyond Supervised Fine-Tuning</h3>
 <p>Here&#39;s where it gets philosophically interesting. Supervised fine-tuning (SFT) teaches the model to <em>imitate</em> your examples. But what if you want the model to <em>prefer</em> certain behaviors over others?</p>
 <p>Enter <strong>RLHF</strong> and <strong>DPO</strong>.</p>
 <p><strong>RLHF (Reinforcement Learning from Human Feedback)</strong> — the classic OpenAI approach:</p>
@@ -378,9 +382,10 @@ function showPipeline(p){
 </script>
 
 <hr>
-<h2>Part 3: The Implementation Pipeline</h2>
+</div></details>
+<details open><summary><h2 id="part-3-the-implementation-pipeline">Part 3: The Implementation Pipeline</h2></summary><div class="details-content">
 <p>This is where most tutorials hand you code and walk away. As a Principal Engineer, you need to understand each step <em>well enough to own it</em>.</p>
-<h3>Step 1: Dataset Preparation (80% of the Real Work)</h3>
+<h3 id="step-1-dataset-preparation-80-of-the-real-work">Step 1: Dataset Preparation (80% of the Real Work)</h3>
 <pre><code class="language-json">{
   &quot;instruction&quot;: &quot;Explain why a BGP route is being dropped&quot;,
   &quot;input&quot;: &quot;Router logs show: BGP: 10.0.0.1 Active, holdtime 90 seconds&quot;,
@@ -397,7 +402,7 @@ function showPipeline(p){
 <li>Ticket resolutions → diagnostic reasoning chains</li>
 </ul>
 <p><strong>The uncomfortable truth:</strong> data quality utterly dominates data quantity. 500 expertly curated examples routinely outperform 50,000 scraped ones. The data curation step is where a senior engineer&#39;s domain expertise creates irreplaceable value that no tool can automate.</p>
-<h3>Step 2: Model Selection</h3>
+<h3 id="step-2-model-selection">Step 2: Model Selection</h3>
 <table>
 <thead>
 <tr>
@@ -422,7 +427,7 @@ function showPipeline(p){
 <td>OpenAI fine-tuning API, Google Vertex AI</td>
 </tr>
 </tbody></table>
-<h3>Step 3: QLoRA Training (Practical Implementation)</h3>
+<h3 id="step-3-qlora-training-practical-implementation">Step 3: QLoRA Training (Practical Implementation)</h3>
 <pre><code class="language-python">from transformers import AutoModelForCausalLM, TrainingArguments
 from peft import LoraConfig, get_peft_model
 from trl import SFTTrainer
@@ -460,7 +465,7 @@ trainer.train()
 </code></pre>
 <p>The hyperparameters here are not arbitrary. <code>r=16</code> means rank-16 matrices. Lower r = fewer trainable parameters = faster training, but potentially less expressive adaptation. <code>lora_alpha=32</code> controls scaling. <code>target_modules</code> determines which transformer layers receive the LoRA treatment — attention layers (q_proj, v_proj) are the most common choice.</p>
 <p>Want to know which r to use? Start at 16. If the model underfits on your validation set, try 32 or 64. If it overfits, try 8. The empirics matter more than the theory here.</p>
-<h3>Step 4: Evaluation (The Step Everyone Rushes)</h3>
+<h3 id="step-4-evaluation-the-step-everyone-rushes">Step 4: Evaluation (The Step Everyone Rushes)</h3>
 <p>Never skip this. Not because it&#39;s a best practice checkbox — because fine-tuning can silently degrade general capability while improving task-specific performance. This is called <strong>catastrophic forgetting</strong>, and it&#39;s subtle enough to ship to production.</p>
 <p>Your eval suite should include:</p>
 <ul>
@@ -469,7 +474,7 @@ trainer.train()
 <li><strong>Human eval</strong> for open-ended generation quality</li>
 <li><strong>Regression tests</strong> on general capability — can it still do math? Can it still reason?</li>
 </ul>
-<h3>Step 5: Serving</h3>
+<h3 id="step-5-serving">Step 5: Serving</h3>
 <pre><code>Options:
 1. Merge LoRA weights → deploy as standalone model (Ollama, vLLM, TGI)
 2. Serve base model + LoRA adapter separately (hot-swappable adapters)
@@ -522,7 +527,8 @@ trainer.train()
 </script>
 
 <hr>
-<h2>Part 4: The Most Important Question — When <em>Not</em> To Fine-Tune</h2>
+</div></details>
+<details open><summary><h2 id="part-4-the-most-important-question-when-not-to-fine-tune">Part 4: The Most Important Question — When <em>Not</em> To Fine-Tune</h2></summary><div class="details-content">
 <p>I&#39;ve seen more engineering time wasted on premature fine-tuning than almost any other AI mistake. Here&#39;s the decision framework I use:</p>
 <pre><code>Do you have a clear, repeatable task with consistent I/O patterns?
 │
@@ -547,7 +553,7 @@ trainer.train()
 <li>System prompt + structured output enforcement</li>
 <li>Fine-tuning — only if 1–4 don&#39;t meet your bar</li>
 </ol>
-<h3>When Fine-Tuning Genuinely Wins</h3>
+<h3 id="when-fine-tuning-genuinely-wins">When Fine-Tuning Genuinely Wins</h3>
 <table>
 <thead>
 <tr>
@@ -690,7 +696,8 @@ trainer.train()
 </script>
 
 <hr>
-<h2>Part 5: Fine-Tuning vs. Prompt Engineering — The Honest Comparison</h2>
+</div></details>
+<details open><summary><h2 id="part-5-fine-tuning-vs-prompt-engineering-the-honest-comparison">Part 5: Fine-Tuning vs. Prompt Engineering — The Honest Comparison</h2></summary><div class="details-content">
 <p>Most comparisons you&#39;ll read are strawman arguments. Here&#39;s the honest one:</p>
 <table>
 <thead>
@@ -818,16 +825,18 @@ function toggleLayer(id){
 </script>
 
 <hr>
-<h2>Part 6: Tooling That Actually Matters in 2026</h2>
+</div></details>
+<details open><summary><h2 id="part-6-tooling-that-actually-matters-in-2026">Part 6: Tooling That Actually Matters in 2026</h2></summary><div class="details-content">
 <p>The course covers four major areas. Here&#39;s how to think about each as a practitioner:</p>
 <p><strong>LoRA/QLoRA</strong> — Your baseline technique. Understand the hyperparameters (<code>r</code>, <code>lora_alpha</code>, <code>target_modules</code>) at an intuitive level. These aren&#39;t knobs to randomly tune; they directly control the expressiveness of the adaptation.</p>
 <p><strong>DPO</strong> — More important than RLHF for most teams today. If you&#39;re building an assistant that needs to operate within policy constraints — which in financial services is essentially every assistant — DPO lets you encode those preferences without a complex reward model pipeline. This is where safety and helpfulness get balanced.</p>
 <p><strong>Unsloth / Axolotl</strong> — Production tooling that matters. Unsloth provides roughly 2x training speedup with the same memory footprint. Axolotl is the config-driven trainer most enterprises adopt so teams aren&#39;t writing raw HuggingFace training loops — configurations are version-controlled, reproducible, and reviewable.</p>
 <p><strong>Enterprise APIs (OpenAI, Vertex AI)</strong> — The path of least infrastructure resistance for regulated industries. OpenAI&#39;s fine-tuning API and Google&#39;s Vertex AI both support supervised fine-tuning on their models — fully managed, no GPU infrastructure to operate, compliance certifications already in place. The tradeoff is vendor lock-in and less control over the training process.</p>
 <hr>
-<h2>Part 7: The Principal Engineer Conversation</h2>
+</div></details>
+<details open><summary><h2 id="part-7-the-principal-engineer-conversation">Part 7: The Principal Engineer Conversation</h2></summary><div class="details-content">
 <p>When you bring fine-tuning to an architecture review or leadership discussion, the framing matters as much as the technical content. Here&#39;s the structure I use:</p>
-<h3>TCO Analysis (Always Lead With This)</h3>
+<h3 id="tco-analysis-always-lead-with-this">TCO Analysis (Always Lead With This)</h3>
 <pre><code>Prompt Engineering Annual Cost:
 = tokens_per_request × cost_per_token × requests_per_day × 365
 
@@ -837,7 +846,7 @@ Fine-Tuning Total Cost:
 Break-even: typically 3–6 months at moderate scale
 </code></pre>
 <p>Numbers make decisions. Come with the numbers.</p>
-<h3>Risk Profile Analysis</h3>
+<h3 id="risk-profile-analysis">Risk Profile Analysis</h3>
 <pre><code>Data sovereignty:
   Fine-tuned on-prem model = zero data egress to external APIs
 
@@ -912,7 +921,8 @@ Vendor dependency:
 </script>
 
 <hr>
-<h2>The Summary Layer</h2>
+</div></details>
+<details open><summary><h2 id="the-summary-layer">The Summary Layer</h2></summary><div class="details-content">
 <table>
 <thead>
 <tr>
@@ -948,14 +958,15 @@ Vendor dependency:
 </tr>
 </tbody></table>
 <hr>
+</div></details>
 
       </div>
       
     <aside style="margin-top:3rem;padding-top:2rem;border-top:1px solid #334155">
       <h3 style="font-size:1.05rem;font-weight:600;margin-bottom:.75rem">Related Posts</h3>
       <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.6rem">
-        <li><a href="/blog/posts/2026-03-18-importance-of-llm-observability/" style="color:#2563eb;font-weight:500;text-decoration:none">The Invisible Engine: What LLM Observability Actually Looks Like in Production</a> <span style="color:#6b7280;font-size:.8rem">— March 18, 2026</span></li>
-        <li><a href="/blog/posts/2026-03-15-databases-a-lead-engineers-field-guide/" style="color:#2563eb;font-weight:500;text-decoration:none">Databases: A Lead Engineer's Field Guide to Picking the Right Tool</a> <span style="color:#6b7280;font-size:.8rem">— March 15, 2026</span></li>
+        <li><a href="/blog/posts/2026-03-29-rag-wealth-management-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Wealth Management — Fiduciary Constraints and Retrieval Design</a> <span style="color:#6b7280;font-size:.8rem">— March 29, 2026</span></li>
+        <li><a href="/blog/posts/2026-03-28-rag-hospital-management-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Hospital Management Systems — Zero Hallucination Tolerance</a> <span style="color:#6b7280;font-size:.8rem">— March 28, 2026</span></li>
       </ul>
     </aside>
     </article>
@@ -963,7 +974,9 @@ Vendor dependency:
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"></script>
-  <script>hljs.highlightAll();</script>
+  <script>
+    try { hljs.highlightAll(); } catch(e) { console.warn('hljs error:', e); }
+  </script>
   <script>
     function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'☀️':'🌙';}
     document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';

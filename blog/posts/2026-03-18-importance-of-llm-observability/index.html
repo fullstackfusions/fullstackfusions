@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Publish gate: redirect to /blog if visited before publish date -->
+  <script>(function(){var pub=new Date('2026-03-18');pub.setHours(0,0,0,0);if(new Date()<pub){window.location.replace('/blog');}})();</script>
   
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWCQ7T2CM8"></script>
@@ -66,7 +68,7 @@
 <p><em>&quot;You cannot improve what you cannot see. In AI systems, you cannot even debug what you cannot see.&quot;</em></p>
 </blockquote>
 <hr>
-<h2>Why Classic Observability Breaks for LLMs</h2>
+<details open><summary><h2 id="why-classic-observability-breaks-for-llms">Why Classic Observability Breaks for LLMs</h2></summary><div class="details-content">
 <p>Traditional software observability was built on a foundational contract: <strong>function in, deterministic output out</strong>. A request hits your API, you trace it through a known call graph, and if something breaks, the stack trace points you to the exact line. Every debugging session is reproducible by construction.</p>
 <p>LLM-powered systems shatter this contract entirely.</p>
 <p>A single user query today can spawn a non-deterministic, multi-model, multi-hop workflow spanning guardrails, classifiers, agents, tool calls, MCP servers, re-rankers, reasoning models, formatters, and output validators — often with different LLMs at each stage, and no two runs producing identical intermediate states. The system is no longer a function. <strong>It is a living pipeline.</strong></p>
@@ -74,7 +76,8 @@
 <p>The first mistake engineers make when approaching this: treating LLM observability like microservice observability with a &quot;model&quot; label added. It isn&#39;t. The architecture is fundamentally different, the failure modes are fundamentally different, and the instrumentation requirements are fundamentally different.</p>
 <p>This post is about what you actually need to see — and why most teams are blind to the most important signals until something breaks in production.</p>
 <hr>
-<h2>Part I — The Five Observability Lenses</h2>
+</div></details>
+<details open><summary><h2 id="part-i-the-five-observability-lenses">Part I — The Five Observability Lenses</h2></summary><div class="details-content">
 <p>LLM observability needs <strong>five distinct lenses</strong>, not three. The classic pillars — Logs, Metrics, and Traces — are necessary but not sufficient. Two new pillars emerge specifically from AI workloads, and the teams that skip them are the ones that get burned in production.</p>
 <div class="lenses-grid-container">
 <div class="lenses-grid">
@@ -116,7 +119,7 @@ html.dark .lens-card-points li code{background:#0f172a;color:#cbd5e1;}
 </script>
 
 <hr>
-<h3>Lens 1 — Distributed Traces (The Spine)</h3>
+<h3 id="lens-1-distributed-traces-the-spine">Lens 1 — Distributed Traces (The Spine)</h3>
 <p>Every user query is a <strong>trace</strong>. Every meaningful operation within that query is a <strong>span</strong>. This is the same conceptual foundation as microservice observability — but with three critical extensions that most teams miss when they first instrument LLM systems.</p>
 <p><strong>Extension A — LLM Call Spans with OTel GenAI Attributes</strong></p>
 <p>The OpenTelemetry GenAI Semantic Conventions (stable, 2025) define a standardized attribute namespace that works across providers. You attach attributes like <code>gen_ai.system</code> (anthropic, openai, google), <code>gen_ai.request.model</code>, <code>gen_ai.usage.input_tokens</code>, <code>gen_ai.usage.output_tokens</code>, and critically, <code>gen_ai.response.finish_reason</code> to every LLM call span. This is your contract with every model provider. Model-agnostic dashboards become possible. You stop writing one-off instrumentation per provider.</p>
@@ -325,7 +328,7 @@ html.dark .fd-insight{background:#0f172a;color:#64748b;}
 </script>
 
 <hr>
-<h3>Lens 2 — Metrics (The Dashboard)</h3>
+<h3 id="lens-2-metrics-the-dashboard">Lens 2 — Metrics (The Dashboard)</h3>
 <p>Metrics answer the question: <strong>&quot;Is the system healthy right now?&quot;</strong> In LLM systems, the metric families you need are significantly different from what you&#39;d define for a REST API.</p>
 <p><strong>Latency metrics</strong> should be histograms, not averages — and they should be broken down by model and by operation. Request duration at p50/p95/p99 per model, agent orchestration duration per agent name, and tool call duration per MCP server. The p99 is where your regressions will hide.</p>
 <p><strong>Token economics</strong> are a new class of metric with no equivalent in traditional systems. You need total token counters broken out by model and by direction (input vs output). You need a cost counter in USD per model per environment. This is how you get PnL accountability at the infrastructure level — not &quot;we spent $X on AI last month,&quot; but &quot;this specific agent workflow costs $0.003 per user session and we have 50,000 daily actives.&quot;</p>
@@ -334,19 +337,19 @@ html.dark .fd-insight{background:#0f172a;color:#64748b;}
 <p><strong>If more than 5% of your LLM calls are finishing with reason <code>max_tokens</code>, your context window budget is wrong.</strong> Your prompts are growing unbounded, or your chain-of-thought instructions are too verbose. The model never tells you this with an error. It just stops mid-sentence. The metric is the only thing that surfaces it.</p>
 </blockquote>
 <hr>
-<h3>Lens 3 — Logs (The Evidence Trail)</h3>
+<h3 id="lens-3-logs-the-evidence-trail">Lens 3 — Logs (The Evidence Trail)</h3>
 <p>Logs answer: <strong>&quot;What exactly happened in this specific request?&quot;</strong></p>
 <p>LLM logs are architecturally different from traditional logs in one critical way: they contain <em>reasoning</em> — the intermediate steps an agent took, why it chose a tool, what it considered and rejected. This is enormously valuable for debugging, but it creates two new problems teams aren&#39;t prepared for.</p>
 <p><strong>What to log per request:</strong> the sanitized prompt (PII stripped before storage — critical for regulatory compliance), tool call inputs and outputs at appropriate truncation, the agent&#39;s reasoning journal with timestamps, the guardrail verdict, and correlation IDs linking <code>trace_id</code>, <code>session_id</code>, and hashed customer identifier. These five things together let you reconstruct any request fully after the fact.</p>
 <p><strong>The volume problem:</strong> LLM log volumes are 10 to 100 times higher than traditional API logs. A single complex query with chain-of-thought reasoning can generate 50KB of structured log data. Storing this in Elasticsearch at full ingest is a cost trap — you will pay orders of magnitude more than the model inference itself. The right architecture is ClickHouse or OpenSearch with hot/warm/cold tiering, sized against your actual query patterns.</p>
 <hr>
-<h3>Lens 4 — OTel Events (The Timeline of What Was Actually Sent)</h3>
+<h3 id="lens-4-otel-events-the-timeline-of-what-was-actually-sent">Lens 4 — OTel Events (The Timeline of What Was Actually Sent)</h3>
 <p>OTel Events are the pillar most teams discover only after a production incident. In the OTel GenAI specification, events are span-attached records that capture what was actually sent to the model and what it actually returned.</p>
 <p>The key event types are <code>gen_ai.content.prompt</code> — the exact payload sent to the model, <code>gen_ai.content.completion</code> — the exact response, <code>gen_ai.tool_call</code> — each tool invocation with full input and output, and <code>mcp.notification</code> — server-sent events from MCP servers.</p>
 <p>What makes events different from logs is that they are <strong>causal</strong> — they are attached to a specific span in a specific trace. When you see a bad LLM output in your quality dashboard, you click through to the Tempo trace, expand the span, and see the exact prompt that produced it. No hunting through Kibana with regex patterns. No trying to correlate a log line timestamp with a trace ID. The prompt and the span are the same object.</p>
 <p>This is the foundational data model that Langfuse and Arize Phoenix are both built around. It&#39;s also the raw material for building prompt evaluation datasets, regression test suites, and model upgrade validation pipelines.</p>
 <hr>
-<h3>Lens 5 — Behavioral Signals (The AI-Specific Layer)</h3>
+<h3 id="lens-5-behavioral-signals-the-ai-specific-layer">Lens 5 — Behavioral Signals (The AI-Specific Layer)</h3>
 <p>This lens has no equivalent in traditional observability. It covers quality and safety signals that emerge from the AI behavior itself — not from infrastructure metrics or log entries.</p>
 <p><strong>Confidence and reasoning quality signals:</strong> reasoning confidence histograms extracted from structured model output, intent classification scores per intent type, and the spread between your re-ranker&#39;s top score and bottom score. A collapsing spread is a signal that your retrieval quality is degrading.</p>
 <p><strong>Drift and degradation signals:</strong> semantic similarity scores comparing current responses against a golden baseline, prompt token growth rate over time (growing prompts are often a sign of context pollution accumulating across sessions), and hallucination detection rate evaluated by a judge model running in a separate evaluation pipeline.</p>
@@ -356,18 +359,19 @@ html.dark .fd-insight{background:#0f172a;color:#64748b;}
 <p><strong>Curiosity question:</strong> How would you detect that your model started degrading in output quality three weeks into a production deployment — without user complaints? What signal would surface it first?</p>
 </blockquote>
 <hr>
-<h2>Part II — The Production Challenges Nobody Warns You About</h2>
+</div></details>
+<details open><summary><h2 id="part-ii-the-production-challenges-nobody-warns-you-about">Part II — The Production Challenges Nobody Warns You About</h2></summary><div class="details-content">
 <blockquote>
 <p><em>Traditional observability assumes your system behaves the same way every time. LLMs assume it won&#39;t.</em></p>
 </blockquote>
 <hr>
-<h3>Challenge 1 — Non-Determinism Breaks the Concept of Replay</h3>
+<h3 id="challenge-1-non-determinism-breaks-the-concept-of-replay">Challenge 1 — Non-Determinism Breaks the Concept of Replay</h3>
 <p>In traditional debugging, you replay a request with the same inputs to reproduce the bug. The test is deterministic. If it happened once, you can make it happen again.</p>
 <p>With LLMs, <code>temperature &gt; 0</code> means the same input produces different outputs on every call. The exact bug you saw in production may not reproduce on demand. You cannot unit test your way to confidence without addressing this architectural reality.</p>
 <p><strong>The engineering response:</strong> You must log the full context window snapshot at the moment of inference — system prompt version, full conversation history, all tool results, and the user message — not just the user query string. This snapshot is what allows you to replay the exact model call in an offline evaluation harness, even if the live system would produce a different answer.</p>
 <p>This approach is expensive. At 10,000 requests per day with an average context of 2,000 tokens, selective sampling is not optional — it is the architecture. Sample 100% of failure cases, 100% of guardrail triggers, and a statistically meaningful portion of normal traffic. Everything else gets dropped at ingest.</p>
 <hr>
-<h3>Challenge 2 — The Context Window Is a Black Box by Default</h3>
+<h3 id="challenge-2-the-context-window-is-a-black-box-by-default">Challenge 2 — The Context Window Is a Black Box by Default</h3>
 <p>The model&#39;s working memory — the context window — is entirely opaque unless you instrument it explicitly. From the outside, you cannot tell whether you are at 30% or 90% capacity, what sections are consuming the most tokens, or whether the context is growing across conversation turns.</p>
 <p>An agent running for 50 iterations on a long-lived task can exhaust its context budget by iteration 30. When it does, the model begins silently forgetting earlier context. There is no error in your logs. There is no exception thrown. You simply see degraded, inconsistent output with no obvious cause.</p>
 <p><strong>The engineering response:</strong> Build context window monitoring that wraps every LLM call and emits per-section token consumption before the request is made. Track fill percentage by section (system prompt, tool results, conversation history, new input), total token counts per request, and the growth rate of context across turns in a session. Alert when any session crosses 80% utilization — that is your early warning threshold.</p>
@@ -375,22 +379,22 @@ html.dark .fd-insight{background:#0f172a;color:#64748b;}
 <p><strong>Curiosity question:</strong> Do you know right now whether any of your running agents are at risk of context exhaustion mid-session? How would you find out?</p>
 </blockquote>
 <hr>
-<h3>Challenge 3 — Prompts as Unversioned Code</h3>
+<h3 id="challenge-3-prompts-as-unversioned-code">Challenge 3 — Prompts as Unversioned Code</h3>
 <p>Your system prompts are code. They encode behavior, constraints, tone, tool usage rules, and output format. They can be changed by any engineer with repository access, deployed without a pipeline, and rolled back only if someone remembers what the previous version was.</p>
 <p>This creates a class of production incidents that are invisible to your observability stack. A developer updates a system prompt on Friday afternoon. By Monday morning, your reasoning confidence metrics have dropped 12%, agent retries are up 40%, and two compliance checks are failing intermittently. You spend three hours looking at infrastructure metrics before someone checks Git and finds the Friday prompt change.</p>
 <p><strong>The engineering response:</strong> Hash every system prompt and include that hash as an attribute on every LLM span. This gives you the ability to query &quot;what were my quality metrics at prompt version <code>a3f891c</code> vs <code>b4d902e</code>?&quot; in any trace analytics system. Treat prompt deployments as first-class deployments — they belong in feature flags with canary rollout capabilities and documented rollback procedures. Langfuse&#39;s prompt management module is the dedicated tool for this specific problem. For teams in production, it is incident prevention infrastructure, not a developer experience improvement.</p>
 <hr>
-<h3>Challenge 4 — Multi-Model Pipelines Hide Their Own Cost</h3>
+<h3 id="challenge-4-multi-model-pipelines-hide-their-own-cost">Challenge 4 — Multi-Model Pipelines Hide Their Own Cost</h3>
 <p>A production LLM pipeline typically looks like: fast classifier model (Haiku class) → orchestrator model (Sonnet class) → reasoning model with extended thinking → synthesis model → output formatter. Each stage has its own cost per call, its own latency profile, and its own quality contribution.</p>
 <p>Without explicit cost attribution at the span level, you get one number at the end: total inference cost per request. That number is not actionable. You cannot tell whether you should optimize the classifier, reduce the reasoning model&#39;s context, or replace the formatter with a deterministic template.</p>
 <p><strong>The engineering response:</strong> Every LLM call span should carry an estimated cost attribute (calculated from token counts multiplied by the model&#39;s per-token rate) and a pipeline stage attribute identifying its role in the workflow. When you aggregate cost by stage across thousands of requests, you will often find one stage consuming 60% of budget while contributing 10% of output quality. That is the optimization target — and you cannot see it without per-span cost tagging.</p>
 <hr>
-<h3>Challenge 5 — Tool Calls Are Distributed Systems Problems in Disguise</h3>
+<h3 id="challenge-5-tool-calls-are-distributed-systems-problems-in-disguise">Challenge 5 — Tool Calls Are Distributed Systems Problems in Disguise</h3>
 <p>MCP servers, external APIs, database tools — tool calls look like function calls from the agent&#39;s perspective, but they are synchronous blocking network calls inside an asynchronous agent loop. They inherit every distributed systems failure mode: timeouts, partial failures, retry storms, cascading degradation, and back-pressure.</p>
 <p>The difference from a normal microservice dependency is the failure behavior. When a tool call fails inside an agent iteration, it does not return an HTTP 503 to a client. It returns an error payload to the language model, which makes a decision about what to do next. It might retry. It might hallucinate a plausible-looking response. It might enter a recovery loop that looks functionally correct from the outside until it isn&#39;t.</p>
 <p><strong>The engineering response:</strong> Instrument every tool call the same way you instrument a service dependency — with duration histograms, success rate counters, retry counters by reason, and error type categorization. And add circuit breaker logic at the tool call boundary. A tool with a 10% error rate should trigger degraded-mode behavior from the agent, not an unbounded retry loop that burns tokens while the tool remains unavailable.</p>
 <hr>
-<h3>Challenge 6 — Guardrails Are Themselves Observable Systems</h3>
+<h3 id="challenge-6-guardrails-are-themselves-observable-systems">Challenge 6 — Guardrails Are Themselves Observable Systems</h3>
 <p>Teams implement guardrails — PII detection, toxicity scoring, compliance checks — and then measure whether the AI system passes them. What they rarely measure is whether the guardrails themselves are performing correctly.</p>
 <p>What is your PII detector&#39;s false positive rate on your specific user population? Is your toxicity classifier blocking valid technical responses because they contain sensitive-domain terminology? Is your compliance check accepting outputs it should be rejecting?</p>
 <p>Guardrail failures in either direction are invisible without instrumentation on the guardrail layer itself. A PII detector blocking legitimate responses at a 2% rate is a product reliability problem masquerading as a safety feature. You only discover it if you are measuring it.</p>
@@ -398,15 +402,16 @@ html.dark .fd-insight{background:#0f172a;color:#64748b;}
 <p><strong>Curiosity question:</strong> If your input sanitizer started over-redacting at a 5% rate today, how long would it take your team to detect it?</p>
 </blockquote>
 <hr>
-<h2>Part III — How AI Coding Tools Observe Themselves</h2>
+</div></details>
+<details open><summary><h2 id="part-iii-how-ai-coding-tools-observe-themselves">Part III — How AI Coding Tools Observe Themselves</h2></summary><div class="details-content">
 <blockquote>
 <p><em>When the AI is operating on your codebase, the codebase is the context. And codebases are large, structured, versioned, and deeply relational — none of which traditional LLM observability was designed for.</em></p>
 </blockquote>
 <hr>
-<h3>The Core Architectural Difference</h3>
+<h3 id="the-core-architectural-difference">The Core Architectural Difference</h3>
 <p>When you ask Claude Code &quot;add pagination to the user list endpoint,&quot; you are not sending a text query into a chat interface. You are initiating a multi-phase agentic workflow that operates on a structured artifact — your codebase — with type dependencies, test suites, build system contracts, and version history. The observability requirements are architecturally distinct from conversational AI.</p>
 <hr>
-<h3>The Four-Phase Pipeline</h3>
+<h3 id="the-four-phase-pipeline">The Four-Phase Pipeline</h3>
 <p>Claude Code, GitHub Copilot Workspace, and Windsurf Cascade all share this common architecture with minor variations:</p>
 <p><strong>Phase 1 — Context Harvesting (typically 200-400ms)</strong></p>
 <p>Before the model receives any input, a pre-processing pipeline runs. It performs a file tree scan to detect structure, language, and framework. It runs an embedding similarity search against the user&#39;s query to select the 10-20 most relevant files. It extracts Abstract Syntax Trees to resolve symbol references — answering questions like &quot;what other functions depend on <code>getUserList</code>?&quot; It pulls recent commit history for files it identified as relevant.</p>
@@ -419,7 +424,7 @@ html.dark .fd-insight{background:#0f172a;color:#64748b;}
 <p>Every accepted edit, every reverted edit, and every follow-up edit the developer makes immediately after the AI&#39;s edit is recorded as outcome telemetry. This is not observability for debugging — it is observability as training data. The acceptance rate on AI suggestions, broken down by file type, framework, and edit type, is the ground truth quality signal that drives model improvements.</p>
 <p>Windsurf Cascade added real-time diff streaming in late 2025 — each edit streams token-by-token with immediate syntax validation, requiring streaming span events to track partial edit quality. GitHub Copilot Workspace added explicit &quot;speculation spans&quot; — when a model proposes a change below a confidence threshold, it emits a signal that triggers mandatory human review before application.</p>
 <hr>
-<h3>The Tiered Context Problem</h3>
+<h3 id="the-tiered-context-problem">The Tiered Context Problem</h3>
 <p>The single hardest engineering problem in AI coding tools: a production codebase is 100,000+ lines and a context window is 200,000 tokens. They do not fit. The solution is tiered context retrieval, and it is directly observable through retrieval spans.</p>
 <p>Tier 1 — open files and cursor position — always enters the context. Tier 2 — the top 20 files by embedding similarity to the user&#39;s query — fills the bulk of the remaining budget. Tier 3 — AST-resolved symbol dependencies for referenced but not selected files — provides structural scaffolding without full file content. Tier 4 — docstrings and function signatures only — covers the rest of the codebase at minimal token cost.</p>
 <p>The metric <code>context_window_tokens_by_tier</code> is the single most diagnostic number for understanding why a particular AI coding session produced poor output. If tier 1 alone consumes 60% of the context budget — because you&#39;re working in a very large file — the model is working with half the repo coverage it would normally have. Retrieval quality degrades measurably.</p>
@@ -427,12 +432,13 @@ html.dark .fd-insight{background:#0f172a;color:#64748b;}
 <p><strong>Curiosity question:</strong> When an AI coding tool generates an edit that&#39;s wrong because it didn&#39;t see a relevant file, is that a model quality problem or a retrieval quality problem? How would you instrument for the distinction?</p>
 </blockquote>
 <hr>
-<h2>Part IV — Inside an Enterprise AI Pipeline at Scale</h2>
+</div></details>
+<details open><summary><h2 id="part-iv-inside-an-enterprise-ai-pipeline-at-scale">Part IV — Inside an Enterprise AI Pipeline at Scale</h2></summary><div class="details-content">
 <blockquote>
 <p><em>When you ask for &quot;a Blade Runner-style image of a jazz musician in neon rain,&quot; you don&#39;t know you just triggered a 7-model, 4-service, 3-second pipeline. The engineering team sees every millisecond of it.</em></p>
 </blockquote>
 <hr>
-<h3>A Real Multi-Model Pipeline, Step by Step</h3>
+<h3 id="a-real-multi-model-pipeline-step-by-step">A Real Multi-Model Pipeline, Step by Step</h3>
 <p>Enterprise AI products are not single-model systems. They are orchestrated pipelines of specialized models, and every stage is independently observable.</p>
 <p><strong>Step 1 — Intent Classification (under 50ms)</strong>
 A fast, lightweight classifier model determines what kind of request this is — image generation, text response, code execution, data analysis — and routes to the appropriate downstream pipeline. Observable signals: detected intent, classification confidence, and routing target. A confidence score below 0.7 here is a signal that the query is ambiguous or falls outside the classifier&#39;s training distribution.</p>
@@ -447,14 +453,14 @@ A secondary model evaluates the primary model&#39;s output against the original 
 <p><strong>Step 6 — Post-Processing and Delivery</strong>
 Upscaling, C2PA watermark injection (mandatory under EU AI Act 2025 for AI-generated content identification), CDN upload, and signed URL generation. Observable signals: upscaling applied, watermark status, CDN upload latency, and total end-to-end pipeline duration.</p>
 <hr>
-<h3>Sampling at 100 Million Requests per Day</h3>
+<h3 id="sampling-at-100-million-requests-per-day">Sampling at 100 Million Requests per Day</h3>
 <p>OpenAI in 2026 processes over 100 million requests per day. A complex multimodal pipeline with 12 spans per trace generates 1.2 billion spans daily. At 500 bytes per span, that is 600GB of trace data per day before any sampling is applied. Storing all of it is not an engineering decision — it is an accounting decision with the answer no.</p>
 <p>The sampling strategies that work at this scale:</p>
 <p><strong>Head-based sampling</strong> makes the keep/drop decision at ingestion time. Use a deterministic hash of the user ID to consistently track a fixed percentage of users at full fidelity — so any individual user&#39;s session can be debugged end-to-end when needed. Always keep 100% of error traces.</p>
 <p><strong>Tail-based sampling</strong> evaluates the complete trace after it finishes and makes the keep/drop decision on richer signal. Keep every trace where a safety policy triggered a block. Keep every trace in the p99+ latency tail. Keep a baseline percentage of everything else. The OTel Tail Sampling Processor implements this with configurable policies.</p>
 <p><strong>Canary population tracing</strong> is the third tier — a small, consent-based cohort of users for whom every span, every event, and every token is captured. This is the population used for model A/B testing and quality regression measurement.</p>
 <hr>
-<h3>Time-To-Good-Output: The Metric Worth Tracking</h3>
+<h3 id="time-to-good-output-the-metric-worth-tracking">Time-To-Good-Output: The Metric Worth Tracking</h3>
 <p>Every AI product team tracks latency. Very few track the metric that actually correlates with product quality: <strong>Time-To-Good-Output (TTGO)</strong>.</p>
 <p>TTGO measures the elapsed time from when a user submits a request to when they see a result they don&#39;t immediately modify, retry, or discard. It is not pipeline latency. It is pipeline latency multiplied by the regeneration rate.</p>
 <p>The compounding effect is significant. A model that is 30% faster but causes 40% more regenerations has a <em>worse</em> TTGO than the slower model. A guardrail that blocks 3% of valid requests forces 3% of users to resubmit, adding a full additional pipeline latency to those sessions. Prompt enrichment that produces high-quality results on the first pass reduces TTGO by eliminating the regeneration loop entirely.</p>
@@ -463,13 +469,14 @@ Upscaling, C2PA watermark injection (mandatory under EU AI Act 2025 for AI-gener
 <p><strong>Curiosity question:</strong> What would it take for your team to compute TTGO today? What data would be missing, and at which layer?</p>
 </blockquote>
 <hr>
-<h3>How Claude Observes Claude</h3>
+<h3 id="how-claude-observes-claude">How Claude Observes Claude</h3>
 <p>Anthropic&#39;s pipeline for Claude.ai follows the same observability foundations but adds a layer unique to a safety-first architecture: <strong>Constitutional AI evaluation spans</strong>.</p>
 <p>For every response Claude generates, a background evaluation pipeline runs three checks in parallel without blocking delivery: a reward model scores helpfulness, a Constitutional AI classifier evaluates harmlessness against Anthropic&#39;s published principles, and a factual consistency checker cross-references the response against any retrieved context that informed it.</p>
 <p>These evaluations do not make the response wait. They complete asynchronously and write their verdicts to an evaluation store. Over millions of conversations, these evaluation results become the RLHF training signal that shapes the next model version.</p>
 <p>The architectural insight here is profound: <strong>the evaluation pipeline is the observability system for model quality</strong>, and the observability system is simultaneously the training data pipeline for model improvement. The feedback loop is not an add-on to the architecture — it is the architecture.</p>
 <hr>
-<h2>The Three Things That Actually Matter</h2>
+</div></details>
+<details open><summary><h2 id="the-three-things-that-actually-matter">The Three Things That Actually Matter</h2></summary><div class="details-content">
 <p>The teams building reliable AI in 2026 are not the ones with the most dashboards. They are the ones who internalized three things early:</p>
 <div class="matters-grid">
 <div class="lens-card pcard">
@@ -586,7 +593,8 @@ html.dark .pcv-warn-bar{color:#fca5a5;}
 </script>
 
 <hr>
-<h2>Reference — The 2026 LLM Observability Stack</h2>
+</div></details>
+<details open><summary><h2 id="reference-the-2026-llm-observability-stack">Reference — The 2026 LLM Observability Stack</h2></summary><div class="details-content">
 <table>
 <thead>
 <tr>
@@ -646,14 +654,15 @@ html.dark .pcv-warn-bar{color:#fca5a5;}
 <td>Standardized <code>gen_ai.*</code> attribute namespace</td>
 </tr>
 </tbody></table>
+</div></details>
 
       </div>
       
     <aside style="margin-top:3rem;padding-top:2rem;border-top:1px solid #334155">
       <h3 style="font-size:1.05rem;font-weight:600;margin-bottom:.75rem">Related Posts</h3>
       <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.6rem">
-        <li><a href="/blog/posts/2026-03-16-llm-fine-tuning/" style="color:#2563eb;font-weight:500;text-decoration:none">LLM Fine-Tuning: What Nobody Tells You Until You've Burned the GPU Budget</a> <span style="color:#6b7280;font-size:.8rem">— March 16, 2026</span></li>
-        <li><a href="/blog/posts/2026-03-15-databases-a-lead-engineers-field-guide/" style="color:#2563eb;font-weight:500;text-decoration:none">Databases: A Lead Engineer's Field Guide to Picking the Right Tool</a> <span style="color:#6b7280;font-size:.8rem">— March 15, 2026</span></li>
+        <li><a href="/blog/posts/2026-03-29-rag-wealth-management-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Wealth Management — Fiduciary Constraints and Retrieval Design</a> <span style="color:#6b7280;font-size:.8rem">— March 29, 2026</span></li>
+        <li><a href="/blog/posts/2026-03-28-rag-hospital-management-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Hospital Management Systems — Zero Hallucination Tolerance</a> <span style="color:#6b7280;font-size:.8rem">— March 28, 2026</span></li>
       </ul>
     </aside>
     </article>
@@ -661,7 +670,9 @@ html.dark .pcv-warn-bar{color:#fca5a5;}
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"></script>
-  <script>hljs.highlightAll();</script>
+  <script>
+    try { hljs.highlightAll(); } catch(e) { console.warn('hljs error:', e); }
+  </script>
   <script>
     function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'☀️':'🌙';}
     document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';

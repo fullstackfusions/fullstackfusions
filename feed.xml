@@ -7,6 +7,34 @@
     <language>en-us</language>
     <atom:link href="https://fullstackfusions.com/feed.xml" rel="self" type="application/rss+xml" />
   <item>
+    <title>RAG in Wealth Management — Fiduciary Constraints and Retrieval Design</title>
+    <link>https://fullstackfusions.com/blog/posts/2026-03-29-rag-wealth-management-systems/</link>
+    <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-29-rag-wealth-management-systems/</guid>
+    <description>How L1–L4 RAG applies to wealth management platforms — from product FAQs to proactive portfolio review. Covers MiFID II suitability, IPS compliance graphs, Bloomberg/Refinitiv hybrid search, and FinBERT fine-tuning.</description>
+    <pubDate>Sun, 29 Mar 2026 04:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>RAG in Hospital Management Systems — Zero Hallucination Tolerance</title>
+    <link>https://fullstackfusions.com/blog/posts/2026-03-28-rag-hospital-management-systems/</link>
+    <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-28-rag-hospital-management-systems/</guid>
+    <description>Applying L1–L4 RAG to hospital management — clinical protocol lookup, drug interaction checking, differential diagnosis with knowledge graphs, and agentic patient surveillance. Covers HIPAA, HL7 FHIR, SNOMED CT, and clinical fine-tuning constraints.</description>
+    <pubDate>Sat, 28 Mar 2026 04:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>RAG in Travel &amp; Tourism Systems — GDS, Visa Routing, and the AI Concierge</title>
+    <link>https://fullstackfusions.com/blog/posts/2026-03-27-rag-travel-tourism-systems/</link>
+    <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-27-rag-travel-tourism-systems/</guid>
+    <description>How L1 through L4 RAG applies to travel and tourism platforms — from airline FAQ bots to agentic honeymoon planners. Covers GDS integration, visa-route graphs, multilingual embeddings, and real-time inventory constraints.</description>
+    <pubDate>Fri, 27 Mar 2026 04:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>The Four RAG Levels — A Decision Framework for Enterprise Systems</title>
+    <link>https://fullstackfusions.com/blog/posts/2026-03-26-rag-four-levels-decision-framework/</link>
+    <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-26-rag-four-levels-decision-framework/</guid>
+    <description>L1 through L4 RAG — vanilla, hybrid, GraphRAG, and agentic — with a concrete decision framework for choosing the right retrieval level for any enterprise problem.</description>
+    <pubDate>Thu, 26 Mar 2026 04:00:00 GMT</pubDate>
+  </item>
+  <item>
     <title>The Invisible Engine: What LLM Observability Actually Looks Like in Production</title>
     <link>https://fullstackfusions.com/blog/posts/2026-03-18-importance-of-llm-observability/</link>
     <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-18-importance-of-llm-observability/</guid>

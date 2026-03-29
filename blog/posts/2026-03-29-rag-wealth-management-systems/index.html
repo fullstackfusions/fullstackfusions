@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Publish gate: redirect to /blog if visited before publish date -->
+  <script>(function(){var pub=new Date('2026-03-29');pub.setHours(0,0,0,0);if(new Date()<pub){window.location.replace('/blog');}})();</script>
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWCQ7T2CM8"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QWCQ7T2CM8');
+  </script>
+  <meta name="description" content="How L1–L4 RAG applies to wealth management platforms — from product FAQs to proactive portfolio review. Covers MiFID II suitability, IPS compliance graphs, Bloomberg/Refinitiv hybrid search, and FinBERT fine-tuning." />
+  <title>RAG in Wealth Management — Fiduciary Constraints and Retrieval Design — fullstackfusions</title>
+  <link rel="canonical" href="https://fullstackfusions.com/blog/posts/2026-03-29-rag-wealth-management-systems/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="RAG in Wealth Management — Fiduciary Constraints and Retrieval Design" />
+  <meta property="og:description" content="How L1–L4 RAG applies to wealth management platforms — from product FAQs to proactive portfolio review. Covers MiFID II suitability, IPS compliance graphs, Bloomberg/Refinitiv hybrid search, and FinBERT fine-tuning." />
+  <meta property="og:url" content="https://fullstackfusions.com/blog/posts/2026-03-29-rag-wealth-management-systems/" />
+  <meta property="og:site_name" content="fullstackfusions" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="RAG in Wealth Management — Fiduciary Constraints and Retrieval Design" />
+  <meta name="twitter:description" content="How L1–L4 RAG applies to wealth management platforms — from product FAQs to proactive portfolio review. Covers MiFID II suitability, IPS compliance graphs, Bloomberg/Refinitiv hybrid search, and FinBERT fine-tuning." />
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="fullstackfusions" href="https://fullstackfusions.com/feed.xml" />
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"RAG in Wealth Management — Fiduciary Constraints and Retrieval Design","author":{"@type":"Person","name":"Mihir"},"datePublished":"2026-03-29","description":"How L1–L4 RAG applies to wealth management platforms — from product FAQs to proactive portfolio review. Covers MiFID II suitability, IPS compliance graphs, Bloomberg/Refinitiv hybrid search, and FinBERT fine-tuning.","url":"https://fullstackfusions.com/blog/posts/2026-03-29-rag-wealth-management-systems/"}</script>
+
+  <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/tailwind.css" />
+  <link rel="stylesheet" href="/blog/assets/blog.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" />
+  <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();</script>
+  <style>body{font-family:"Inter",ui-sans-serif,system-ui,sans-serif}.section-heading{position:relative;padding-bottom:.6rem}.section-heading::after{content:"";position:absolute;left:0;bottom:0;width:36px;height:3px;background:#3b82f6;border-radius:2px}#theme-toggle{position:fixed;bottom:1rem;right:1rem;z-index:999;width:2.25rem;height:2.25rem;border-radius:50%;border:none;background:#2563eb;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .2s}#theme-toggle:hover{background:#3b82f6}html.dark #theme-toggle{background:#2563eb;border:none}html.dark #theme-toggle:hover{background:#3b82f6}html.dark{color-scheme:dark}html.dark body{background-color:#0f172a;color:#e2e8f0}html.dark .bg-gray-50{background-color:#0f172a}html.dark .bg-white{background-color:#1e293b}html.dark .bg-gray-900{background-color:#020617}html.dark .text-gray-900{color:#f1f5f9}html.dark .text-gray-800{color:#e2e8f0}html.dark .text-gray-700{color:#cbd5e1}html.dark .text-gray-600{color:#94a3b8}html.dark .text-gray-500{color:#64748b}html.dark .border-gray-200{border-color:#334155}html.dark .shadow-sm{box-shadow:0 1px 2px rgba(0,0,0,.5)}html.dark .text-blue-600{color:#60a5fa}html.dark .section-heading::after{background:#60a5fa}</style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode"><span id="theme-icon">&#x1F319;</span></button>
+
+  
+  <div id="site-nav"></div>
+  <script src="/components/navbar.js"></script>
+
+  <main class="blog-container">
+    <a class="back-link" href="/blog">&#8592; All posts</a>
+
+    <article>
+      <header class="post-header">
+        <div class="post-meta">March 29, 2026</div>
+        <h1 class="text-3xl font-bold mt-2">RAG in Wealth Management — Fiduciary Constraints and Retrieval Design</h1>
+        <p class="text-gray-600 mt-2">How L1–L4 RAG applies to wealth management platforms — from product FAQs to proactive portfolio review. Covers MiFID II suitability, IPS compliance graphs, Bloomberg/Refinitiv hybrid search, and FinBERT fine-tuning.</p>
+        <div class="post-tags"><span class="tag">llm</span><span class="tag">ai</span><span class="tag">rag</span><span class="tag">fintech</span><span class="tag">wealthtech</span><span class="tag">compliance</span><span class="tag">architecture</span></div>
+      </header>
+
+      <div class="post-content">
+        <p><em>This is Part 4 of the <a href="/blog/rag-four-levels-decision-framework">RAG Enterprise Series</a>. It assumes familiarity with the four RAG levels. <a href="/blog/rag-four-levels-decision-framework">Start with Part 1</a> if you haven&#39;t already.</em></p>
+<p>Wealth management AI operates under a constraint that makes it uniquely hard: the system is simultaneously an analyst, a compliance officer, a tax advisor, and a relationship manager — but is legally constrained from acting as any of them without human oversight. Every retrieval decision has a fiduciary implication.</p>
+<details open><summary><h2 id="4-domain-3-wealth-management-systems">4. Domain 3 — Wealth Management Systems</h2></summary><div class="details-content">
+<div style="background:#052e16;border:1px solid #14532d;border-radius:12px;padding:1.3rem;margin:1.2rem 0;font-family:Inter,sans-serif">
+  <div style="font-size:.7rem;color:#86efac;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.9rem">RAG Level Progression in Wealth Management</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:.5rem">
+    <div style="background:rgba(134,239,172,.07);border:1px solid rgba(134,239,172,.2);border-radius:8px;padding:.8rem;text-align:center">
+      <div style="background:#334155;color:#94a3b8;font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;display:inline-block;margin-bottom:.4rem">L1</div>
+      <div style="color:#e2e8f0;font-weight:700;font-size:.78rem;margin-bottom:.3rem">Product FAQs</div>
+      <div style="color:#86efac;font-size:.68rem;line-height:1.4;opacity:.85">GIC, TFSA, RRSP explainers, process Q&amp;A</div>
+      <div style="color:#86efac;font-size:.63rem;margin-top:.4rem;opacity:.7">RBC MyAdvisor · TD EasyWeb</div>
+    </div>
+    <div style="background:rgba(134,239,172,.07);border:1px solid rgba(134,239,172,.2);border-radius:8px;padding:.8rem;text-align:center">
+      <div style="background:#1e3a5f;color:#60a5fa;font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;display:inline-block;margin-bottom:.4rem">L2</div>
+      <div style="color:#e2e8f0;font-weight:700;font-size:.78rem;margin-bottom:.3rem">Investment Research</div>
+      <div style="color:#86efac;font-size:.68rem;line-height:1.4;opacity:.85">Ticker search, NIM analysis, earnings transcript retrieval</div>
+      <div style="color:#86efac;font-size:.63rem;margin-top:.4rem;opacity:.7">Bloomberg BQNT · FactSet</div>
+    </div>
+    <div style="background:rgba(134,239,172,.07);border:1px solid rgba(134,239,172,.2);border-radius:8px;padding:.8rem;text-align:center">
+      <div style="background:#2e1065;color:#a78bfa;font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;display:inline-block;margin-bottom:.4rem">L3</div>
+      <div style="color:#e2e8f0;font-weight:700;font-size:.78rem;margin-bottom:.3rem">Suitability Assessment</div>
+      <div style="color:#86efac;font-size:.68rem;line-height:1.4;opacity:.85">IPS compliance, investor type vs product eligibility graph</div>
+      <div style="color:#86efac;font-size:.63rem;margin-top:.4rem;opacity:.7">SuitabilityPro · Compliance.ai</div>
+    </div>
+    <div style="background:rgba(134,239,172,.07);border:1px solid rgba(134,239,172,.2);border-radius:8px;padding:.8rem;text-align:center">
+      <div style="background:#451a03;color:#fbbf24;font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;display:inline-block;margin-bottom:.4rem">L4</div>
+      <div style="color:#e2e8f0;font-weight:700;font-size:.78rem;margin-bottom:.3rem">Portfolio Review</div>
+      <div style="color:#86efac;font-size:.68rem;line-height:1.4;opacity:.85">Proactive IPS drift detection, tax-loss harvesting, advisor NBA</div>
+      <div style="color:#86efac;font-size:.63rem;margin-top:.4rem;opacity:.7">Morgan Stanley NBA · RBC Aiden</div>
+    </div>
+  </div>
+</div>
+
+<h3 id="41-domain-characteristics-and-challenges">4.1 Domain Characteristics and Challenges</h3>
+<p>Wealth management AI operates under the most severe <strong>fiduciary and regulatory</strong> constraints of any financial domain. The system is simultaneously an analyst, a compliance officer, a tax advisor, and a relationship manager — but is legally constrained from acting as any of them without human oversight.</p>
+<p><strong>Regulatory landscape</strong>:</p>
+<ul>
+<li>Canada: IIROC (now CIRO), OSC, OSFI, FATF (AML)</li>
+<li>US: FINRA, SEC Rule 15l-1 (Reg BI — Best Interest)</li>
+<li>EU: MiFID II (suitability, appropriateness)</li>
+<li>FATF: AML/KYC — beneficial ownership, PEP screening</li>
+</ul>
+<p><strong>Domain challenges</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Challenge</th>
+<th>Why It&#39;s Hard</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Suitability reasoning</td>
+<td>A recommendation must account for client risk profile, investment objectives, time horizon, tax situation, liquidity needs, and regulatory classification simultaneously</td>
+</tr>
+<tr>
+<td>Real-time market data</td>
+<td>Stale data creates regulatory exposure (MiFID II requires &quot;best execution&quot; based on current prices)</td>
+</tr>
+<tr>
+<td>Cross-jurisdiction complexity</td>
+<td>A client with Canadian, US, and UK accounts faces three regulatory regimes simultaneously</td>
+</tr>
+<tr>
+<td>Document complexity</td>
+<td>Prospectuses, offering memoranda, IPS documents are long, dense, and legally binding</td>
+</tr>
+<tr>
+<td>Prohibited products</td>
+<td>Certain products are prohibited for retail clients (structured notes with embedded leverage) regardless of client preference</td>
+</tr>
+<tr>
+<td>Fair dealing</td>
+<td>Recommendations must demonstrably not be driven by product margin (DSC fund ban in Canada)</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="42-level-1-vanilla-rag">4.2 Level 1 — Vanilla RAG</h3>
+<p><strong>Use case</strong>: Product knowledge base — &quot;What is a GIC?&quot;, &quot;How does a TFSA contribution room work?&quot;, &quot;What is a dividend reinvestment plan?&quot;</p>
+<p><strong>Implementation</strong>: Embed product brochures, regulatory fact sheets, knowledge articles → semantic search → FAQ response generation.</p>
+<p><strong>Real-world example</strong>: RBC&#39;s MyAdvisor chatbot handles basic product FAQs. TD&#39;s EasyWeb virtual assistant deflects tier-1 queries. These are all effectively L1.</p>
+<p><strong>What L1 handles well</strong>:</p>
+<ul>
+<li>Product education content (low-risk, no personalization needed)</li>
+<li>General tax-advantaged account explanations (RRSP, TFSA, FHSA)</li>
+<li>Process FAQs (how to transfer a RRSP, how to change beneficiaries)</li>
+</ul>
+<p><strong>Where L1 dangerously fails</strong>:</p>
+<ul>
+<li>&quot;Should I put my RRSP contribution into Canadian equities or bonds given current market conditions?&quot; — this is a suitability question. An L1 system that answers this without client profile context is making an unsuitable recommendation and is in regulatory violation.</li>
+<li>L1 has no mechanism to know it doesn&#39;t have enough context to answer.</li>
+</ul>
+<hr>
+<h3 id="43-level-2-hybrid-rag">4.3 Level 2 — Hybrid RAG</h3>
+<p><strong>Use case</strong>: Investment research retrieval, earnings report analysis, portfolio news scanning.</p>
+<p><strong>Why hybrid matters for financial text</strong>:</p>
+<ul>
+<li>Analyst reports are dense with exact ticker symbols, CUSIP identifiers, financial ratios — BM25 is essential for exact-match on these</li>
+<li>But the semantic intent behind &quot;show me bearish analyst coverage on Canadian bank stocks&quot; requires dense retrieval</li>
+<li>Financial jargon evolves: &quot;stealth tightening&quot;, &quot;quantitative tightening&quot;, &quot;soft landing&quot; — dense vectors capture semantic drift better</li>
+</ul>
+<p><strong>Concrete example — Portfolio research assistant</strong>:</p>
+<pre><code>Query: &quot;What are analysts saying about the rate sensitivity of Canadian bank NIM in 2025?&quot;
+
+Dense path: semantic similarity to &quot;net interest margin rate sensitivity Canadian banks 2025&quot;
+            → retrieves analyst commentary, earnings call transcripts, sector reports
+
+Sparse path: BM25 exact match on [&quot;NIM&quot;, &quot;net interest margin&quot;, &quot;TD&quot;, &quot;RY&quot;, &quot;BNS&quot;, &quot;BMO&quot;, &quot;CM&quot;]
+            → retrieves reports with specific bank identifiers and exact financial metric names
+
+Reranker:  Cross-encoder scores and prioritizes docs that contain BOTH semantic context
+           AND exact bank ticker identifiers
+
+Result: 5 analyst reports specifically discussing Canadian bank NIM in rate-sensitive scenarios
+</code></pre>
+<p><strong>Real-world systems</strong>:</p>
+<ul>
+<li><strong>Bloomberg Terminal BQNT</strong> — BQuant combines NLP semantic search with structured data exact queries</li>
+<li><strong>FactSet Research Systems</strong> — hybrid retrieval over fundamental data + document corpus</li>
+<li><strong>Refinitiv Eikon</strong> — semantic document search + exact financial identifier matching</li>
+<li><strong>Morgan Stanley&#39;s AI @ Morgan Stanley</strong> (2023, OpenAI-powered) — assistant retrieves from 100k+ research reports using hybrid search</li>
+</ul>
+<hr>
+<h3 id="44-level-3-graphrag">4.4 Level 3 — GraphRAG</h3>
+<p><strong>Use case</strong>: Regulatory suitability assessment, conflict of interest screening, portfolio constraint compliance.</p>
+<p><strong>Wealth management ontology</strong>:
+<img src="Wealth_Management_Ontology.png" alt="Wealth Management Ontology" title="Wealth Management Ontology"></p>
+<p><strong>Query example — Suitability check</strong>:</p>
+<blockquote>
+<p>&quot;Is this 7-year autocallable note on an equity basket suitable for this client?&quot;</p>
+</blockquote>
+<p>Graph traversal:</p>
+<pre><code>1. Client → InvestorType: Retail (not accredited) → limits product universe
+2. Product → [REQUIRES_CATEGORY: Accredited] → IMMEDIATELY PROHIBITED for retail
+   [If accredited: continue]
+3. Product → RiskRating: High → Client RiskProfile: Conservative → MISMATCH
+4. Client → IPS → [CONSTRAINT: max_alternative: 10%] → current alternatives allocation = 8%
+5. Product → LiquidityRating: Illiquid (7-year lockup) → Client [LIQUIDITY_NEED: High] → MISMATCH
+6. Product → [SUBJECT_TO: OSC Rule 45-106] → offering memorandum required
+7. Synthesis: 2 hard stops (investor type + risk mismatch), 1 soft concern (liquidity)
+8. Generate: Unsuitable — cannot recommend; document rationale for compliance record
+</code></pre>
+<p><strong>Real-world examples</strong>:</p>
+<ul>
+<li><strong>SuitabilityPro (Broadridge)</strong> — uses rule-based graph engines for suitability; moving toward graph + LLM hybrid</li>
+<li><strong>Compliance.ai</strong> — regulatory change graph that maps regulatory updates to affected products and client segments</li>
+<li><strong>Backstop Solutions (BlackRock)</strong> — portfolio constraint compliance using graph-based rule engines</li>
+</ul>
+<hr>
+<h3 id="45-level-4-agentic-rag">4.5 Level 4 — Agentic RAG</h3>
+<p><strong>Use case</strong>: Proactive portfolio review triggered by market events, tax-loss harvesting opportunity identification, next-best-action for advisors.</p>
+<p><strong>Example — IPS drift detection</strong>:</p>
+<blockquote>
+<p>&quot;Given Q3 market events, identify which of our high-net-worth clients have portfolios that have drifted beyond their IPS constraints and require rebalancing.&quot;</p>
+</blockquote>
+<p><strong>Agent loop</strong>:</p>
+<pre><code>Turn 1: Query market events Q3 2024 → identify major themes: rate cuts, CAD weakness, energy sector decline
+Turn 2: Identify affected asset classes and sectors → Canadian equities (-4%), energy (-12%), REITs (+3%)
+Turn 3: For each HNW client: retrieve portfolio holdings
+Turn 4: For each client: retrieve IPS constraints (max equity %, sector exclusions, benchmark)
+Turn 5: Calculate current allocation vs. IPS target for each client
+Turn 6: Reflect: Which clients exceed tolerance bands (typically ±5% from target)?
+Turn 7: For flagged clients: retrieve rebalancing options within IPS constraints
+Turn 8: Rank by urgency and tax impact (RRSP vs. non-registered rebalancing has different tax treatment)
+Turn 9: Generate advisor briefing: client list + drift magnitude + recommended trades + tax impact estimate
+</code></pre>
+<p><strong>Real-world systems</strong>:</p>
+<ul>
+<li><strong>Morgan Stanley Next Best Action (NBA)</strong> — advisor-facing LLM that surfaces proactive client opportunities</li>
+<li><strong>Salesforce Einstein for Wealth Management</strong> — CRM + portfolio data agentic retrieval</li>
+<li><strong>RBC&#39;s Aiden (internal)</strong> — AI model used for client segmentation and advisor recommendations</li>
+<li><strong>Vanguard&#39;s Personal Advisor Services</strong> — semi-agentic portfolio review and rebalancing triggers</li>
+</ul>
+<hr>
+<h3 id="46-supporting-elements-wealth-management-domain">4.6 Supporting Elements — Wealth Management Domain</h3>
+<p><strong>Memory</strong>:</p>
+<pre><code class="language-yaml">Client relationship memory:
+  - Investment policy statement (IPS) — evolves over time; version history matters
+  - Life event flags (retirement approaching, inheritance received, divorce)
+  - Communication preferences and meeting history
+  - Prior recommendations made and client responses
+
+Market context memory:
+  - Rolling 90-day market event log
+  - Active regulatory changes affecting product universe
+  - Interest rate and currency regime context
+
+Compliance memory:
+  - Rationale log for every recommendation (audit trail — regulatory requirement)
+  - Suitability assessment history per product per client
+  - Complaints and dispute records
+</code></pre>
+<p><strong>Prompt Engineering</strong>:</p>
+<pre><code>Fiduciary system prompt:
+  &quot;You are a portfolio analytics assistant supporting a registered investment advisor.
+   You do not give investment advice directly to clients. You support advisor decision-making.
+   Client profile: [INJECT_CLIENT_SUMMARY]
+   IPS constraints: [INJECT_IPS]
+   Current portfolio: [INJECT_HOLDINGS_SNAPSHOT with TIMESTAMP]
+   Regulatory context: [INJECT_ACTIVE_REGULATIONS for client.jurisdiction]
+   Required: Always distinguish between (a) factual portfolio analysis and (b) forward-looking recommendations.
+   Required: Every recommendation must cite IPS section and regulatory basis.
+   Required: Flag any recommendation requiring compliance pre-approval.&quot;
+
+Constraint-awareness prompting:
+  &quot;Before answering, identify: What does this client&#39;s IPS prohibit? What investor category are they?
+   What is their stated risk tolerance? Answer only within those guardrails.&quot;
+</code></pre>
+<p><strong>Fine-Tuning</strong>:</p>
+<ul>
+<li><strong>FinBERT</strong>: Pre-trained on financial news, SEC filings, earnings transcripts — better semantic alignment for financial text</li>
+<li><strong>Instruction fine-tuning on earnings Q&amp;A</strong>: Teach the model to extract net interest margin, CET1 ratio, efficiency ratio from dense earnings transcripts without confusing similar metrics</li>
+<li><strong>Compliance fine-tuning</strong>: Train the model on thousands of suitability determination examples so it learns the decision boundary (suitable vs. unsuitable) with high precision</li>
+<li><strong>Tool</strong>: Unsloth + LoRA on LLaMA-3 base; domain-adapted FinBERT as the embedding backbone</li>
+</ul>
+<hr>
+<p><em>Part of the <a href="/blog/posts/2026-03-26-rag-four-levels-decision-framework/">RAG Enterprise Series</a>. Next: <a href="/blog/posts/2026-03-30-rag-personal-banking-systems/">RAG in Personal Banking — Scale, AML, and Transaction Intelligence</a>.</em></p>
+</div></details>
+
+      </div>
+      
+    <aside style="margin-top:3rem;padding-top:2rem;border-top:1px solid #334155">
+      <h3 style="font-size:1.05rem;font-weight:600;margin-bottom:.75rem">Related Posts</h3>
+      <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.6rem">
+        <li><a href="/blog/posts/2026-03-28-rag-hospital-management-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Hospital Management Systems — Zero Hallucination Tolerance</a> <span style="color:#6b7280;font-size:.8rem">— March 28, 2026</span></li>
+        <li><a href="/blog/posts/2026-03-27-rag-travel-tourism-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Travel &amp; Tourism Systems — GDS, Visa Routing, and the AI Concierge</a> <span style="color:#6b7280;font-size:.8rem">— March 27, 2026</span></li>
+      </ul>
+    </aside>
+    </article>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"></script>
+  <script>
+    try { hljs.highlightAll(); } catch(e) { console.warn('hljs error:', e); }
+  </script>
+  <script>
+    function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'☀️':'🌙';}
+    document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';
+  </script>
+
+</body>
+</html>

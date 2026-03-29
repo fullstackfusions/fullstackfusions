@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Publish gate: redirect to /blog if visited before publish date -->
+  <script>(function(){var pub=new Date('2026-03-14');pub.setHours(0,0,0,0);if(new Date()<pub){window.location.replace('/blog');}})();</script>
   
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWCQ7T2CM8"></script>
@@ -62,13 +64,14 @@
       </header>
 
       <div class="post-content">
-        <h2>The Hospital That Got Hacked</h2>
+        <details open><summary><h2 id="the-hospital-that-got-hacked">The Hospital That Got Hacked</h2></summary><div class="details-content">
 <p>Imagine you&#39;re a developer at a hospital. You just shipped a patient portal. It lives at <code>hospital.com/patient-portal</code>. Everything&#39;s fine — until one morning, a nurse finds a cross-site scripting bug in the internal scheduling tool, sitting at <code>hospital.com/scheduler</code>.</p>
 <p>Here&#39;s the terrifying part: because both apps share the same origin, that single XSS vulnerability just handed an attacker access to <strong>every patient&#39;s session cookie</strong> — their medical records, prescription data, all of it. One bug. Total compromise.</p>
 <p>That&#39;s not a hypothetical. That&#39;s what happens when you choose the wrong routing architecture.</p>
 <p>This post breaks down one of the most underrated architectural decisions you&#39;ll make: <strong>subdomains versus path-based routing</strong>. I&#39;ll show you how banks, hospitals, big tech, and ecommerce companies actually think about it — because this one choice quietly shapes your security, deployment pipeline, scaling strategy, and career.</p>
 <hr>
-<h2>What Are We Actually Choosing Between?</h2>
+</div></details>
+<details open><summary><h2 id="what-are-we-actually-choosing-between">What Are We Actually Choosing Between?</h2></summary><div class="details-content">
 <p>On the surface, this looks cosmetic. Who cares if it&#39;s <code>shop.amazon.com</code> or <code>amazon.com/shop</code>?</p>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;margin:2rem 0;font-size:.9rem">
   <div style="background:#0f172a;border:1px solid #1e3a5f;border-radius:12px;padding:1.5rem">
@@ -105,7 +108,8 @@
 <p>With <strong>path routing</strong>, everything lives under one roof. One domain, one origin — you carve up apps using URL paths. <code>/shop</code>, <code>/docs</code>, <code>/aws</code> are just rooms inside the same house.</p>
 <p>This single decision ripples through six critical dimensions: security, cost, infrastructure, application code, SEO, and authentication. And once you ship with one approach, switching is painful. Let&#39;s walk through each one.</p>
 <hr>
-<h2>1. Security: The Blast Radius Problem</h2>
+</div></details>
+<details open><summary><h2 id="1-security-the-blast-radius-problem">1. Security: The Blast Radius Problem</h2></summary><div class="details-content">
 <p>This is the one that matters most. To explain it properly, you need one concept: <strong>browser origin policy</strong>.</p>
 <p>The browser treats each unique combination of protocol, domain, and port as a separate &quot;origin.&quot; The key rule: <strong>JavaScript running in one origin cannot access cookies, localStorage, or the DOM of another origin.</strong> That&#39;s the browser&#39;s security wall.</p>
 <p>Watch what happens with our two approaches.</p>
@@ -160,7 +164,7 @@ function xssSimulate(){var btn=document.getElementById('xss-attack-btn');btn.dis
 function xssReset(){['xss-sub-sched','xss-sub-patient','xss-path-sched','xss-path-patient'].forEach(function(id){var el=document.getElementById(id);el.style.background='#1e293b';el.style.borderColor='#334155';});document.getElementById('xss-sub-result').style.display='none';document.getElementById('xss-path-result').style.display='none';var btn=document.getElementById('xss-attack-btn');btn.disabled=false;document.getElementById('xss-reset-btn').style.display='none';}
 </script>
 
-<h3>Real-World Examples</h3>
+<h3 id="real-world-examples">Real-World Examples</h3>
 <p><strong>Banking.</strong> Chase has <code>secure.chase.com</code> for banking and <code>creditcards.chase.com</code> for credit cards. Wells Fargo runs <code>connect.secure.wellsfargo.com</code>. They don&#39;t put their trading platform and mortgage portal on the same origin. If a vulnerability hits one product, regulators ask: &quot;Could this have compromised accounts in your other products?&quot; With path-based routing, the answer is yes — by design.</p>
 <p><strong>Ecommerce.</strong> Shopify gives every merchant their own subdomain: <code>yourstore.myshopify.com</code>. If every Shopify store shared the same origin, one compromised store could access session data from every other store — affecting millions of merchants.</p>
 <p><strong>Healthcare.</strong> HIPAA compliance isn&#39;t optional. If patient data leaks through a vulnerability in a co-located app that you could have isolated with subdomains, that&#39;s an audit finding.</p>
@@ -169,7 +173,8 @@ function xssReset(){['xss-sub-sched','xss-sub-patient','xss-path-sched','xss-pat
 </blockquote>
 <p><strong>Verdict: subdomains win, and it&#39;s not close.</strong></p>
 <hr>
-<h2>2. Cost: The Myth That Subdomains Are Expensive</h2>
+</div></details>
+<details open><summary><h2 id="2-cost-the-myth-that-subdomains-are-expensive">2. Cost: The Myth That Subdomains Are Expensive</h2></summary><div class="details-content">
 <p>Many developers avoid subdomains assuming it costs more. Let&#39;s bust that myth.</p>
 <p><strong>Subdomains are free.</strong> If you own <code>yourdomain.com</code>, you can create unlimited subdomains at zero additional cost.</p>
 <p><strong>SSL certificates?</strong> Let&#39;s Encrypt gives you wildcard certificates — one cert covers <code>*.yourdomain.com</code> — for free. Certbot handles per-subdomain certs automatically with auto-renewal.</p>
@@ -178,7 +183,8 @@ function xssReset(){['xss-sub-sched','xss-sub-patient','xss-path-sched','xss-pat
 <p>The actual cost difference between subdomains and paths is effectively <strong>zero</strong>.</p>
 <p><strong>Verdict: it&#39;s a tie.</strong></p>
 <hr>
-<h2>3. Infrastructure &amp; Deployment: Where It Gets Real</h2>
+</div></details>
+<details open><summary><h2 id="3-infrastructure-deployment-where-it-gets-real">3. Infrastructure &amp; Deployment: Where It Gets Real</h2></summary><div class="details-content">
 <p>This is where the architectural difference becomes tangible, especially at the senior and principal level.</p>
 <p>Compare two Nginx configurations side by side.</p>
 <p><strong>Subdomain config</strong> — each app gets its own <code>server</code> block. Clean and isolated. Changing the marketplace config cannot break the chatbot.</p>
@@ -205,16 +211,17 @@ server {
     }
 }
 </code></pre>
-<h3>The Deployment Story</h3>
+<h3 id="the-deployment-story">The Deployment Story</h3>
 <p>It&#39;s Friday afternoon. Marketplace has a critical bug fix. With subdomains, you redeploy that one container. The chatbot, LMS, and blog are completely unaffected — different server blocks, different containers, different pipelines.</p>
 <p>With paths, you&#39;re touching the same Nginx config, the same server block. A bad rewrite rule during the marketplace deploy can take down routing for the chatbot too. <strong>Everything is coupled.</strong></p>
-<h3>Scale and Team Structure</h3>
+<h3 id="scale-and-team-structure">Scale and Team Structure</h3>
 <p>AWS Console lives at <code>console.aws.amazon.com</code>. AWS Documentation at <code>docs.aws.amazon.com</code>. S3 uses <code>s3.console.aws.amazon.com</code>. Each service is owned by a different team, deployed on its own schedule, on its own infrastructure. When the S3 team needs to scale, they don&#39;t coordinate with the Lambda team. <strong>The subdomain boundary is also an organizational boundary.</strong></p>
 <p>Google does the same: <code>mail.google.com</code>, <code>docs.google.com</code>, <code>drive.google.com</code>, <code>calendar.google.com</code> — separate products, separate teams, separate release cycles.</p>
 <p><strong>Migration path:</strong> if your chatbot becomes wildly popular and needs a dedicated server, with subdomains you change one DNS record — a five-minute operation. With paths, you&#39;d need to refactor your entire routing layer.</p>
 <p><strong>Verdict: subdomains win decisively.</strong></p>
 <hr>
-<h2>4. Application Code: The Hidden Prefix Tax</h2>
+</div></details>
+<details open><summary><h2 id="4-application-code-the-hidden-prefix-tax">4. Application Code: The Hidden Prefix Tax</h2></summary><div class="details-content">
 <p>You don&#39;t feel this pain upfront. You feel it six months later when things are subtly broken everywhere.</p>
 <p><strong>With subdomains</strong>, your React app thinks it lives at <code>/</code>. Routes are clean:</p>
 <pre><code class="language-jsx">&lt;Route path=&quot;/products&quot; component={Products} /&gt;
@@ -231,13 +238,14 @@ server {
 <p>Stripe runs <code>dashboard.stripe.com</code> and <code>docs.stripe.com</code> — not <code>stripe.com/dashboard</code> and <code>stripe.com/docs</code>. Their dashboard is a complex React SPA; their docs site is a completely different static site generator. Forcing both into the same origin with path prefixes would create constant friction for both teams.</p>
 <p><strong>Verdict: subdomains win.</strong></p>
 <hr>
-<h2>5. SEO and Auth: Where Paths Fight Back</h2>
+</div></details>
+<details open><summary><h2 id="5-seo-and-auth-where-paths-fight-back">5. SEO and Auth: Where Paths Fight Back</h2></summary><div class="details-content">
 <p>In fairness, path-based routing has a genuine edge in two areas.</p>
-<h3>SEO: Domain Authority</h3>
+<h3 id="seo-domain-authority">SEO: Domain Authority</h3>
 <p>Google treats subdomains as semi-separate websites. A backlink to <code>blog.yourdomain.com</code> strengthens your blog subdomain, but that authority doesn&#39;t fully flow to <code>shop.yourdomain.com</code>. With paths, every backlink to <code>yourdomain.com/anything</code> strengthens the same root domain.</p>
 <p>For content-heavy businesses — media companies, content marketing sites — this matters. If organic search is your primary growth channel, paths consolidate authority faster.</p>
 <p>The nuance: Google has gotten much better at associating subdomains with their parent. Companies like HubSpot run <code>blog.hubspot.com</code> and still dominate search. Google Search Console lets you explicitly link your subdomains. It&#39;s manageable — but paths do have a natural advantage.</p>
-<h3>Auth: Zero Configuration Overhead</h3>
+<h3 id="auth-zero-configuration-overhead">Auth: Zero Configuration Overhead</h3>
 <p>With paths, authentication is trivially simple. Everything is the same origin — set a cookie and every app reads it. No CORS. No cookie tricks.</p>
 <p>With subdomains, you need two things:</p>
 <ol>
@@ -248,7 +256,8 @@ server {
 <p><strong>Paths win on SEO and auth simplicity.</strong> Worth acknowledging.</p>
 <p>But notice the pattern: <strong>paths win on convenience; subdomains win on isolation and scalability.</strong> In production systems serving real users with real data, convenience takes a back seat to resilience.</p>
 <hr>
-<h2>6. The Enterprise Pattern: Use Both</h2>
+</div></details>
+<details open><summary><h2 id="6-the-enterprise-pattern-use-both">6. The Enterprise Pattern: Use Both</h2></summary><div class="details-content">
 <p>What do companies actually do in practice? They use <strong>both</strong>.</p>
 <p>The answer isn&#39;t &quot;always subdomains&quot; or &quot;always paths.&quot; It&#39;s: <strong>subdomains between applications, paths within them.</strong></p>
 <p><strong>GitHub:</strong> <code>gist.github.com</code> and <code>docs.github.com</code> are separate products → subdomains. Inside <code>github.com</code>, <code>/pulls</code>, <code>/issues</code>, and <code>/settings</code> are features of one product → paths.</p>
@@ -261,7 +270,8 @@ Docker network            →  Service Mesh
 </code></pre>
 <p>If you can explain this architecture in a system design interview and connect it to enterprise equivalents, you&#39;re demonstrating principal-engineer-level thinking. Not because of the tooling — because you understood <strong>why the boundaries exist</strong>.</p>
 <hr>
-<h2>Quick Verdict Scorecard</h2>
+</div></details>
+<details open><summary><h2 id="quick-verdict-scorecard">Quick Verdict Scorecard</h2></summary><div class="details-content">
 <div style="margin:1.5rem 0;overflow-x:auto">
   <table style="width:100%;border-collapse:collapse;background:#0f172a;border-radius:12px;overflow:hidden;font-size:.875rem;border:1px solid #1e293b;min-width:480px">
     <thead>
@@ -307,7 +317,8 @@ Docker network            →  Service Mesh
 </div>
 
 <hr>
-<h2>The Decision Framework</h2>
+</div></details>
+<details open><summary><h2 id="the-decision-framework">The Decision Framework</h2></summary><div class="details-content">
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem;margin:1.5rem 0">
   <div style="background:#0f172a;border:1px solid #431307;border-radius:12px;padding:1.5rem">
     <div style="color:#f97316;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem">Use Paths When</div>
@@ -336,14 +347,15 @@ Docker network            →  Service Mesh
 <hr>
 <p>The routing choice you make today echoes through your system&#39;s security posture, your team&#39;s deployment velocity, and your platform&#39;s ability to scale. It&#39;s one of those decisions that feels small but compounds over time.</p>
 <p>Pick intentionally.</p>
+</div></details>
 
       </div>
       
     <aside style="margin-top:3rem;padding-top:2rem;border-top:1px solid #334155">
       <h3 style="font-size:1.05rem;font-weight:600;margin-bottom:.75rem">Related Posts</h3>
       <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.6rem">
-        <li><a href="/blog/posts/2026-03-18-importance-of-llm-observability/" style="color:#2563eb;font-weight:500;text-decoration:none">The Invisible Engine: What LLM Observability Actually Looks Like in Production</a> <span style="color:#6b7280;font-size:.8rem">— March 18, 2026</span></li>
-        <li><a href="/blog/posts/2026-03-16-llm-fine-tuning/" style="color:#2563eb;font-weight:500;text-decoration:none">LLM Fine-Tuning: What Nobody Tells You Until You've Burned the GPU Budget</a> <span style="color:#6b7280;font-size:.8rem">— March 16, 2026</span></li>
+        <li><a href="/blog/posts/2026-03-29-rag-wealth-management-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Wealth Management — Fiduciary Constraints and Retrieval Design</a> <span style="color:#6b7280;font-size:.8rem">— March 29, 2026</span></li>
+        <li><a href="/blog/posts/2026-03-28-rag-hospital-management-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Hospital Management Systems — Zero Hallucination Tolerance</a> <span style="color:#6b7280;font-size:.8rem">— March 28, 2026</span></li>
       </ul>
     </aside>
     </article>
@@ -351,7 +363,9 @@ Docker network            →  Service Mesh
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"></script>
-  <script>hljs.highlightAll();</script>
+  <script>
+    try { hljs.highlightAll(); } catch(e) { console.warn('hljs error:', e); }
+  </script>
   <script>
     function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'☀️':'🌙';}
     document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';
