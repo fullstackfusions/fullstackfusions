@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Publish gate: redirect to /blog if visited before publish date -->
+  <script>(function(){var pub=new Date('2026-03-15');pub.setHours(0,0,0,0);if(new Date()<pub){window.location.replace('/blog');}})();</script>
   
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWCQ7T2CM8"></script>
@@ -62,13 +64,14 @@
       </header>
 
       <div class="post-content">
-        <h2>Why I&#39;m Writing This</h2>
+        <details open><summary><h2 id="why-im-writing-this">Why I&#39;m Writing This</h2></summary><div class="details-content">
 <p>A few weeks ago a colleague asked me: <em>&quot;Should we use MongoDB or Postgres for this new service?&quot;</em></p>
 <p>My honest first instinct was to say <em>&quot;it depends&quot;</em> — which is the most unhelpful answer in engineering. So instead I walked them through my actual decision framework, and then thought: I should write this down.</p>
 <p>This post is that write-up. It&#39;s the mental model I&#39;ve built over years of real production experience — working across startups, scale-ups, and enterprise systems — captured through the lens of someone who is deliberately working toward a Principal Engineer role.</p>
 <p>The jump from Lead to Principal isn&#39;t just about writing better code. It&#39;s about making <em>better bets at the system level</em>. And few bets matter more than: <strong>which database do you trust your data to</strong>?</p>
 <hr>
-<h2>The Landscape (and Where Most Teams Live)</h2>
+</div></details>
+<details open><summary><h2 id="the-landscape-and-where-most-teams-live">The Landscape (and Where Most Teams Live)</h2></summary><div class="details-content">
 <p>Before the trade-offs, a map. These are the categories that cover the vast majority of real-world needs today:</p>
 <table>
 <thead>
@@ -116,8 +119,9 @@
 </tbody></table>
 <p>Most teams I&#39;ve worked on use 2–4 of these at once. The dangerous trap is using <strong>one hammer for every nail</strong> — or worse, adding every tool on this list &quot;just in case.&quot;</p>
 <hr>
-<h2>The Core Four: Where You&#39;ll Spend Most of Your Career</h2>
-<h3>PostgreSQL — The One You Can Always Trust</h3>
+</div></details>
+<details open><summary><h2 id="the-core-four-where-youll-spend-most-of-your-career">The Core Four: Where You&#39;ll Spend Most of Your Career</h2></summary><div class="details-content">
+<h3 id="postgresql-the-one-you-can-always-trust">PostgreSQL — The One You Can Always Trust</h3>
 <p>If I could only pick one database for a new product, it would be <strong>PostgreSQL</strong>. Every time.</p>
 <p><strong>Why it wins:</strong></p>
 <ul>
@@ -138,7 +142,7 @@ Early startup all the way to mid-stage enterprise. If you outgrow it for writes,
 <p><strong>Real-world example:</strong>
 At a fintech I worked at, we ran the entire transactional core — accounts, ledgers, transfers — on PostgreSQL with read replicas. JSONB stored flexible product configurations. We didn&#39;t touch another DB for three years. That&#39;s how good it is.</p>
 <hr>
-<h3>SQL Server — The Enterprise Workhorse</h3>
+<h3 id="sql-server-the-enterprise-workhorse">SQL Server — The Enterprise Workhorse</h3>
 <p>If PostgreSQL is the developer&#39;s darling, <strong>SQL Server</strong> is what&#39;s already running in your enterprise client&#39;s data center.</p>
 <p><strong>Why it wins:</strong></p>
 <ul>
@@ -158,7 +162,7 @@ Mid-to-large enterprise, especially Microsoft-stack companies. Greenfield projec
 <p><strong>Real-world example:</strong>
 A healthcare client had a 15-year-old SQL Server installation. Every BI tool, every reporting dashboard, every stored proc was baked in. We didn&#39;t replace it — we built <em>around</em> it, using it as the source of truth and syncing to modern services where needed. Sometimes the right engineering call is staying.</p>
 <hr>
-<h3>MongoDB — Flexible, Powerful, Misused</h3>
+<h3 id="mongodb-flexible-powerful-misused">MongoDB — Flexible, Powerful, Misused</h3>
 <p>MongoDB gets a bad reputation, usually from teams that used it as a dumping ground with zero schema discipline. Used intentionally, it&#39;s excellent.</p>
 <p><strong>Why it wins:</strong></p>
 <ul>
@@ -180,7 +184,7 @@ Startups with rapidly evolving data models, content-heavy platforms, catalogue s
 <p><strong>Real-world example:</strong>
 An e-commerce platform used MongoDB for the product catalogue — each category had completely different attributes (a shirt has size/color, a laptop has RAM/CPU). Relational EAV tables would have been a mess. Mongo was the right call there.</p>
 <hr>
-<h3>Redis — Speed as a Feature</h3>
+<h3 id="redis-speed-as-a-feature">Redis — Speed as a Feature</h3>
 <p>Redis is not a primary database. Say it out loud. Write it on a sticky note. <strong>Redis is not a primary database.</strong></p>
 <p>It is, however, the best tool in the shed for several specific jobs.</p>
 <p><strong>Why it wins:</strong></p>
@@ -201,7 +205,7 @@ Any stage as a caching and speed layer. Add Redis when you have hot read paths, 
 <p><strong>Lead Engineer pattern:</strong>
 Cache-aside with a TTL. Write to Postgres (source of truth), populate Redis on read, expire with a sensible TTL. Add cache invalidation logic only where you need real-time consistency. 99% of the time, TTL-based expiry is enough.</p>
 <hr>
-<h3>Elasticsearch — Search as a First-Class Citizen</h3>
+<h3 id="elasticsearch-search-as-a-first-class-citizen">Elasticsearch — Search as a First-Class Citizen</h3>
 <p>When users type into a search box and expect Google-quality results, that&#39;s Elasticsearch&#39;s job.</p>
 <p><strong>Why it wins:</strong></p>
 <ul>
@@ -222,9 +226,10 @@ Any product with meaningful search UX, log management (ELK stack), or analytics 
 <p><strong>Common pattern:</strong>
 Primary data in Postgres → sync to Elasticsearch via CDC (Change Data Capture) or an event queue. Elasticsearch serves reads. Writes always go to Postgres first.</p>
 <hr>
-<h2>The Broader Landscape: When Startups Become Platforms</h2>
+</div></details>
+<details open><summary><h2 id="the-broader-landscape-when-startups-become-platforms">The Broader Landscape: When Startups Become Platforms</h2></summary><div class="details-content">
 <p>Once your product matures, you&#39;ll encounter needs the Core Four don&#39;t cover natively.</p>
-<h3>Cloud-native NoSQL: DynamoDB, Cosmos DB, Firestore</h3>
+<h3 id="cloud-native-nosql-dynamodb-cosmos-db-firestore">Cloud-native NoSQL: DynamoDB, Cosmos DB, Firestore</h3>
 <p>These are managed, serverless-by-default, and scale to near-infinite throughput — but they demand a completely different mental model.</p>
 <p><strong>DynamoDB</strong> (AWS) is the gold standard for single-table design. Mastering it means designing your access patterns <em>before</em> you define your schema — the inverse of relational thinking. When you get it right, it&#39;s nearly infinitely scalable at low cost. When you get it wrong, you&#39;re in a painful remodel.</p>
 <p><strong>Cosmos DB</strong> (Azure) is similar but with multiple consistency models (strong, bounded staleness, eventual) as a dial you can tune per operation. Useful when you need to trade consistency for latency globally.</p>
@@ -232,7 +237,7 @@ Primary data in Postgres → sync to Elasticsearch via CDC (Change Data Capture)
 <p><strong>When to reach for this tier:</strong>
 High-traffic, high-variability workloads at scale. API backends with known access patterns. Mobile apps needing real-time sync. Not for deeply relational data.</p>
 <hr>
-<h3>Data Warehouse &amp; Analytics: Snowflake, BigQuery, Redshift, ClickHouse</h3>
+<h3 id="data-warehouse-analytics-snowflake-bigquery-redshift-clickhouse">Data Warehouse &amp; Analytics: Snowflake, BigQuery, Redshift, ClickHouse</h3>
 <p>Your OLTP database is optimized for writes and point lookups. Analytics workloads — aggregate scans over billions of rows — will kill it.</p>
 <table>
 <thead>
@@ -262,28 +267,29 @@ High-traffic, high-variability workloads at scale. API backends with known acces
 OLTP writes to Postgres/SQL Server → events or CDC flows to a data warehouse → analysts and BI tools query the warehouse, never the OLTP system.</p>
 <p>This separation is not optional at scale. I&#39;ve seen OLTP databases brought to their knees by a single analyst running a GROUP BY over 200M rows. Don&#39;t let that be you.</p>
 <hr>
-<h3>Graph: Neo4j</h3>
+<h3 id="graph-neo4j">Graph: Neo4j</h3>
 <p>Graph databases model data as nodes and edges. They shine when <strong>relationships themselves are the data</strong>.</p>
 <p>Classic use cases: social networks (who follows whom), fraud detection (shared devices, accounts, addresses), recommendation engines (users → products → categories), access control with complex role hierarchies.</p>
 <p>SQL joins can model graphs, but the query complexity explodes with depth. &quot;Give me all friends-of-friends-of-friends who bought product X&quot; is 3 self-joins in SQL and one <code>MATCH</code> pattern in Cypher.</p>
 <p><strong>When to reach for it:</strong>
 Adding &quot;graph-like&quot; features (recommendations, social, access hierarchies) to a product. Fraud analytics. Network topology.</p>
 <hr>
-<h3>Time-series: TimescaleDB, InfluxDB</h3>
+<h3 id="time-series-timescaledb-influxdb">Time-series: TimescaleDB, InfluxDB</h3>
 <p>IoT sensors, application metrics, financial tick data — these are time-series workloads. They share properties: high insert rates, data ordered by timestamp, queries almost always involve time-range scans and aggregations.</p>
 <p><strong>TimescaleDB</strong> is a PostgreSQL extension — same SQL interface, automatic partitioning by time, compression, continuous aggregates. If your team already knows Postgres, this is the lowest-friction time-series solution.</p>
 <p><strong>InfluxDB</strong> is purpose-built: its query language (Flux) and data model are optimized for high-cardinality metric data.</p>
 <p><strong>When to reach for it:</strong>
 Monitoring infrastructure, IoT data pipelines, financial market data. If your timestamps are just metadata (user created_at), you don&#39;t need this — Postgres handles that fine.</p>
 <hr>
-<h3>Wide-column: Cassandra</h3>
+<h3 id="wide-column-cassandra">Wide-column: Cassandra</h3>
 <p>Cassandra is built for one thing: <strong>massive write throughput with linear horizontal scalability across datacenters</strong>.</p>
 <p>It sacrifices query flexibility (no joins, limited secondary indexes, partition-key-first design) in exchange for near-unlimited scale and multi-datacenter active-active replication.</p>
 <p>Used by Netflix for watch history, Apple for iCloud backups, Discord for message storage.</p>
 <p><strong>When to reach for it:</strong>
 Very high write volume (millions of writes/sec), multi-region active-active, time-series or append-heavy data. Almost never the right first choice for a startup — the operational complexity and data modeling constraints are high.</p>
 <hr>
-<h2>The Decision Framework I Actually Use</h2>
+</div></details>
+<details open><summary><h2 id="the-decision-framework-i-actually-use">The Decision Framework I Actually Use</h2></summary><div class="details-content">
 <p>When I encounter a new service or data problem, I run through this:</p>
 <pre><code>1. What are the access patterns?
    - Point lookups? → relational/key-value
@@ -312,7 +318,8 @@ Very high write volume (millions of writes/sec), multi-region active-active, tim
    - Snowflake/BigQuery: per-query cost model — plan for query governance
 </code></pre>
 <hr>
-<h2>How I Frame This for My Portfolio</h2>
+</div></details>
+<details open><summary><h2 id="how-i-frame-this-for-my-portfolio">How I Frame This for My Portfolio</h2></summary><div class="details-content">
 <p>For a long time I wrote &quot;PostgreSQL, MongoDB, Redis&quot; on my resume and left it at that. A Principal Engineer I mentored with suggested a better frame:</p>
 <blockquote>
 <p><strong>Databases &amp; Data Platforms:</strong> PostgreSQL, SQL Server, MongoDB, Redis, Elasticsearch; hands-on experience designing OLTP and caching layers; familiar with Snowflake/BigQuery/Redshift for analytical workloads and DynamoDB for high-throughput cloud-native services.</p>
@@ -325,7 +332,8 @@ Very high write volume (millions of writes/sec), multi-region active-active, tim
 <li>Reads well to both a startup CTO and an enterprise architecture committee</li>
 </ul>
 <hr>
-<h2>What the Principal Engineer Lens Adds</h2>
+</div></details>
+<details open><summary><h2 id="what-the-principal-engineer-lens-adds">What the Principal Engineer Lens Adds</h2></summary><div class="details-content">
 <p>The difference between a Senior Engineer picking a database and a Principal Engineer picking one comes down to <strong>scope of consequence</strong>:</p>
 <ul>
 <li>A Senior asks: &quot;Does this solve the problem?&quot;</li>
@@ -341,18 +349,20 @@ Very high write volume (millions of writes/sec), multi-region active-active, tim
 </ul>
 <p>I&#39;m still building this instinct. But writing it down helps me see the gaps.</p>
 <hr>
-<h2>Closing Thoughts</h2>
+</div></details>
+<details open><summary><h2 id="closing-thoughts">Closing Thoughts</h2></summary><div class="details-content">
 <p>Databases are infrastructure decisions that compound. A bad database choice rarely kills a product on day one — it kills it when you&#39;re stressed, scaling, and don&#39;t have the bandwidth to fix foundational issues.</p>
 <p>The goal isn&#39;t to know every database. The goal is to understand the <em>tradeoff landscape</em> well enough that you can make a defensible choice at any stage, communicate it clearly to your team, and know when to revisit it.</p>
 <p>That, more than any specific technology, is what I&#39;m working toward on this path to Principal.</p>
+</div></details>
 
       </div>
       
     <aside style="margin-top:3rem;padding-top:2rem;border-top:1px solid #334155">
       <h3 style="font-size:1.05rem;font-weight:600;margin-bottom:.75rem">Related Posts</h3>
       <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.6rem">
-        <li><a href="/blog/posts/2026-03-18-importance-of-llm-observability/" style="color:#2563eb;font-weight:500;text-decoration:none">The Invisible Engine: What LLM Observability Actually Looks Like in Production</a> <span style="color:#6b7280;font-size:.8rem">— March 18, 2026</span></li>
-        <li><a href="/blog/posts/2026-03-16-llm-fine-tuning/" style="color:#2563eb;font-weight:500;text-decoration:none">LLM Fine-Tuning: What Nobody Tells You Until You've Burned the GPU Budget</a> <span style="color:#6b7280;font-size:.8rem">— March 16, 2026</span></li>
+        <li><a href="/blog/posts/2026-03-29-rag-wealth-management-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Wealth Management — Fiduciary Constraints and Retrieval Design</a> <span style="color:#6b7280;font-size:.8rem">— March 29, 2026</span></li>
+        <li><a href="/blog/posts/2026-03-28-rag-hospital-management-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Hospital Management Systems — Zero Hallucination Tolerance</a> <span style="color:#6b7280;font-size:.8rem">— March 28, 2026</span></li>
       </ul>
     </aside>
     </article>
@@ -360,7 +370,9 @@ Very high write volume (millions of writes/sec), multi-region active-active, tim
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"></script>
-  <script>hljs.highlightAll();</script>
+  <script>
+    try { hljs.highlightAll(); } catch(e) { console.warn('hljs error:', e); }
+  </script>
   <script>
     function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'☀️':'🌙';}
     document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';

@@ -14,6 +14,24 @@ Every run of the build command regenerates three things automatically — you ne
 
 ---
 
+## 0. Tone & Title Guidelines
+
+Do **not** use self-assigned seniority titles in post titles, headings, or callout labels. Phrases like these should be avoided:
+
+| Avoid | Use instead |
+|---|---|
+| "A Principal Engineer's …" | "An Architectural Deep Dive", "An Engineering Reference" |
+| "Principal Engineer framing" | "Architectural framing", "Design-level framing" |
+| "Principal Engineer perspective" | "Architectural takeaway", "Engineering perspective" |
+| "A Staff Engineer's Guide" | "A Practical Guide", "A Field Guide" |
+| "Senior Engineer's Opinion" | "Engineering opinion", or just state the opinion directly |
+
+**Why:** Readers (colleagues, managers, directors) already know who you are. Let the depth of the content signal the level — not the title. Claiming a role you don't currently hold undermines credibility; a genuinely senior person wouldn't need to label their own writing that way.
+
+**Rule of thumb:** If a heading or label includes `[Title] Engineer's …`, replace the title with a neutral descriptor (`Architectural`, `Practical`, `Engineering`, `Production`) or drop the possessive framing entirely.
+
+---
+
 ## 1. Markdown Posts
 
 ### File location

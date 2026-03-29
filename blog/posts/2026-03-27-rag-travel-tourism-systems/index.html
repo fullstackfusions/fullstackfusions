@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Publish gate: redirect to /blog if visited before publish date -->
+  <script>(function(){var pub=new Date('2026-03-27');pub.setHours(0,0,0,0);if(new Date()<pub){window.location.replace('/blog');}})();</script>
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWCQ7T2CM8"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QWCQ7T2CM8');
+  </script>
+  <meta name="description" content="How L1 through L4 RAG applies to travel and tourism platforms — from airline FAQ bots to agentic honeymoon planners. Covers GDS integration, visa-route graphs, multilingual embeddings, and real-time inventory constraints." />
+  <title>RAG in Travel &amp; Tourism Systems — GDS, Visa Routing, and the AI Concierge — fullstackfusions</title>
+  <link rel="canonical" href="https://fullstackfusions.com/blog/posts/2026-03-27-rag-travel-tourism-systems/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="RAG in Travel &amp; Tourism Systems — GDS, Visa Routing, and the AI Concierge" />
+  <meta property="og:description" content="How L1 through L4 RAG applies to travel and tourism platforms — from airline FAQ bots to agentic honeymoon planners. Covers GDS integration, visa-route graphs, multilingual embeddings, and real-time inventory constraints." />
+  <meta property="og:url" content="https://fullstackfusions.com/blog/posts/2026-03-27-rag-travel-tourism-systems/" />
+  <meta property="og:site_name" content="fullstackfusions" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="RAG in Travel &amp; Tourism Systems — GDS, Visa Routing, and the AI Concierge" />
+  <meta name="twitter:description" content="How L1 through L4 RAG applies to travel and tourism platforms — from airline FAQ bots to agentic honeymoon planners. Covers GDS integration, visa-route graphs, multilingual embeddings, and real-time inventory constraints." />
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="fullstackfusions" href="https://fullstackfusions.com/feed.xml" />
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"RAG in Travel & Tourism Systems — GDS, Visa Routing, and the AI Concierge","author":{"@type":"Person","name":"Mihir"},"datePublished":"2026-03-27","description":"How L1 through L4 RAG applies to travel and tourism platforms — from airline FAQ bots to agentic honeymoon planners. Covers GDS integration, visa-route graphs, multilingual embeddings, and real-time inventory constraints.","url":"https://fullstackfusions.com/blog/posts/2026-03-27-rag-travel-tourism-systems/"}</script>
+
+  <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/tailwind.css" />
+  <link rel="stylesheet" href="/blog/assets/blog.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" />
+  <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();</script>
+  <style>body{font-family:"Inter",ui-sans-serif,system-ui,sans-serif}.section-heading{position:relative;padding-bottom:.6rem}.section-heading::after{content:"";position:absolute;left:0;bottom:0;width:36px;height:3px;background:#3b82f6;border-radius:2px}#theme-toggle{position:fixed;bottom:1rem;right:1rem;z-index:999;width:2.25rem;height:2.25rem;border-radius:50%;border:none;background:#2563eb;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .2s}#theme-toggle:hover{background:#3b82f6}html.dark #theme-toggle{background:#2563eb;border:none}html.dark #theme-toggle:hover{background:#3b82f6}html.dark{color-scheme:dark}html.dark body{background-color:#0f172a;color:#e2e8f0}html.dark .bg-gray-50{background-color:#0f172a}html.dark .bg-white{background-color:#1e293b}html.dark .bg-gray-900{background-color:#020617}html.dark .text-gray-900{color:#f1f5f9}html.dark .text-gray-800{color:#e2e8f0}html.dark .text-gray-700{color:#cbd5e1}html.dark .text-gray-600{color:#94a3b8}html.dark .text-gray-500{color:#64748b}html.dark .border-gray-200{border-color:#334155}html.dark .shadow-sm{box-shadow:0 1px 2px rgba(0,0,0,.5)}html.dark .text-blue-600{color:#60a5fa}html.dark .section-heading::after{background:#60a5fa}</style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode"><span id="theme-icon">&#x1F319;</span></button>
+
+  
+  <div id="site-nav"></div>
+  <script src="/components/navbar.js"></script>
+
+  <main class="blog-container">
+    <a class="back-link" href="/blog">&#8592; All posts</a>
+
+    <article>
+      <header class="post-header">
+        <div class="post-meta">March 27, 2026</div>
+        <h1 class="text-3xl font-bold mt-2">RAG in Travel &amp; Tourism Systems — GDS, Visa Routing, and the AI Concierge</h1>
+        <p class="text-gray-600 mt-2">How L1 through L4 RAG applies to travel and tourism platforms — from airline FAQ bots to agentic honeymoon planners. Covers GDS integration, visa-route graphs, multilingual embeddings, and real-time inventory constraints.</p>
+        <div class="post-tags"><span class="tag">llm</span><span class="tag">ai</span><span class="tag">rag</span><span class="tag">travel</span><span class="tag">architecture</span></div>
+      </header>
+
+      <div class="post-content">
+        <p><em>This is Part 2 of the <a href="/blog/rag-four-levels-decision-framework">RAG Enterprise Series</a>. It assumes familiarity with the four RAG levels (L1–L4). If you haven&#39;t read that yet, <a href="/blog/rag-four-levels-decision-framework">start with Part 1</a>.</em></p>
+<details open><summary><h2 id="2-domain-1-travel-and-tourism-software-systems">2. Domain 1 — Travel and Tourism Software Systems</h2></summary><div class="details-content">
+<div style="background:#0c2d4e;border:1px solid #1e4976;border-radius:12px;padding:1.3rem;margin:1.2rem 0;font-family:Inter,sans-serif">
+  <div style="font-size:.7rem;color:#38bdf8;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.9rem">RAG Level Progression in Travel &amp; Tourism</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:.5rem;position:relative">
+    <div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:8px;padding:.8rem;text-align:center">
+      <div style="background:#334155;color:#94a3b8;font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;display:inline-block;margin-bottom:.4rem">L1</div>
+      <div style="color:#e2e8f0;font-weight:700;font-size:.78rem;margin-bottom:.3rem">FAQ &amp; Policy</div>
+      <div style="color:#7dd3fc;font-size:.68rem;line-height:1.4">Baggage rules, visa overviews, basic destination info</div>
+      <div style="color:#38bdf8;font-size:.63rem;margin-top:.4rem;opacity:.8">Air Canada · British Airways</div>
+    </div>
+    <div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:8px;padding:.8rem;text-align:center">
+      <div style="background:#1e3a5f;color:#60a5fa;font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;display:inline-block;margin-bottom:.4rem">L2</div>
+      <div style="color:#e2e8f0;font-weight:700;font-size:.78rem;margin-bottom:.3rem">Search &amp; Filter</div>
+      <div style="color:#7dd3fc;font-size:.68rem;line-height:1.4">IATA code search, exact hotel chains, destination discovery</div>
+      <div style="color:#38bdf8;font-size:.63rem;margin-top:.4rem;opacity:.8">Expedia · Booking.com</div>
+    </div>
+    <div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:8px;padding:.8rem;text-align:center">
+      <div style="background:#2e1065;color:#a78bfa;font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;display:inline-block;margin-bottom:.4rem">L3</div>
+      <div style="color:#e2e8f0;font-weight:700;font-size:.78rem;margin-bottom:.3rem">Itinerary Planning</div>
+      <div style="color:#7dd3fc;font-size:.68rem;line-height:1.4">Multi-constraint visa routing, complex itinerary synthesis</div>
+      <div style="color:#38bdf8;font-size:.63rem;margin-top:.4rem;opacity:.8">Skyscanner · Mondee AI</div>
+    </div>
+    <div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:8px;padding:.8rem;text-align:center">
+      <div style="background:#451a03;color:#fbbf24;font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;display:inline-block;margin-bottom:.4rem">L4</div>
+      <div style="color:#e2e8f0;font-weight:700;font-size:.78rem;margin-bottom:.3rem">AI Concierge</div>
+      <div style="color:#7dd3fc;font-size:.68rem;line-height:1.4">Multi-turn honeymoon planning, real-time inventory loop</div>
+      <div style="color:#38bdf8;font-size:.63rem;margin-top:.4rem;opacity:.8">Priceline Penny · Kayak AI</div>
+    </div>
+  </div>
+</div>
+
+<h3 id="21-domain-characteristics-and-challenges">2.1 Domain Characteristics and Challenges</h3>
+<p>Travel is a <strong>multi-source, heterogeneous, temporally sensitive</strong> domain. A travel AI system must reason across:</p>
+<ul>
+<li><strong>GDS data</strong> (Global Distribution Systems — Amadeus, Sabre, Travelport) for flights, hotels, rail</li>
+<li><strong>Regulatory/visa databases</strong> — constantly updated, jurisdiction-dependent</li>
+<li><strong>Unstructured content</strong> — reviews, destination guides, travel blog content</li>
+<li><strong>Real-time pricing</strong> — dynamic, revenue-managed, perishable inventory</li>
+<li><strong>User context</strong> — nationality, passport, dietary restrictions, accessibility needs, loyalty tier</li>
+<li><strong>Multilingual + multicultural</strong> — the same destination means different things to a Japanese backpacker vs. a German retiree vs. a Canadian family</li>
+</ul>
+<p><strong>Core challenges</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Challenge</th>
+<th>Why It&#39;s Hard</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Intent ambiguity</td>
+<td>&quot;Something warm and relaxing under $2000&quot; is not a query, it&#39;s a semantic space</td>
+</tr>
+<tr>
+<td>Multi-constraint satisfaction</td>
+<td>&quot;Connects through Dubai, under 14 hours, window seat, vegetarian meal, wife&#39;s birthday&quot;</td>
+</tr>
+<tr>
+<td>Visa-route dependency</td>
+<td>Visa rules depend on the path, not just the destination (transit visas, layover rules)</td>
+</tr>
+<tr>
+<td>Real-time requirement</td>
+<td>Pricing retrieved at T+5 seconds may be expired</td>
+</tr>
+<tr>
+<td>Cultural nuance in embeddings</td>
+<td>&quot;Luxury&quot; in Japanese context ≠ &quot;luxury&quot; in Brazilian context</td>
+</tr>
+<tr>
+<td>Multilingual corpus</td>
+<td>Destination content exists in 50+ languages with varying quality</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="22-level-1-vanilla-rag">2.2 Level 1 — Vanilla RAG</h3>
+<p><strong>Use case</strong>: Airline FAQ chatbot — &quot;What is your carry-on bag policy for economy class?&quot; or &quot;What are the entry requirements for Thailand?&quot;</p>
+<p><strong>Implementation</strong>:</p>
+<pre><code>User query → embedding → cosine similarity over policy corpus → top-3 docs → GPT-4 prompt → response
+</code></pre>
+<p><strong>Real-world example</strong>: Air Canada&#39;s virtual agent handling basic policy questions. British Airways&#39; Ask Ben chatbot (pre-2023).</p>
+<p><strong>What it handles well</strong>:</p>
+<ul>
+<li>Static policy lookups (baggage, cancellation, check-in timings)</li>
+<li>Destination overview content (&quot;What is Kyoto known for?&quot;)</li>
+<li>Basic FAQ deflection — reduces tier-1 call volume by 30–40%</li>
+</ul>
+<p><strong>Where it breaks</strong>:</p>
+<ul>
+<li>&quot;Is my Canadian passport valid for a transit through Dubai if I&#39;m connecting to India on a separate ticket?&quot; — requires policy AND route AND nationality AND ticket type — no single chunk answers this</li>
+<li>Semantic drift: &quot;Budget-friendly beach&quot; retrieves &quot;beach resort pricing&quot; documents rather than genuinely affordable destinations</li>
+<li>No recency awareness — a retrieved doc about Thailand visa requirements from 6 months ago may be outdated</li>
+</ul>
+<hr>
+<h3 id="23-level-2-hybrid-rag">2.3 Level 2 — Hybrid RAG</h3>
+<p><strong>Use case</strong>: Destination and itinerary search combining semantic intent with precise identifier matching.</p>
+<p><strong>Implementation</strong>:</p>
+<pre><code>User query → [Dense encoder (semantic intent)] + [BM25 (exact keywords)]
+           → Reciprocal Rank Fusion (RRF) or learned fusion
+           → Cross-encoder reranker
+           → Top-k → LLM prompt
+</code></pre>
+<p><strong>Why dense-only fails here</strong>: A user querying &quot;flights from YYZ to NRT&quot; uses IATA codes. A pure semantic model may match &quot;Toronto to Tokyo flights&quot; correctly, but it might also retrieve &quot;New York to Tokyo&quot; because semantically they&#39;re close. BM25 enforces the exact <code>YYZ</code> constraint.</p>
+<p><strong>Real-world example</strong>: Expedia&#39;s search engine uses hybrid retrieval — Elasticsearch (BM25-based) for structured filters + neural retrieval for semantic destination discovery. Booking.com&#39;s &quot;What kind of trip are you looking for?&quot; feature.</p>
+<p><strong>What it solves vs L1</strong>:</p>
+<ul>
+<li>Exact identifier matching: airport codes, hotel chains, cruise lines, tour operators</li>
+<li>Keyword anchoring: &quot;direct flights only&quot; must hard-match, not semantically approximate</li>
+<li>Precision on brand names: &quot;Fairmont&quot; must retrieve Fairmont properties, not &quot;luxury hotels&quot;</li>
+</ul>
+<p><strong>Emerging pattern — Reciprocal Rank Fusion (RRF)</strong>:</p>
+<pre><code class="language-python"># Merge dense + sparse rankings
+final_score[doc] = Σ 1 / (k + rank_dense[doc]) + 1 / (k + rank_sparse[doc])
+# k=60 is standard; lower k = more aggressive rank-weighting
+</code></pre>
+<p><strong>What L2 still cannot do</strong>: It cannot synthesize across documents. &quot;Plan me a 10-day Japan itinerary for a first-time visitor who loves architecture, speaks no Japanese, and is vegetarian&quot; requires pulling from multiple destination docs, restaurant guides, accommodation types, transportation options — and synthesizing them into a coherent plan. That requires L3 or L4.</p>
+<hr>
+<h3 id="24-level-3-graphrag">2.4 Level 3 — GraphRAG</h3>
+<p><strong>Use case</strong>: Complex itinerary planning with multi-dimensional constraint satisfaction, or visa eligibility reasoning.</p>
+<p><strong>The ontology investment</strong>:
+<img src="Travel_and_Tourism_Ontology_Graph.png" alt="Travel and Tourism Ontology Graph" title="Travel and Tourism Ontology Graph"></p>
+<p><strong>Real-world example</strong>: Rome2Rio&#39;s multi-modal routing system is graph-based (not LLM-backed, but the ontology structure is instructive). Skyscanner&#39;s &quot;Everywhere&quot; feature uses destination graph traversal. Mondee&#39;s AI travel agent (2024) combines knowledge graph + LLM.</p>
+<p><strong>Query example</strong>:</p>
+<blockquote>
+<p>&quot;I hold a Canadian passport. I want to visit Vietnam, Cambodia, and Thailand in 14 days. I prefer boutique hotels and I&#39;m allergic to shellfish.&quot;</p>
+</blockquote>
+<p>Graph traversal path:
+<img src="Regulatory_Travel_Synthesis.png" alt="Regulatory Travel Synthesis" title="Regulatory Travel Synthesis"></p>
+<p><strong>What L3 enables that L2 cannot</strong>: Multi-hop relationship traversal. No single retrieved document says &quot;Canadian passport holders traveling the Vietnam-Cambodia-Thailand circuit don&#39;t need advance visas.&quot; That fact is constructed from the intersection of three visa rules, route feasibility data, and border crossing availability in the graph.</p>
+<p><strong>Implementation consideration</strong>: Graph databases (Neo4j, Amazon Neptune, TigerGraph) + vector index (FAISS, Weaviate) hybrid query. Microsoft&#39;s GraphRAG (2024) open-source framework uses community detection on knowledge graphs for global synthesis.</p>
+<hr>
+<h3 id="25-level-4-agentic-rag">2.5 Level 4 — Agentic RAG</h3>
+<p><strong>Use case</strong>: &quot;Plan my honeymoon to Japan during cherry blossom season — we love quiet, culturally significant architecture, we&#39;re vegetarian, and we&#39;ve never been to Asia before.&quot;</p>
+<p><strong>Agent loop</strong>:</p>
+<pre><code>Turn 1: Query &quot;cherry blossom forecast Japan 2025&quot; → peak window: late March to mid-April, Kyoto 1st week April
+Turn 2: Query &quot;vegetarian-friendly regions Japan&quot; → Kyoto, Nara higher density than Tokyo
+Turn 3: Query &quot;quiet traditional architecture sites Kyoto not Fushimi Inari&quot; → Philosopher&#39;s Path, Daitoku-ji, Fushimi area alternatives
+Turn 4: Reflect: Do I have accommodation options? No → Query &quot;ryokan Kyoto vegetarian kaiseki&quot; → 3 results
+Turn 5: Query &quot;Nara day trip from Kyoto&quot; → feasible, 45 min shinkansen
+Turn 6: Query &quot;flight YYZ → KIX (Osaka) April cherry blossom&quot; → 2 connecting options
+Turn 7: Synthesize: 10-day itinerary with day-by-day allocation, booking recommendations, transport passes
+</code></pre>
+<p><strong>Real-world systems</strong>: Priceline&#39;s Penny AI (2024), Kayak&#39;s AI trip planner, Expedia&#39;s AI agent — all use variations of multi-hop agentic retrieval. None are truly L4 yet; most are L2.5 with scripted multi-turn flows. Genuine L4 in travel is 2025–2027 horizon.</p>
+<p><strong>What makes travel agentic RAG uniquely hard</strong>:</p>
+<ul>
+<li><strong>Inventory expiry</strong>: A retrieved flight offer may expire between retrieval steps</li>
+<li><strong>Scope explosion</strong>: Every constraint added by the agent&#39;s reflection increases the retrieval fanout</li>
+<li><strong>No single ground truth</strong>: Two travel agents would give different itineraries — the LLM&#39;s synthesis is inherently subjective</li>
+</ul>
+<hr>
+<h3 id="26-supporting-elements-travel-domain">2.6 Supporting Elements — Travel Domain</h3>
+<p><strong>Memory</strong>:</p>
+<pre><code class="language-yaml">Episodic memory:
+  - Past trip history (destinations visited, hotels stayed, airlines used)
+  - Feedback and ratings from previous trips
+  - Cancellations and complaint patterns
+Semantic memory:
+  - User profile: passport nationality, dietary restrictions, loyalty programs
+  - Preference vector: adventure vs. relaxation, budget tier, accommodation type
+  - Family context: traveling with children, accessibility needs
+In-context memory:
+  - Entire multi-turn booking session retained in window
+  - Real-time pricing snapshots timestamped for expiry
+</code></pre>
+<p><strong>Prompt Engineering</strong>:</p>
+<pre><code>System prompt pattern:
+  &quot;You are a senior travel consultant with 20 years of experience.
+   User profile: [INJECT_PROFILE].
+   Regulatory context: [INJECT_ACTIVE_VISA_RULES for {user.nationality}].
+   Inventory snapshot timestamp: [INJECT_TIMESTAMP].
+   Always flag when retrieved information may be outdated (&gt;72h).
+   Never confirm availability — suggest verification with booking engine.&quot;
+</code></pre>
+<p>Chain-of-thought for constraint satisfaction:</p>
+<pre><code>Step 1: Extract all hard constraints (dates, budget, nationality).
+Step 2: Extract all soft constraints (preferences, style).
+Step 3: Identify which constraints require live lookup vs. static knowledge.
+Step 4: Synthesize options ranked by constraint satisfaction coverage.
+</code></pre>
+<p><strong>Fine-Tuning</strong>:</p>
+<ul>
+<li><strong>Use case</strong>: Train a base model on travel booking conversation logs to learn domain vocabulary (GDS codes, layover rules, fare class logic)</li>
+<li><strong>Dataset</strong>: Anonymized booking flows + customer service transcripts</li>
+<li><strong>Goal</strong>: The model should understand &quot;Y-class fare&quot; without retrieval augmentation, recognize fare rules, and know that &quot;0PC&quot; on a fare means zero piece checked baggage</li>
+<li><strong>Tool</strong>: Unsloth + QLoRA for efficient fine-tuning on a 7B base model; deploy as a specialized travel planning assistant</li>
+</ul>
+<p><strong>Embedding improvements</strong>:</p>
+<ul>
+<li><strong>Cross-lingual embeddings</strong> (LaBSE, mE5): A user querying in French &quot;hôtels romantiques à Paris&quot; should match English-language hotel descriptions without requiring translation</li>
+<li><strong>Cultural context embeddings</strong>: &quot;Luxury&quot; has culturally embedded meaning — training embeddings on culture-tagged corpora improves semantic alignment across markets</li>
+<li><strong>Temporal embeddings</strong>: Encode recency signal into the embedding — a 2022 visa document should rank lower than a 2024 one for the same query</li>
+</ul>
+<hr>
+<p><em>Part of the <a href="/blog/posts/2026-03-26-rag-four-levels-decision-framework/">RAG Enterprise Series</a>. Next: <a href="/blog/posts/2026-03-28-rag-hospital-management-systems/">RAG in Hospital Management — Zero Hallucination Tolerance</a>.</em></p>
+</div></details>
+
+      </div>
+      
+    <aside style="margin-top:3rem;padding-top:2rem;border-top:1px solid #334155">
+      <h3 style="font-size:1.05rem;font-weight:600;margin-bottom:.75rem">Related Posts</h3>
+      <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.6rem">
+        <li><a href="/blog/posts/2026-03-29-rag-wealth-management-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Wealth Management — Fiduciary Constraints and Retrieval Design</a> <span style="color:#6b7280;font-size:.8rem">— March 29, 2026</span></li>
+        <li><a href="/blog/posts/2026-03-28-rag-hospital-management-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Hospital Management Systems — Zero Hallucination Tolerance</a> <span style="color:#6b7280;font-size:.8rem">— March 28, 2026</span></li>
+      </ul>
+    </aside>
+    </article>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"></script>
+  <script>
+    try { hljs.highlightAll(); } catch(e) { console.warn('hljs error:', e); }
+  </script>
+  <script>
+    function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'☀️':'🌙';}
+    document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';
+  </script>
+
+</body>
+</html>
