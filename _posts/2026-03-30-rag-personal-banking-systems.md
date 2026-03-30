@@ -122,7 +122,7 @@ Output:     "We found a transaction of $127.43 from ACME DIGITAL SERVICES on Mar
 **Use case**: Holistic financial health advisor, complex product eligibility, life-event driven recommendations.
 
 **Personal banking ontology**:
-![Financial Intelligence Knowledge Graph](../blog/_drafts/Financial_Intelligence_Knowledge_Graph.png "Financial Intelligence Knowledge Graph")
+![Financial Intelligence Knowledge Graph](Financial_Intelligence_Knowledge_Graph.png "Financial Intelligence Knowledge Graph")
 
 
 **Query example — Goal-based financial planning**:
@@ -207,7 +207,7 @@ Fraud context memory:
   - Behavioral biometrics baseline (typing patterns, transaction timing)
 ```
 
-![Integrated Financial Intelligence](../blog/_drafts/Integrated_Financial_Intelligence.png "Integrated Financial Intelligence")
+![Integrated Financial Intelligence](Integrated_Financial_Intelligence.png "Integrated Financial Intelligence")
 
 **Prompt Engineering**:
 ```
