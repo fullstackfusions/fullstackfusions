@@ -7,7 +7,7 @@ series: "RAG Enterprise Series"
 series_part: 7
 ---
 
-*This is Part 7 of the [RAG Enterprise Series](/blog/rag-four-levels-decision-framework). This post stands alone — it does not require reading the domain posts (Parts 2–5). For context on where SSM architectures fit in the L1–L4 retrieval framework, [Part 1](/blog/rag-four-levels-decision-framework) has the reference.*
+*This is Part 7 of the [RAG Enterprise Series](/blog/posts/2026-03-26-rag-four-levels-decision-framework/). This post stands alone — it does not require reading the domain posts (Parts 2–5). For context on where SSM architectures fit in the L1–L4 retrieval framework, [Part 1](/blog/posts/2026-03-26-rag-four-levels-decision-framework/) has the reference.*
 
 The retrieval layer in RAG — L1 through L4 — is model-agnostic. What changes with Mamba is what *receives* the retrieved context. That distinction sounds narrow; its practical implications for long-document enterprise RAG are not.
 

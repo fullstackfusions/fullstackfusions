@@ -129,8 +129,8 @@ function postTemplate({ slug, title, date, tags = [], description = '', contentH
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Publish gate: redirect to /blog if visited before publish date -->
-  <script>(function(){var pub=new Date('${rawDate}');pub.setHours(0,0,0,0);if(new Date()<pub){window.location.replace('/blog');}})();<\/script>
+  <!-- Publish gate: redirect to /blog if visited before publish date (UTC midnight of publish date) -->
+  <script>(function(){if(new Date()<new Date('${rawDate}')){window.location.replace('/blog');}})();<\/script>
   ${gaTag()}
   <meta name="description" content="${escapeHtml(description)}" />
   <title>${escapeHtml(title)} — fullstackfusions</title>
@@ -479,8 +479,8 @@ ${entries}
 
 function buildRssFeed(postMeta) {
   function toRfc822(dateStr) {
-    const [y, m, d] = dateStr.split('-').map(Number);
-    return new Date(y, m - 1, d).toUTCString();
+    // Parse as UTC midnight so pubDate matches the publish gate (both UTC-based)
+    return new Date(dateStr + 'T00:00:00Z').toUTCString();
   }
 
   const items = postMeta.slice(0, 20).map(p =>

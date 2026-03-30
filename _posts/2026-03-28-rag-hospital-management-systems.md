@@ -7,7 +7,7 @@ series: "RAG Enterprise Series"
 series_part: 3
 ---
 
-*This is Part 3 of the [RAG Enterprise Series](/blog/rag-four-levels-decision-framework). It assumes familiarity with the four RAG levels. [Start with Part 1](/blog/rag-four-levels-decision-framework) if you haven't already.*
+*This is Part 3 of the [RAG Enterprise Series](/blog/posts/2026-03-26-rag-four-levels-decision-framework/). It assumes familiarity with the four RAG levels. [Start with Part 1](/blog/posts/2026-03-26-rag-four-levels-decision-framework/) if you haven't already.*
 
 Healthcare is the domain where RAG failure modes stop being engineering problems and start being patient safety problems. The hallucination tolerance is zero. The regulatory surface is the widest of any domain covered in this series. This post works through what that means at each retrieval level.
 

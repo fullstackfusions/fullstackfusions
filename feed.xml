@@ -7,60 +7,67 @@
     <language>en-us</language>
     <atom:link href="https://fullstackfusions.com/feed.xml" rel="self" type="application/rss+xml" />
   <item>
+    <title>RAG in Personal Banking — Scale, AML, and Transaction Intelligence</title>
+    <link>https://fullstackfusions.com/blog/posts/2026-03-30-rag-personal-banking-systems/</link>
+    <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-30-rag-personal-banking-systems/</guid>
+    <description>L1–L4 RAG in personal banking — from FAQ deflection to agentic cash flow diagnosis. Covers PCI-DSS, FINTRAC/AML constraints, hybrid transaction dispute retrieval, financial health knowledge graphs, and the 10M+ daily transaction scale challenge.</description>
+    <pubDate>Mon, 30 Mar 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
     <title>RAG in Wealth Management — Fiduciary Constraints and Retrieval Design</title>
     <link>https://fullstackfusions.com/blog/posts/2026-03-29-rag-wealth-management-systems/</link>
     <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-29-rag-wealth-management-systems/</guid>
     <description>How L1–L4 RAG applies to wealth management platforms — from product FAQs to proactive portfolio review. Covers MiFID II suitability, IPS compliance graphs, Bloomberg/Refinitiv hybrid search, and FinBERT fine-tuning.</description>
-    <pubDate>Sun, 29 Mar 2026 04:00:00 GMT</pubDate>
+    <pubDate>Sun, 29 Mar 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>RAG in Hospital Management Systems — Zero Hallucination Tolerance</title>
     <link>https://fullstackfusions.com/blog/posts/2026-03-28-rag-hospital-management-systems/</link>
     <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-28-rag-hospital-management-systems/</guid>
     <description>Applying L1–L4 RAG to hospital management — clinical protocol lookup, drug interaction checking, differential diagnosis with knowledge graphs, and agentic patient surveillance. Covers HIPAA, HL7 FHIR, SNOMED CT, and clinical fine-tuning constraints.</description>
-    <pubDate>Sat, 28 Mar 2026 04:00:00 GMT</pubDate>
+    <pubDate>Sat, 28 Mar 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>RAG in Travel &amp; Tourism Systems — GDS, Visa Routing, and the AI Concierge</title>
     <link>https://fullstackfusions.com/blog/posts/2026-03-27-rag-travel-tourism-systems/</link>
     <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-27-rag-travel-tourism-systems/</guid>
     <description>How L1 through L4 RAG applies to travel and tourism platforms — from airline FAQ bots to agentic honeymoon planners. Covers GDS integration, visa-route graphs, multilingual embeddings, and real-time inventory constraints.</description>
-    <pubDate>Fri, 27 Mar 2026 04:00:00 GMT</pubDate>
+    <pubDate>Fri, 27 Mar 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>The Four RAG Levels — A Decision Framework for Enterprise Systems</title>
     <link>https://fullstackfusions.com/blog/posts/2026-03-26-rag-four-levels-decision-framework/</link>
     <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-26-rag-four-levels-decision-framework/</guid>
     <description>L1 through L4 RAG — vanilla, hybrid, GraphRAG, and agentic — with a concrete decision framework for choosing the right retrieval level for any enterprise problem.</description>
-    <pubDate>Thu, 26 Mar 2026 04:00:00 GMT</pubDate>
+    <pubDate>Thu, 26 Mar 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>The Invisible Engine: What LLM Observability Actually Looks Like in Production</title>
     <link>https://fullstackfusions.com/blog/posts/2026-03-18-importance-of-llm-observability/</link>
     <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-18-importance-of-llm-observability/</guid>
     <description>Classic observability was built for deterministic systems. LLMs are not deterministic. Here's the complete engineering picture — five distinct lenses, six production challenges, and the metric every AI team should be tracking but isn't.</description>
-    <pubDate>Wed, 18 Mar 2026 04:00:00 GMT</pubDate>
+    <pubDate>Wed, 18 Mar 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>LLM Fine-Tuning: What Nobody Tells You Until You've Burned the GPU Budget</title>
     <link>https://fullstackfusions.com/blog/posts/2026-03-16-llm-fine-tuning/</link>
     <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-16-llm-fine-tuning/</guid>
     <description>A Principal Engineer's honest field guide to LLM fine-tuning — from LoRA and QLoRA mechanics to DPO, dataset curation, and the decision framework for when not to fine-tune.</description>
-    <pubDate>Mon, 16 Mar 2026 04:00:00 GMT</pubDate>
+    <pubDate>Mon, 16 Mar 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>Databases: A Lead Engineer's Field Guide to Picking the Right Tool</title>
     <link>https://fullstackfusions.com/blog/posts/2026-03-15-databases-a-lead-engineers-field-guide/</link>
     <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-15-databases-a-lead-engineers-field-guide/</guid>
     <description>From OLTP to analytics, caches to graphs — how I think about database selection as a Lead Software Developer inching toward Principal.</description>
-    <pubDate>Sun, 15 Mar 2026 04:00:00 GMT</pubDate>
+    <pubDate>Sun, 15 Mar 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>Subdomains vs Path-Based Routing: The Architecture Decision Nobody Talks About</title>
     <link>https://fullstackfusions.com/blog/posts/2026-03-14-subdomain-vs-path-based-routing/</link>
     <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-14-subdomain-vs-path-based-routing/</guid>
     <description>One routing choice quietly shapes your security posture, deployment pipeline, and scaling strategy. Here's how banks, hospitals, and big tech think about it — and how you should too.</description>
-    <pubDate>Sat, 14 Mar 2026 04:00:00 GMT</pubDate>
+    <pubDate>Sat, 14 Mar 2026 00:00:00 GMT</pubDate>
   </item>
   </channel>
 </rss>

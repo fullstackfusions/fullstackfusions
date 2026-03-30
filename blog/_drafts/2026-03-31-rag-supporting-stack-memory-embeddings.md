@@ -7,9 +7,9 @@ series: "RAG Enterprise Series"
 series_part: 6
 ---
 
-*This is Part 6 of the [RAG Enterprise Series](/blog/rag-four-levels-decision-framework). This post covers the supporting infrastructure that applies across all four domains (Parts 2–5). It can be read independently.*
+*This is Part 6 of the [RAG Enterprise Series](/blog/posts/2026-03-26-rag-four-levels-decision-framework/). This post covers the supporting infrastructure that applies across all four domains (Parts 2–5). It can be read independently.*
 
-The decision of which RAG level to use (covered in [Part 1](/blog/rag-four-levels-decision-framework)) and the domain-specific application (Parts 2–5) both depend on getting the supporting stack right. Memory architecture, prompt engineering, fine-tuning strategy, and embedding quality are the multipliers on retrieval sophistication — a well-indexed L2 system with good embeddings will often outperform a poorly-constructed L3.
+The decision of which RAG level to use (covered in [Part 1](/blog/posts/2026-03-26-rag-four-levels-decision-framework/)) and the domain-specific application (Parts 2–5) both depend on getting the supporting stack right. Memory architecture, prompt engineering, fine-tuning strategy, and embedding quality are the multipliers on retrieval sophistication — a well-indexed L2 system with good embeddings will often outperform a poorly-constructed L3.
 
 ## 6. Cross-Cutting Supporting Stack
 

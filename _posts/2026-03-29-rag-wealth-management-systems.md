@@ -7,7 +7,7 @@ series: "RAG Enterprise Series"
 series_part: 4
 ---
 
-*This is Part 4 of the [RAG Enterprise Series](/blog/rag-four-levels-decision-framework). It assumes familiarity with the four RAG levels. [Start with Part 1](/blog/rag-four-levels-decision-framework) if you haven't already.*
+*This is Part 4 of the [RAG Enterprise Series](/blog/posts/2026-03-26-rag-four-levels-decision-framework/). It assumes familiarity with the four RAG levels. [Start with Part 1](/blog/posts/2026-03-26-rag-four-levels-decision-framework/) if you haven't already.*
 
 Wealth management AI operates under a constraint that makes it uniquely hard: the system is simultaneously an analyst, a compliance officer, a tax advisor, and a relationship manager — but is legally constrained from acting as any of them without human oversight. Every retrieval decision has a fiduciary implication.
 

@@ -1,1 +1,311 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8" /><meta http-equiv="refresh" content="0;url=/blog" /><title>Redirecting…</title></head><body><script>window.location.replace('/blog');</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Publish gate: redirect to /blog if visited before publish date (UTC midnight of publish date) -->
+  <script>(function(){if(new Date()<new Date('2026-03-30')){window.location.replace('/blog');}})();</script>
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWCQ7T2CM8"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QWCQ7T2CM8');
+  </script>
+  <meta name="description" content="L1–L4 RAG in personal banking — from FAQ deflection to agentic cash flow diagnosis. Covers PCI-DSS, FINTRAC/AML constraints, hybrid transaction dispute retrieval, financial health knowledge graphs, and the 10M+ daily transaction scale challenge." />
+  <title>RAG in Personal Banking — Scale, AML, and Transaction Intelligence — fullstackfusions</title>
+  <link rel="canonical" href="https://fullstackfusions.com/blog/posts/2026-03-30-rag-personal-banking-systems/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="RAG in Personal Banking — Scale, AML, and Transaction Intelligence" />
+  <meta property="og:description" content="L1–L4 RAG in personal banking — from FAQ deflection to agentic cash flow diagnosis. Covers PCI-DSS, FINTRAC/AML constraints, hybrid transaction dispute retrieval, financial health knowledge graphs, and the 10M+ daily transaction scale challenge." />
+  <meta property="og:url" content="https://fullstackfusions.com/blog/posts/2026-03-30-rag-personal-banking-systems/" />
+  <meta property="og:site_name" content="fullstackfusions" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="RAG in Personal Banking — Scale, AML, and Transaction Intelligence" />
+  <meta name="twitter:description" content="L1–L4 RAG in personal banking — from FAQ deflection to agentic cash flow diagnosis. Covers PCI-DSS, FINTRAC/AML constraints, hybrid transaction dispute retrieval, financial health knowledge graphs, and the 10M+ daily transaction scale challenge." />
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="fullstackfusions" href="https://fullstackfusions.com/feed.xml" />
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"RAG in Personal Banking — Scale, AML, and Transaction Intelligence","author":{"@type":"Person","name":"Mihir"},"datePublished":"2026-03-30","description":"L1–L4 RAG in personal banking — from FAQ deflection to agentic cash flow diagnosis. Covers PCI-DSS, FINTRAC/AML constraints, hybrid transaction dispute retrieval, financial health knowledge graphs, and the 10M+ daily transaction scale challenge.","url":"https://fullstackfusions.com/blog/posts/2026-03-30-rag-personal-banking-systems/"}</script>
+
+  <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/tailwind.css" />
+  <link rel="stylesheet" href="/blog/assets/blog.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" />
+  <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();</script>
+  <style>body{font-family:"Inter",ui-sans-serif,system-ui,sans-serif}.section-heading{position:relative;padding-bottom:.6rem}.section-heading::after{content:"";position:absolute;left:0;bottom:0;width:36px;height:3px;background:#3b82f6;border-radius:2px}#theme-toggle{position:fixed;bottom:1rem;right:1rem;z-index:999;width:2.25rem;height:2.25rem;border-radius:50%;border:none;background:#2563eb;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .2s}#theme-toggle:hover{background:#3b82f6}html.dark #theme-toggle{background:#2563eb;border:none}html.dark #theme-toggle:hover{background:#3b82f6}html.dark{color-scheme:dark}html.dark body{background-color:#0f172a;color:#e2e8f0}html.dark .bg-gray-50{background-color:#0f172a}html.dark .bg-white{background-color:#1e293b}html.dark .bg-gray-900{background-color:#020617}html.dark .text-gray-900{color:#f1f5f9}html.dark .text-gray-800{color:#e2e8f0}html.dark .text-gray-700{color:#cbd5e1}html.dark .text-gray-600{color:#94a3b8}html.dark .text-gray-500{color:#64748b}html.dark .border-gray-200{border-color:#334155}html.dark .shadow-sm{box-shadow:0 1px 2px rgba(0,0,0,.5)}html.dark .text-blue-600{color:#60a5fa}html.dark .section-heading::after{background:#60a5fa}</style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode"><span id="theme-icon">&#x1F319;</span></button>
+
+  
+  <div id="site-nav"></div>
+  <script src="/components/navbar.js"></script>
+
+  <main class="blog-container">
+    <a class="back-link" href="/blog">&#8592; All posts</a>
+
+    <article>
+      <header class="post-header">
+        <div class="post-meta">March 30, 2026</div>
+        <h1 class="text-3xl font-bold mt-2">RAG in Personal Banking — Scale, AML, and Transaction Intelligence</h1>
+        <p class="text-gray-600 mt-2">L1–L4 RAG in personal banking — from FAQ deflection to agentic cash flow diagnosis. Covers PCI-DSS, FINTRAC/AML constraints, hybrid transaction dispute retrieval, financial health knowledge graphs, and the 10M+ daily transaction scale challenge.</p>
+        <div class="post-tags"><span class="tag">llm</span><span class="tag">ai</span><span class="tag">rag</span><span class="tag">banking</span><span class="tag">fintech</span><span class="tag">aml</span><span class="tag">architecture</span></div>
+      </header>
+
+      <div class="post-content">
+        <p><em>This is Part 5 of the <a href="/blog/posts/2026-03-26-rag-four-levels-decision-framework/">RAG Enterprise Series</a>. It assumes familiarity with the four RAG levels. <a href="/blog/posts/2026-03-26-rag-four-levels-decision-framework/">Start with Part 1</a> if you haven&#39;t already.</em></p>
+<p>Personal banking serves the broadest demographic of any domain in this series — from financially literate HNW individuals to first-generation banking customers. The RAG system must be a financial expert and a plain-language explainer simultaneously, at 10M+ daily transaction scale.</p>
+<details open><summary><h2 id="5-domain-4-personal-banking-systems">5. Domain 4 — Personal Banking Systems</h2></summary><div class="details-content">
+<div style="background:#1e1152;border:1px solid #3730a3;border-radius:12px;padding:1.3rem;margin:1.2rem 0;font-family:Inter,sans-serif">
+  <div style="font-size:.7rem;color:#a5b4fc;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.9rem">RAG Level Progression in Personal Banking</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:.5rem">
+    <div style="background:rgba(165,180,252,.07);border:1px solid rgba(165,180,252,.2);border-radius:8px;padding:.8rem;text-align:center">
+      <div style="background:#334155;color:#94a3b8;font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;display:inline-block;margin-bottom:.4rem">L1</div>
+      <div style="color:#e2e8f0;font-weight:700;font-size:.78rem;margin-bottom:.3rem">Self-Service Help</div>
+      <div style="color:#a5b4fc;font-size:.68rem;line-height:1.4;opacity:.85">E-transfer limits, FHSA docs, dispute process FAQs</div>
+      <div style="color:#a5b4fc;font-size:.63rem;margin-top:.4rem;opacity:.7">RBC Arya · TD Clari · Scotiabank</div>
+    </div>
+    <div style="background:rgba(165,180,252,.07);border:1px solid rgba(165,180,252,.2);border-radius:8px;padding:.8rem;text-align:center">
+      <div style="background:#1e3a5f;color:#60a5fa;font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;display:inline-block;margin-bottom:.4rem">L2</div>
+      <div style="color:#e2e8f0;font-weight:700;font-size:.78rem;margin-bottom:.3rem">Dispute Support</div>
+      <div style="color:#a5b4fc;font-size:.68rem;line-height:1.4;opacity:.85">Exact merchant + amount match + dispute policy fusion</div>
+      <div style="color:#a5b4fc;font-size:.63rem;margin-top:.4rem;opacity:.7">Capital One Eno · CIBC</div>
+    </div>
+    <div style="background:rgba(165,180,252,.07);border:1px solid rgba(165,180,252,.2);border-radius:8px;padding:.8rem;text-align:center">
+      <div style="background:#2e1065;color:#a78bfa;font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;display:inline-block;margin-bottom:.4rem">L3</div>
+      <div style="color:#e2e8f0;font-weight:700;font-size:.78rem;margin-bottom:.3rem">Financial Health</div>
+      <div style="color:#a5b4fc;font-size:.68rem;line-height:1.4;opacity:.85">Goal-based planning, FHSA/RRSP trade-off, life event graph</div>
+      <div style="color:#a5b4fc;font-size:.63rem;margin-top:.4rem;opacity:.7">RBC NOMI · BMO Financial Coach</div>
+    </div>
+    <div style="background:rgba(165,180,252,.07);border:1px solid rgba(165,180,252,.2);border-radius:8px;padding:.8rem;text-align:center">
+      <div style="background:#451a03;color:#fbbf24;font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;display:inline-block;margin-bottom:.4rem">L4</div>
+      <div style="color:#e2e8f0;font-weight:700;font-size:.78rem;margin-bottom:.3rem">Cash Flow Diagnosis</div>
+      <div style="color:#a5b4fc;font-size:.68rem;line-height:1.4;opacity:.85">90-day transaction reasoning, anomaly detection, narrative</div>
+      <div style="color:#a5b4fc;font-size:.63rem;margin-top:.4rem;opacity:.7">Cleo · Plaid AI · RBC NOMI</div>
+    </div>
+  </div>
+</div>
+
+<h3 id="51-domain-characteristics-and-challenges">5.1 Domain Characteristics and Challenges</h3>
+<p>Personal banking AI serves the broadest demographic — from financially literate HNW individuals to first-generation banking customers with limited financial literacy. The system must simultaneously be a financial expert and a plain-language explainer.</p>
+<p><strong>Regulatory landscape</strong>:</p>
+<ul>
+<li>OSFI B-7 (cyber security), OSFI B-10 (third-party risk) — Canadian context</li>
+<li>FCAC (Financial Consumer Agency of Canada) — consumer protection requirements</li>
+<li>PCI-DSS — payment card data handling</li>
+<li>FINTRAC — AML/ATF transaction reporting requirements</li>
+<li>Open Banking (Canada: Budget 2024 framework) — data portability implications</li>
+</ul>
+<p><strong>Domain challenges</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Challenge</th>
+<th>Why It&#39;s Hard</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Cross-product reasoning</td>
+<td>Customer question may span chequing, mortgage, credit card, and TFSA simultaneously</td>
+</tr>
+<tr>
+<td>Fraud signal disambiguation</td>
+<td>Is this unusual transaction fraud or did the customer travel? Context determines response</td>
+</tr>
+<tr>
+<td>Financial literacy gap</td>
+<td>&quot;What&#39;s the difference between my RRSP and TFSA?&quot; is L1. &quot;Should I maximize my TFSA or RRSP this year?&quot; is personalization + tax reasoning</td>
+</tr>
+<tr>
+<td>Dispute complexity</td>
+<td>A credit card dispute involves merchant data, transaction logs, card scheme rules, and timeline analysis</td>
+</tr>
+<tr>
+<td>Life event triggering</td>
+<td>A salary increase, home purchase, or job loss should proactively trigger relevant product recommendations</td>
+</tr>
+<tr>
+<td>Transaction volume</td>
+<td>A major bank processes 10M+ daily transactions — agentic RAG at the customer level must be computationally efficient</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="52-level-1-vanilla-rag">5.2 Level 1 — Vanilla RAG</h3>
+<p><strong>Use case</strong>: Product FAQ and self-service help — &quot;What documents do I need to open a FHSA?&quot;, &quot;What&#39;s the daily e-transfer limit?&quot;, &quot;How do I dispute a transaction?&quot;</p>
+<p><strong>Implementation</strong>: Static knowledge base (product brochures, help center articles) → dense retrieval → response generation.</p>
+<p><strong>Real-world examples</strong>: RBC&#39;s Arya chatbot, TD&#39;s Clari, Scotiabank&#39;s Scotia Advisor. All major Canadian banks have deployed L1 chatbots handling tier-1 FAQ volume since 2019–2021. Average: 40–60% call deflection rate for simple queries.</p>
+<p><strong>Where L1 fails for personal banking</strong>:</p>
+<ul>
+<li>&quot;Why was my rent pre-authorized debit rejected this morning?&quot; — requires the customer&#39;s actual account data, transaction logs, and NSF analysis. Static knowledge cannot answer this.</li>
+<li>&quot;I&#39;m trying to e-transfer $2,500 but it&#39;s being blocked&quot; — requires real-time account state, velocity limits, and fraud flag status.</li>
+<li>Any question prefixed with &quot;my&quot; or &quot;mine&quot; — personal banking is inherently personalized; L1 has no access to customer context.</li>
+</ul>
+<hr>
+<h3 id="53-level-2-hybrid-rag">5.3 Level 2 — Hybrid RAG</h3>
+<p><strong>Use case</strong>: Customer service augmentation — combining account data retrieval with product knowledge, transaction dispute support.</p>
+<p><strong>Why BM25 is critical in banking</strong>:</p>
+<ul>
+<li>Transaction descriptions are structured text — &quot;TIM HORTONS #12345 TORONTO ON&quot;, &quot;AMAZON.CA PYMT&quot;, &quot;ROGERS COMM INTERNET&quot;</li>
+<li>Customer-facing queries often contain exact merchant names, dollar amounts, dates — these must match precisely</li>
+<li>Account numbers, card numbers (masked), product codes need exact retrieval</li>
+</ul>
+<p><strong>Example — Transaction dispute support</strong>:</p>
+<pre><code>Customer: &quot;I was charged $127.43 by someone called ACME DIGITAL SERVICES on March 15th
+           and I don&#39;t recognize it.&quot;
+
+Dense path: semantic similarity to &quot;unrecognized charge dispute process unfamiliar merchant&quot;
+            → retrieves dispute policy documents, timeline requirements, provisional credit rules
+
+Sparse path: BM25 exact match on [&quot;ACME DIGITAL SERVICES&quot;, &quot;$127.43&quot;, &quot;March 15&quot;]
+             → retrieves actual transaction record from account data
+
+Reranker:   Merges both paths → surfaces the specific transaction + dispute process for that merchant category
+
+Output:     &quot;We found a transaction of $127.43 from ACME DIGITAL SERVICES on March 15th.
+             This appears to be a digital subscription merchant. Here&#39;s how to dispute it:
+             [dispute steps]. If the charge is unauthorized, provisional credit will be applied
+             within 5 business days while we investigate.&quot;
+</code></pre>
+<p><strong>Real-world systems</strong>:</p>
+<ul>
+<li><strong>JPMorgan COiN</strong> — hybrid NLP system for commercial loan document analysis</li>
+<li><strong>Capital One&#39;s Eno</strong> — hybrid retrieval for transaction pattern recognition</li>
+<li><strong>CIBC&#39;s Ask CIBC</strong> — hybrid FAQ + account data retrieval</li>
+</ul>
+<hr>
+<h3 id="54-level-3-graphrag">5.4 Level 3 — GraphRAG</h3>
+<p><strong>Use case</strong>: Holistic financial health advisor, complex product eligibility, life-event driven recommendations.</p>
+<p><strong>Personal banking ontology</strong>:
+<img src="Financial_Intelligence_Knowledge_Graph.png" alt="Financial Intelligence Knowledge Graph" title="Financial Intelligence Knowledge Graph"></p>
+<p><strong>Query example — Goal-based financial planning</strong>:</p>
+<blockquote>
+<p>&quot;I&#39;m 28, just got a $15k raise, trying to pay off my student loan ($18k at 6.5%), save for a house down payment (need $80k, 3-year goal), and build an emergency fund. Help me allocate this raise.&quot;</p>
+</blockquote>
+<p><strong>Graph traversal</strong>:</p>
+<pre><code>1. Customer → [HAS_PRODUCT: Student loan $18k @ 6.5%] — interest cost = $1,170/yr
+2. Emergency fund: Customer → [HAS_BALANCE: Chequing + Savings] → $3,200 total →
+   Financial rule: 3-6 months expenses (graph: spending average = $3,400/mo) → need $10-20k
+3. FHSA eligibility: Customer → [NOT_HAS_PRODUCT: FHSA] + [GOAL: first home] → ELIGIBLE
+   FHSA: $8,000/yr contribution room → tax deduction + tax-free growth → 3 years = $24,000
+4. RRSP: Marginal tax rate for $X income → calculate RRSP deduction value
+5. Goal graph: $80k down payment in 3 years on savings rate X → requires $2,220/mo savings
+6. Trade-off: 6.5% student loan interest vs. FHSA/RRSP tax shelter value
+   At 30% marginal rate: $8k RRSP contribution = $2,400 tax refund → net cost of loan payoff vs. shelter
+7. Synthesize: Priority allocation — Emergency fund → FHSA ($8k/yr) → Student loan aggressively → RRSP
+</code></pre>
+<p>No single document contains this logic — it is constructed from the relationship graph across products, regulatory rules, tax implications, and customer-specific financial state.</p>
+<p><strong>Real-world implementations</strong>:</p>
+<ul>
+<li><strong>RBC&#39;s NOMI</strong> (Notice of Money Intelligence) — uses graph-like pattern recognition for spending insights and proactive recommendations</li>
+<li><strong>Mint (Intuit)</strong> — spending categorization graph for financial health</li>
+<li><strong>BMO&#39;s Financial Coach</strong> (AI-powered) — goal-based planning with product graph</li>
+</ul>
+<hr>
+<h3 id="55-level-4-agentic-rag">5.5 Level 4 — Agentic RAG</h3>
+<p><strong>Use case</strong>: Proactive financial monitoring, fraud pattern investigation, complex complaint resolution, mortgage pre-qualification assessment.</p>
+<p><strong>Example — Proactive cash flow diagnosis</strong>:</p>
+<blockquote>
+<p>&quot;Why has my cash flow been consistently negative for the past 3 months?&quot;</p>
+</blockquote>
+<p><strong>Agent loop</strong>:</p>
+<pre><code>Turn 1: Retrieve transaction history — last 90 days
+Turn 2: Categorize transactions → spending categories (automated via embedding-based classification)
+Turn 3: Compare to 90-day prior period → identify category-level changes
+Turn 4: Identify anomalies:
+        - &quot;Subscriptions&quot; category: increased by $340/mo → investigate
+Turn 5: Drill down on subscriptions → retrieve subscription transaction details
+Turn 6: Reflect: Do I know why income changed? → Query income deposits
+Turn 7: Income deposits: same job, but timing shifted — pay period changed from bi-weekly to monthly
+        → cash flow optics changed (lumpier income)
+Turn 8: Also identify: mortgage renewal at higher rate in Month 1 → payment increased $387/mo
+Turn 9: Synthesize narrative:
+        &quot;Your negative cash flow over the last 3 months is primarily explained by:
+         (1) Your mortgage payment increased by $387/mo when your rate renewed at 5.84% in January.
+         (2) You added 3 new streaming/software subscriptions totaling ~$45/mo in February.
+         (3) Your pay cycle shifted from bi-weekly to monthly, making month-end cash flow appear tighter.
+         Your underlying income is unchanged. Here are 3 options to restore positive cash flow...&quot;
+</code></pre>
+<p><strong>Real-world systems</strong>:</p>
+<ul>
+<li><strong>RBC NOMI</strong> — real-time transaction analysis with proactive nudges (closest Canadian L4 equivalent)</li>
+<li><strong>Trim</strong> / <strong>Copilot</strong> — subscription detection and cash flow analysis</li>
+<li><strong>Plaid AI</strong> — agentic transaction intelligence layer</li>
+<li><strong>Cleo</strong> (UK challenger bank AI) — conversational financial health agent, multi-turn reasoning</li>
+</ul>
+<hr>
+<h3 id="56-supporting-elements-personal-banking-domain">5.6 Supporting Elements — Personal Banking Domain</h3>
+<p><strong>Memory</strong>:</p>
+<pre><code class="language-yaml">Customer financial memory:
+  - Persistent spending profile (rolling 12-month category averages)
+  - Life event detection (salary change, recurring rent payment, child benefit deposits)
+  - Stated financial goals and progress tracking
+  - Product interaction history (what was offered, what was accepted, what was declined)
+
+Episodic memory:
+  - Last 3 conversation summaries (for multi-session continuity)
+  - Outstanding disputes and their status
+  - Pending transfers and scheduled payments
+
+Fraud context memory:
+  - Known travel patterns → distinguish legitimate foreign transaction from fraud
+  - Device fingerprint and location history
+  - Behavioral biometrics baseline (typing patterns, transaction timing)
+</code></pre>
+<p><img src="Integrated_Financial_Intelligence.png" alt="Integrated Financial Intelligence" title="Integrated Financial Intelligence"></p>
+<p><strong>Prompt Engineering</strong>:</p>
+<pre><code>Banking assistant system prompt:
+  &quot;You are a personal financial assistant for [Customer Name] at RBC.
+   Customer profile: [INJECT_SEGMENT: Mass retail | Premium | Private Banking]
+   Financial summary: [INJECT_BALANCE_SUMMARY, SPEND_SUMMARY_30D, PRODUCT_LIST]
+   Active alerts: [INJECT_OPEN_DISPUTES, PENDING_ACTIONS]
+   Regulatory constraint: You cannot provide investment advice or tax advice.
+   You can describe products, explain account activity, and provide financial education.
+   Tone: Plain language. Avoid jargon. The customer may not have financial background.
+   Privacy: Never display full account numbers. Use masked format (****1234).
+   Escalation trigger: If customer mentions fraud, financial hardship, or distress,
+                        escalate to human agent immediately.&quot;
+
+Financial literacy calibration:
+  &quot;Assess user financial literacy from their message. If they use technical terms
+   (amortization, marginal tax rate), respond at expert level.
+   If they use casual language (save for a house, pay down my debt), use plain language.&quot;
+</code></pre>
+<hr>
+<p><em>Part of the <a href="/blog/posts/2026-03-26-rag-four-levels-decision-framework/">RAG Enterprise Series</a>. Next: <a href="/blog/posts/2026-03-31-rag-supporting-stack-memory-embeddings/">The RAG Supporting Stack — Memory, Prompt Engineering, Fine-tuning, and Embeddings</a>.</em></p>
+</div></details>
+
+      </div>
+      
+    <aside style="margin-top:3rem;padding-top:2rem;border-top:1px solid #334155">
+      <h3 style="font-size:1.05rem;font-weight:600;margin-bottom:.75rem">Related Posts</h3>
+      <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.6rem">
+        <li><a href="/blog/posts/2026-03-29-rag-wealth-management-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Wealth Management — Fiduciary Constraints and Retrieval Design</a> <span style="color:#6b7280;font-size:.8rem">— March 29, 2026</span></li>
+        <li><a href="/blog/posts/2026-03-28-rag-hospital-management-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Hospital Management Systems — Zero Hallucination Tolerance</a> <span style="color:#6b7280;font-size:.8rem">— March 28, 2026</span></li>
+      </ul>
+    </aside>
+    </article>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"></script>
+  <script>
+    try { hljs.highlightAll(); } catch(e) { console.warn('hljs error:', e); }
+  </script>
+  <script>
+    function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'☀️':'🌙';}
+    document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';
+  </script>
+
+</body>
+</html>

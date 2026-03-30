@@ -7,7 +7,7 @@ series: "RAG Enterprise Series"
 series_part: 5
 ---
 
-*This is Part 5 of the [RAG Enterprise Series](/blog/rag-four-levels-decision-framework). It assumes familiarity with the four RAG levels. [Start with Part 1](/blog/rag-four-levels-decision-framework) if you haven't already.*
+*This is Part 5 of the [RAG Enterprise Series](/blog/posts/2026-03-26-rag-four-levels-decision-framework/). It assumes familiarity with the four RAG levels. [Start with Part 1](/blog/posts/2026-03-26-rag-four-levels-decision-framework/) if you haven't already.*
 
 Personal banking serves the broadest demographic of any domain in this series — from financially literate HNW individuals to first-generation banking customers. The RAG system must be a financial expert and a plain-language explainer simultaneously, at 10M+ daily transaction scale.
 

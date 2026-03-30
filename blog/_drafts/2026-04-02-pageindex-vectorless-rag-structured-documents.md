@@ -7,7 +7,7 @@ series: "RAG Enterprise Series"
 series_part: 8
 ---
 
-*This is Part 8 of the [RAG Enterprise Series](/blog/rag-four-levels-decision-framework). This post stands alone — it targets engineers working with structured professional documents (financial filings, clinical guidelines, legal agreements, regulatory disclosures). For context on how this fits into the L1–L4 framework, [Part 1](/blog/rag-four-levels-decision-framework) is the reference.*
+*This is Part 8 of the [RAG Enterprise Series](/blog/posts/2026-03-26-rag-four-levels-decision-framework/). This post stands alone — it targets engineers working with structured professional documents (financial filings, clinical guidelines, legal agreements, regulatory disclosures). For context on how this fits into the L1–L4 framework, [Part 1](/blog/posts/2026-03-26-rag-four-levels-decision-framework/) is the reference.*
 
 The L1–L4 levels assume retrieval works by similarity — embed the query, embed document chunks, find nearest vectors. That assumption is correct for corpus-level search across thousands of documents. It is the wrong mechanism for navigating a 200-page SEC filing, a clinical treatment guideline, or a mortgage agreement. This post is about what to use instead.
 
