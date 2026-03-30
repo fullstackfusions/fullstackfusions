@@ -7,7 +7,7 @@ series: "RAG Enterprise Series"
 series_part: 5
 ---
 
-*This is Part 5 of the [RAG Enterprise Series](/blog/rag-four-levels-decision-framework). It assumes familiarity with the four RAG levels. [Start with Part 1](/blog/rag-four-levels-decision-framework) if you haven't already.*
+*This is Part 5 of the [RAG Enterprise Series](/blog/posts/2026-03-26-rag-four-levels-decision-framework/). It assumes familiarity with the four RAG levels. [Start with Part 1](/blog/posts/2026-03-26-rag-four-levels-decision-framework/) if you haven't already.*
 
 Personal banking serves the broadest demographic of any domain in this series — from financially literate HNW individuals to first-generation banking customers. The RAG system must be a financial expert and a plain-language explainer simultaneously, at 10M+ daily transaction scale.
 
@@ -122,7 +122,7 @@ Output:     "We found a transaction of $127.43 from ACME DIGITAL SERVICES on Mar
 **Use case**: Holistic financial health advisor, complex product eligibility, life-event driven recommendations.
 
 **Personal banking ontology**:
-![Financial Intelligence Knowledge Graph](Financial_Intelligence_Knowledge_Graph.png "Financial Intelligence Knowledge Graph")
+![Financial Intelligence Knowledge Graph](../blog/_drafts/Financial_Intelligence_Knowledge_Graph.png "Financial Intelligence Knowledge Graph")
 
 
 **Query example — Goal-based financial planning**:
@@ -207,7 +207,7 @@ Fraud context memory:
   - Behavioral biometrics baseline (typing patterns, transaction timing)
 ```
 
-![Integrated Financial Intelligence](Integrated_Financial_Intelligence.png "Integrated Financial Intelligence")
+![Integrated Financial Intelligence](../blog/_drafts/Integrated_Financial_Intelligence.png "Integrated Financial Intelligence")
 
 **Prompt Engineering**:
 ```

@@ -7,7 +7,7 @@ series: "RAG Enterprise Series"
 series_part: 2
 ---
 
-*This is Part 2 of the [RAG Enterprise Series](/blog/rag-four-levels-decision-framework). It assumes familiarity with the four RAG levels (L1–L4). If you haven't read that yet, [start with Part 1](/blog/rag-four-levels-decision-framework).*
+*This is Part 2 of the [RAG Enterprise Series](/blog/posts/2026-03-26-rag-four-levels-decision-framework/). It assumes familiarity with the four RAG levels (L1–L4). If you haven't read that yet, [start with Part 1](/blog/posts/2026-03-26-rag-four-levels-decision-framework/).*
 
 ## 2. Domain 1 — Travel and Tourism Software Systems
 
