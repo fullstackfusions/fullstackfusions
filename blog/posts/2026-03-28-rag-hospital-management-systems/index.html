@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Publish gate: redirect to /blog if visited before publish date -->
-  <script>(function(){var pub=new Date('2026-03-28');pub.setHours(0,0,0,0);if(new Date()<pub){window.location.replace('/blog');}})();</script>
+  <!-- Publish gate: redirect to /blog if visited before publish date (UTC midnight of publish date) -->
+  <script>(function(){if(new Date()<new Date('2026-03-28')){window.location.replace('/blog');}})();</script>
   
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWCQ7T2CM8"></script>
@@ -64,7 +64,7 @@
       </header>
 
       <div class="post-content">
-        <p><em>This is Part 3 of the <a href="/blog/rag-four-levels-decision-framework">RAG Enterprise Series</a>. It assumes familiarity with the four RAG levels. <a href="/blog/rag-four-levels-decision-framework">Start with Part 1</a> if you haven&#39;t already.</em></p>
+        <p><em>This is Part 3 of the <a href="/blog/posts/2026-03-26-rag-four-levels-decision-framework/">RAG Enterprise Series</a>. It assumes familiarity with the four RAG levels. <a href="/blog/posts/2026-03-26-rag-four-levels-decision-framework/">Start with Part 1</a> if you haven&#39;t already.</em></p>
 <p>Healthcare is the domain where RAG failure modes stop being engineering problems and start being patient safety problems. The hallucination tolerance is zero. The regulatory surface is the widest of any domain covered in this series. This post works through what that means at each retrieval level.</p>
 <details open><summary><h2 id="3-domain-2-hospital-management-systems">3. Domain 2 — Hospital Management Systems</h2></summary><div class="details-content">
 <div style="background:#3b0a0a;border:1px solid #7f1d1d;border-radius:12px;padding:1.3rem;margin:1.2rem 0;font-family:Inter,sans-serif">
@@ -325,8 +325,8 @@ Chain-of-thought mandate:
     <aside style="margin-top:3rem;padding-top:2rem;border-top:1px solid #334155">
       <h3 style="font-size:1.05rem;font-weight:600;margin-bottom:.75rem">Related Posts</h3>
       <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.6rem">
+        <li><a href="/blog/posts/2026-03-30-rag-personal-banking-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Personal Banking — Scale, AML, and Transaction Intelligence</a> <span style="color:#6b7280;font-size:.8rem">— March 30, 2026</span></li>
         <li><a href="/blog/posts/2026-03-29-rag-wealth-management-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Wealth Management — Fiduciary Constraints and Retrieval Design</a> <span style="color:#6b7280;font-size:.8rem">— March 29, 2026</span></li>
-        <li><a href="/blog/posts/2026-03-27-rag-travel-tourism-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Travel &amp; Tourism Systems — GDS, Visa Routing, and the AI Concierge</a> <span style="color:#6b7280;font-size:.8rem">— March 27, 2026</span></li>
       </ul>
     </aside>
     </article>
