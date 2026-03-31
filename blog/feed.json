@@ -1,5 +1,21 @@
 [
   {
+    "slug": "2026-03-31-rag-supporting-stack-memory-embeddings",
+    "title": "The RAG Supporting Stack — Memory, Prompt Engineering, Fine-tuning, and Embeddings",
+    "date": "2026-03-31",
+    "tags": [
+      "llm",
+      "ai",
+      "rag",
+      "embeddings",
+      "prompt-engineering",
+      "fine-tuning",
+      "architecture"
+    ],
+    "description": "The cross-cutting infrastructure that makes RAG systems work in practice — layered memory architecture, prompt engineering patterns, domain-specific fine-tuning, and embedding improvements including ColBERT, cross-lingual, hyperbolic, and negation-aware approaches.",
+    "url": "/blog/posts/2026-03-31-rag-supporting-stack-memory-embeddings/"
+  },
+  {
     "slug": "2026-03-30-rag-personal-banking-systems",
     "title": "RAG in Personal Banking — Scale, AML, and Transaction Intelligence",
     "date": "2026-03-30",
