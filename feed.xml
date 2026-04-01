@@ -7,6 +7,13 @@
     <language>en-us</language>
     <atom:link href="https://fullstackfusions.com/feed.xml" rel="self" type="application/rss+xml" />
   <item>
+    <title>Mamba and SSMs — What the Generation Backbone Change Means for RAG</title>
+    <link>https://fullstackfusions.com/blog/posts/2026-04-01-mamba-ssm-rag-generation-backbone/</link>
+    <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-04-01-mamba-ssm-rag-generation-backbone/</guid>
+    <description>A systems-level analysis of replacing the Transformer backbone with Mamba/SSM architectures in RAG systems — covering linear context scaling, constant KV cache memory, selective state tracking (Mamba-3), and the hybrid Transformer+Mamba pattern for enterprise deployment.</description>
+    <pubDate>Wed, 01 Apr 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
     <title>The RAG Supporting Stack — Memory, Prompt Engineering, Fine-tuning, and Embeddings</title>
     <link>https://fullstackfusions.com/blog/posts/2026-03-31-rag-supporting-stack-memory-embeddings/</link>
     <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-03-31-rag-supporting-stack-memory-embeddings/</guid>

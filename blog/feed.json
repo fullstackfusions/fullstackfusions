@@ -1,5 +1,21 @@
 [
   {
+    "slug": "2026-04-01-mamba-ssm-rag-generation-backbone",
+    "title": "Mamba and SSMs — What the Generation Backbone Change Means for RAG",
+    "date": "2026-04-01",
+    "tags": [
+      "llm",
+      "ai",
+      "rag",
+      "mamba",
+      "ssm",
+      "architecture",
+      "transformers"
+    ],
+    "description": "A systems-level analysis of replacing the Transformer backbone with Mamba/SSM architectures in RAG systems — covering linear context scaling, constant KV cache memory, selective state tracking (Mamba-3), and the hybrid Transformer+Mamba pattern for enterprise deployment.",
+    "url": "/blog/posts/2026-04-01-mamba-ssm-rag-generation-backbone/"
+  },
+  {
     "slug": "2026-03-31-rag-supporting-stack-memory-embeddings",
     "title": "The RAG Supporting Stack — Memory, Prompt Engineering, Fine-tuning, and Embeddings",
     "date": "2026-03-31",

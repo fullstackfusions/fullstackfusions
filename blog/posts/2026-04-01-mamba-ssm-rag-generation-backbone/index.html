@@ -1,1 +1,311 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8" /><meta http-equiv="refresh" content="0;url=/blog" /><title>Redirecting…</title></head><body><script>window.location.replace('/blog');</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Publish gate: redirect to /blog if visited before publish date (UTC midnight of publish date) -->
+  <script>(function(){if(new Date()<new Date('2026-04-01')){window.location.replace('/blog');}})();</script>
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWCQ7T2CM8"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QWCQ7T2CM8');
+  </script>
+  <meta name="description" content="A systems-level analysis of replacing the Transformer backbone with Mamba/SSM architectures in RAG systems — covering linear context scaling, constant KV cache memory, selective state tracking (Mamba-3), and the hybrid Transformer+Mamba pattern for enterprise deployment." />
+  <title>Mamba and SSMs — What the Generation Backbone Change Means for RAG — fullstackfusions</title>
+  <link rel="canonical" href="https://fullstackfusions.com/blog/posts/2026-04-01-mamba-ssm-rag-generation-backbone/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Mamba and SSMs — What the Generation Backbone Change Means for RAG" />
+  <meta property="og:description" content="A systems-level analysis of replacing the Transformer backbone with Mamba/SSM architectures in RAG systems — covering linear context scaling, constant KV cache memory, selective state tracking (Mamba-3), and the hybrid Transformer+Mamba pattern for enterprise deployment." />
+  <meta property="og:url" content="https://fullstackfusions.com/blog/posts/2026-04-01-mamba-ssm-rag-generation-backbone/" />
+  <meta property="og:site_name" content="fullstackfusions" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Mamba and SSMs — What the Generation Backbone Change Means for RAG" />
+  <meta name="twitter:description" content="A systems-level analysis of replacing the Transformer backbone with Mamba/SSM architectures in RAG systems — covering linear context scaling, constant KV cache memory, selective state tracking (Mamba-3), and the hybrid Transformer+Mamba pattern for enterprise deployment." />
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="fullstackfusions" href="https://fullstackfusions.com/feed.xml" />
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Mamba and SSMs — What the Generation Backbone Change Means for RAG","author":{"@type":"Person","name":"Mihir"},"datePublished":"2026-04-01","description":"A systems-level analysis of replacing the Transformer backbone with Mamba/SSM architectures in RAG systems — covering linear context scaling, constant KV cache memory, selective state tracking (Mamba-3), and the hybrid Transformer+Mamba pattern for enterprise deployment.","url":"https://fullstackfusions.com/blog/posts/2026-04-01-mamba-ssm-rag-generation-backbone/"}</script>
+
+  <link rel="icon" sizes="32x32" type="image/png" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/tailwind.css" />
+  <link rel="stylesheet" href="/blog/assets/blog.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" />
+  <script>(function(){const s=localStorage.getItem('theme');if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();</script>
+  <style>body{font-family:"Inter",ui-sans-serif,system-ui,sans-serif}.section-heading{position:relative;padding-bottom:.6rem}.section-heading::after{content:"";position:absolute;left:0;bottom:0;width:36px;height:3px;background:#3b82f6;border-radius:2px}#theme-toggle{position:fixed;bottom:1rem;right:1rem;z-index:999;width:2.25rem;height:2.25rem;border-radius:50%;border:none;background:#2563eb;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .2s}#theme-toggle:hover{background:#3b82f6}html.dark #theme-toggle{background:#2563eb;border:none}html.dark #theme-toggle:hover{background:#3b82f6}html.dark{color-scheme:dark}html.dark body{background-color:#0f172a;color:#e2e8f0}html.dark .bg-gray-50{background-color:#0f172a}html.dark .bg-white{background-color:#1e293b}html.dark .bg-gray-900{background-color:#020617}html.dark .text-gray-900{color:#f1f5f9}html.dark .text-gray-800{color:#e2e8f0}html.dark .text-gray-700{color:#cbd5e1}html.dark .text-gray-600{color:#94a3b8}html.dark .text-gray-500{color:#64748b}html.dark .border-gray-200{border-color:#334155}html.dark .shadow-sm{box-shadow:0 1px 2px rgba(0,0,0,.5)}html.dark .text-blue-600{color:#60a5fa}html.dark .section-heading::after{background:#60a5fa}</style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode"><span id="theme-icon">&#x1F319;</span></button>
+
+  
+  <div id="site-nav"></div>
+  <script src="/components/navbar.js"></script>
+
+  <main class="blog-container">
+    <a class="back-link" href="/blog">&#8592; All posts</a>
+
+    <article>
+      <header class="post-header">
+        <div class="post-meta">April 1, 2026</div>
+        <h1 class="text-3xl font-bold mt-2">Mamba and SSMs — What the Generation Backbone Change Means for RAG</h1>
+        <p class="text-gray-600 mt-2">A systems-level analysis of replacing the Transformer backbone with Mamba/SSM architectures in RAG systems — covering linear context scaling, constant KV cache memory, selective state tracking (Mamba-3), and the hybrid Transformer+Mamba pattern for enterprise deployment.</p>
+        <div class="post-tags"><span class="tag">llm</span><span class="tag">ai</span><span class="tag">rag</span><span class="tag">mamba</span><span class="tag">ssm</span><span class="tag">architecture</span><span class="tag">transformers</span></div>
+      </header>
+
+      <div class="post-content">
+        <p><em>This is Part 7 of the <a href="/blog/posts/2026-03-26-rag-four-levels-decision-framework/">RAG Enterprise Series</a>. This post stands alone — it does not require reading the domain posts (Parts 2–5). For context on where SSM architectures fit in the L1–L4 retrieval framework, <a href="/blog/posts/2026-03-26-rag-four-levels-decision-framework/">Part 1</a> has the reference.</em></p>
+<p>The retrieval layer in RAG — L1 through L4 — is model-agnostic. What changes with Mamba is what <em>receives</em> the retrieved context. That distinction sounds narrow; its practical implications for long-document enterprise RAG are not.</p>
+<details open><summary><h2 id="63-architecture-backend-selection-transformer-vs-ssm-for-rag-generation">6.3 Architecture Backend Selection: Transformer vs. SSM for RAG Generation</h2></summary><div class="details-content">
+<p>This is an architectural infrastructure decision. The retrieval layer (L1-L4) is architecture-agnostic — it produces a set of relevant chunks. What changes is what <em>receives</em> those chunks:</p>
+<pre><code>Current standard:       [Retrieved chunks] → [Transformer LLM] → [Answer]
+Mamba-based RAG:        [Retrieved chunks] → [Mamba/Hybrid LLM] → [Answer]
+</code></pre>
+<p>Standard Transformer-based RAG has a structural bottleneck that is easy to miss if you&#39;re only thinking about retrieval quality:</p>
+<pre><code>Transformer attention complexity:    O(n²) compute, O(n) KV cache memory
+Where n = total tokens in context    (system prompt + retrieved chunks + conversation history)
+
+For a RAG system with:
+  - System prompt:              ~500 tokens
+  - Top-k retrieved chunks:   ~3,000 tokens
+  - Conversation history:     ~2,000 tokens (multi-turn, Agentic L4)
+  Total context n ≈ 5,500 tokens
+
+At n=5,500:   attention cost = 5,500² = 30.25M operations per layer
+At n=11,000:  attention cost = 121M operations per layer  (4× worse for 2× context)
+At n=22,000:  attention cost = 484M operations per layer  (16× worse for 4× context)
+</code></pre>
+<p>Mamba&#39;s selective state space mechanism replaces this with <strong>linear scaling in sequence length</strong> and <strong>constant memory</strong> regardless of context length. The implications differ by domain and RAG level:</p>
+<h4 id="long-context-retrieval-where-mambas-linear-scaling-directly-helps">Long-Context Retrieval — Where Mamba&#39;s Linear Scaling Directly Helps</h4>
+<table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>Long-context RAG scenario</th>
+<th>Why Transformers are costly here</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Healthcare</td>
+<td>Full EHR summary (3,000+ tokens) + 5 clinical guideline chunks + patient history</td>
+<td>Each additional retrieved document adds quadratic cost</td>
+</tr>
+<tr>
+<td>Wealth Management</td>
+<td>Prospectus or offering memorandum (10,000+ tokens) being analyzed for suitability flags</td>
+<td>OM documents routinely exceed 32k tokens</td>
+</tr>
+<tr>
+<td>Personal Banking</td>
+<td>90-day transaction history + product knowledge + complaint history in one context</td>
+<td>Agentic cash flow diagnosis needs full transaction log</td>
+</tr>
+<tr>
+<td>Travel</td>
+<td>Multi-day itinerary planning session accumulates context over many turns</td>
+<td>Inventory docs + visa rules + destination content expand rapidly</td>
+</tr>
+</tbody></table>
+<p>With a Mamba backend, retrieving more context chunks — or using longer individual documents — does not trigger the quadratic cost explosion. This changes the economic calculus of how many chunks you inject per query: under a Transformer, there&#39;s pressure to minimize <code>k</code> in top-k because each additional chunk is increasingly expensive. Under Mamba, you can afford <code>k=15</code> or <code>k=20</code> without the same penalty.</p>
+<p><strong>Practical implication for L3 and L4 RAG specifically:</strong> Graph traversal (L3) and agentic loops (L4) naturally produce <em>more</em> retrieved context across multiple retrieval turns. A Mamba backend is a better fit for these levels than a Transformer, because the accumulated context across agent turns no longer creates an exponentially expensive prompt.</p>
+<h4 id="mambas-selection-mechanism-as-implicit-retrieval-filtering">Mamba&#39;s Selection Mechanism as Implicit Retrieval Filtering</h4>
+<p>This is the insight that is easy to miss when reading the Mamba paper. The <strong>selective SSM</strong> doesn&#39;t just process context cheaply — it <em>selectively compresses</em> context based on what&#39;s relevant to the current input. The model learns to propagate relevant information through its hidden state and gate out irrelevant information, similar in spirit to what a reranker does but happening <em>inside</em> the forward pass.</p>
+<p>The selection mechanism addresses the inability to perform content-based reasoning that LTI (Linear Time-Invariant) models had. The SSM parameters (B, C, Delta) become <em>functions of the input</em> — allowing the model to selectively remember or forget information along the sequence.</p>
+<pre><code>Transformer approach:  All retrieved chunks are in the attention window equally.
+                       The model pays equal attention budget to a highly relevant chunk
+                       and a marginally relevant one unless instructed otherwise.
+
+Mamba approach:        The selection mechanism gates information based on content.
+                       A chunk that&#39;s irrelevant to the current token position gets
+                       compressed (forgotten) in the hidden state. A relevant one is
+                       propagated.
+</code></pre>
+<p>In enterprise RAG where top-k retrieval still returns noisy chunks (a known problem at all levels), Mamba&#39;s selection mechanism provides a second layer of implicit filtering <em>without requiring an explicit reranker</em>. This doesn&#39;t eliminate the need for a reranker in hybrid RAG — it reduces the damage when the reranker isn&#39;t perfect.</p>
+<p><strong>Domain relevance:</strong></p>
+<ul>
+<li><strong>Healthcare</strong>: Clinical notes retrieved alongside a specific query may contain large amounts of irrelevant patient history. Mamba&#39;s selection can compress sections unrelated to the current diagnostic question.</li>
+<li><strong>Wealth Management</strong>: An earnings transcript retrieved for NIM analysis contains 20,000 tokens. The relevant NIM discussion is 400 tokens. Mamba learns to gate through the relevant sections.</li>
+<li><strong>Personal Banking</strong>: A 90-day transaction log is retrieved for cash flow analysis. Most transactions are routine; Mamba compresses the routine and propagates the anomalies.</li>
+</ul>
+<h4 id="constant-memory-for-agentic-rag-l4-the-kv-cache-elimination">Constant Memory for Agentic RAG (L4) — The KV Cache Elimination</h4>
+<p>This is the most operationally impactful Mamba property for L4 Agentic RAG systems.</p>
+<pre><code>The Transformer KV cache problem in agentic loops:
+
+Turn 1: Retrieved 5 chunks (2,000 tokens) → KV cache: 2,000 entries
+Turn 2: Added 4 more chunks (1,600 tokens) → KV cache: 3,600 entries
+Turn 3: Reflection + re-query + 4 chunks → KV cache: 5,600 entries
+Turn 4: Synthesis pass → KV cache: 6,800 entries (still growing)
+Turn 5: Tool call results → KV cache: 8,200 entries
+
+Memory grows linearly with turns. Inference cost for each turn = attention over entire
+accumulated KV cache. For a 70B parameter Transformer, this hits memory pressure at
+~20-25k tokens on an 80GB A100.
+</code></pre>
+<p>Mamba maintains a <strong>fixed-size hidden state</strong> regardless of how many tokens have been processed:</p>
+<pre><code>Mamba in an agentic loop:
+Turn 1: Process 2,000 tokens → hidden state h_t (fixed size, e.g., state_dim=256)
+Turn 2: Process 1,600 more tokens → hidden state h_t (same size)
+Turn 3: Process 2,000 more tokens → hidden state h_t (same size)
+...
+Turn N: Process 2,000 more tokens → hidden state h_t (same size)
+
+Memory is CONSTANT regardless of N. Inference cost per turn is O(n_turn), not O(n_cumulative).
+</code></pre>
+<p><strong>For L4 Agentic RAG, this means:</strong></p>
+<ol>
+<li>Deeper agentic loops without memory pressure — you can run 15-20 retrieval turns on a single GPU without context window eviction</li>
+<li>Better suited for long-running enterprise workflows (a portfolio review that spans thousands of account records, a clinical case that requires iterating over a full admission history)</li>
+<li>Cost predictability — you can model the inference cost of an agentic workflow upfront because it doesn&#39;t compound quadratically with loop depth</li>
+</ol>
+<hr>
+</div></details>
+<details open><summary><h2 id="9-generation-backbone-mamba-ssms-and-what-they-change-for-rag">9. Generation Backbone — Mamba, SSMs, and What They Change for RAG</h2></summary><div class="details-content">
+<p>The sections above integrated Mamba&#39;s specific properties into the relevant parts of the supporting stack. This section addresses the broader architectural picture: state tracking (from Mamba-3), the hybrid architecture pattern, and what Mamba does <em>not</em> change.</p>
+<h3 id="91-state-tracking-for-compliance-and-clinical-systems-mamba-3">9.1 State Tracking for Compliance and Clinical Systems (Mamba-3)</h3>
+<p>Mamba-3 introduces <strong>state tracking via complex-valued SSM states</strong> — solving a class of problems where prior linear models (including Mamba-2) failed. The paper demonstrates that tracking a binary or categorical state over a sequence of inputs (e.g., parity of a bit sequence) requires the complex-valued update rule equivalent to rotary embeddings (RoPE).</p>
+<p><img src="Mamba-3_Advanced_State_Tracking_For_Portfolio_Compliance.png" alt="Mamba-3 Advanced State Tracking For Portfolio Compliance" title="Mamba-3 Advanced State Tracking For Portfolio Compliance"></p>
+<p>For enterprise RAG, state tracking matters more than it initially appears:</p>
+<p><strong>Healthcare — Clinical state machines:</strong></p>
+<pre><code>Patient admission state machine:
+  Admitted → [lab results arrive] → Stable/Unstable → [vitals change] → Deteriorating
+
+A Transformer reads this as a sequence of text tokens.
+A Mamba-3 SSM encodes the state transitions explicitly in its hidden state.
+Result: better temporal reasoning in clinical deterioration prediction (sepsis watch, fall risk)
+</code></pre>
+<p><img src="Comparative_Analysis_Of_Medical_Patient_State_Monitoring_vs_Mamba-3_SSM.png" alt="Comparative Analysis Of Medical Patient State Monitoring vs Mamba-3 SSM" title="Comparative Analysis Of Medical Patient State Monitoring vs Mamba-3 SSM"></p>
+<p><strong>Wealth Management — Compliance state tracking:</strong></p>
+<pre><code>Portfolio compliance state:
+  Within IPS → [equity rally] → Equity-overweight → [no rebalancing] → Breached IPS constraint
+
+Tracking whether a portfolio has passed through sequential compliance states requires
+exactly the kind of state-tracking that Mamba-3&#39;s complex-valued update enables.
+A model fine-tuned on Mamba-3 can track these transitions more reliably than Mamba-2.
+</code></pre>
+<p><strong>Personal Banking — Fraud pattern state machines:</strong></p>
+<pre><code>Transaction sequence state:
+  Normal → [foreign transaction] → Travel-mode? → [multiple rapid ATM withdrawals] → Fraud-pattern
+
+Fraud detection is fundamentally a state-tracking problem over transaction sequences.
+Mamba-3&#39;s state tracking capability makes it a strong architectural candidate for
+the agentic fraud analysis use case described in the personal banking L4 section.
+</code></pre>
+<p><strong>Architectural framing</strong>: Mamba-3&#39;s improvement on state tracking is not just a synthetic benchmark achievement. It maps directly onto the class of problems in regulated industries where the answer depends on the <em>sequence of events</em> and the <em>state transitions</em> those events caused — not just the current snapshot. These are exactly the high-stakes, L3/L4 RAG use cases analyzed throughout this document.</p>
+<hr>
+<h3 id="92-hybrid-architecture-pattern-transformer-attention-mamba-ssm">9.2 Hybrid Architecture Pattern — Transformer Attention + Mamba SSM</h3>
+<p>The Mamba-3 paper notes that current large-scale deployments incorporate Mamba-2 and Gated DeltaNet layers into <em>hybrid</em> models (e.g., NVIDIA&#39;s work, Tencent Hunyuan, Kimi). This is the production-realistic trajectory — not pure Transformer, not pure Mamba, but a hybrid that uses:</p>
+<ul>
+<li><strong>Attention layers</strong>: for precise token-level semantic alignment (query-to-chunk relevance, instruction following)</li>
+<li><strong>Mamba layers</strong>: for long-context integration, temporal reasoning, state tracking, and efficient long-sequence compression</li>
+</ul>
+<pre><code>HYBRID RAG BACKEND ARCHITECTURE:
+
+[Short retrieved chunks, precise semantic matching]
+  → Transformer attention layers handle the direct query-answer alignment
+
+[Long document integration, temporal sequence, accumulated agentic context]
+  → Mamba SSM layers handle the compression and state-tracking over the full context
+
+Practical implication:
+  A 32-layer hybrid model might use:
+    Layers 1-8:   Attention (semantic precision for retrieval grounding)
+    Layers 9-24:  Mamba (long-context compression, state tracking)
+    Layers 25-32: Attention (precise output generation)
+</code></pre>
+<p>This pattern resolves the apparent tension between &quot;Transformers are better at precise semantic tasks&quot; and &quot;Mamba is better at long sequences and state tracking&quot; — they&#39;re both true, and you don&#39;t have to choose.</p>
+<p><strong>Enterprise deployment consideration</strong>: The hybrid architecture is not yet widely available as a production API (as of mid-2026). It is emerging in open-weight models (Jamba from AI21, various NVIDIA hybrid models). For organizations building on top of foundation model APIs, the decision today is: use standard Transformer APIs for most RAG; track hybrid model availability for long-document and agentic use cases where quadratic cost is a blocker.</p>
+<hr>
+<h3 id="93-summary-what-mamba-changes-across-the-research">9.3 Summary: What Mamba Changes Across the Research</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Change Introduced by Mamba / Mamba-3</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>L4 Agentic RAG feasibility</td>
+<td>Constant memory removes the context accumulation constraint on deep loops</td>
+</tr>
+<tr>
+<td>Long-document retrieval (Wealth, Healthcare)</td>
+<td>Linear-time encoding enables full-document embedding without chunking</td>
+</tr>
+<tr>
+<td>Retrieval noise handling</td>
+<td>Selection mechanism provides implicit content-based filtering inside the forward pass</td>
+</tr>
+<tr>
+<td>Healthcare temporal reasoning</td>
+<td>State tracking (Mamba-3 complex state) enables clinical state machine modeling</td>
+</tr>
+<tr>
+<td>Compliance state tracking (Wealth)</td>
+<td>Complex-valued update enables IPS/portfolio state transition tracking</td>
+</tr>
+<tr>
+<td>Fraud detection (Banking)</td>
+<td>State tracking over transaction sequences — more reliable than Transformer</td>
+</tr>
+<tr>
+<td>Latency constraint in Section 8</td>
+<td>5x throughput + constant memory loosens the &quot;L4 is too slow&quot; heuristic</td>
+</tr>
+<tr>
+<td>Embedding for long documents</td>
+<td>SSM-based encoders enable coherent single-pass embedding of 50k+ token documents</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="94-what-mamba-does-not-change">9.4 What Mamba Does NOT Change</h3>
+<p>It&#39;s worth being explicit about what Mamba does <em>not</em> change, to avoid overfitting to the new architecture:</p>
+<ol>
+<li><p><strong>The retrieval layer (L1-L4) is model-agnostic</strong>. Hybrid search, knowledge graphs, and agentic retrieval loops are independent of whether the generation backend is a Transformer or Mamba. The levels and their decision criteria remain valid.</p>
+</li>
+<li><p><strong>The ontology investment for L3 (GraphRAG) is unchanged</strong>. A better generation backend doesn&#39;t reduce the cost of building and maintaining a medical ontology or a compliance knowledge graph. That investment is in the data modeling layer, not the model layer.</p>
+</li>
+<li><p><strong>Fine-tuning strategies are largely unchanged</strong>. Mamba can be fine-tuned with the same techniques (LoRA, instruction tuning, RLHF) as Transformers. The domain-specific fine-tuning rationale described per domain remains valid.</p>
+</li>
+<li><p><strong>Embedding improvements in Section 7 are additive, not replaced</strong>. Cross-lingual embeddings, negation-aware fine-tuning, ColBERT late interaction, and coreference resolution are still required. Mamba adds a new option for <em>long-document</em> encoders; it doesn&#39;t replace the semantic improvements.</p>
+</li>
+<li><p><strong>Regulatory and compliance constraints are unchanged</strong>. HIPAA, OSFI, MiFID II, FINTRAC don&#39;t care what architecture produces the output — the output is what&#39;s regulated. The compliance framing per domain is fully preserved.</p>
+</li>
+</ol>
+<hr>
+<p><em>Part of the <a href="/blog/posts/2026-03-26-rag-four-levels-decision-framework/">RAG Enterprise Series</a>. Next: <a href="/blog/posts/2026-04-02-pageindex-vectorless-rag-structured-documents/">PageIndex and Vectorless RAG — A Structural Alternative for Professional Documents</a>.</em></p>
+</div></details>
+
+      </div>
+      
+    <aside style="margin-top:3rem;padding-top:2rem;border-top:1px solid #334155">
+      <h3 style="font-size:1.05rem;font-weight:600;margin-bottom:.75rem">Related Posts</h3>
+      <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:.6rem">
+        <li><a href="/blog/posts/2026-03-31-rag-supporting-stack-memory-embeddings/" style="color:#2563eb;font-weight:500;text-decoration:none">The RAG Supporting Stack — Memory, Prompt Engineering, Fine-tuning, and Embeddings</a> <span style="color:#6b7280;font-size:.8rem">— March 31, 2026</span></li>
+        <li><a href="/blog/posts/2026-03-30-rag-personal-banking-systems/" style="color:#2563eb;font-weight:500;text-decoration:none">RAG in Personal Banking — Scale, AML, and Transaction Intelligence</a> <span style="color:#6b7280;font-size:.8rem">— March 30, 2026</span></li>
+      </ul>
+    </aside>
+    </article>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/nginx.min.js"></script>
+  <script>
+    try { hljs.highlightAll(); } catch(e) { console.warn('hljs error:', e); }
+  </script>
+  <script>
+    function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');document.getElementById('theme-icon').textContent=d?'☀️':'🌙';}
+    document.getElementById('theme-icon').textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';
+  </script>
+
+</body>
+</html>
