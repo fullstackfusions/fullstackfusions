@@ -1,5 +1,21 @@
 [
   {
+    "slug": "2026-04-02-pageindex-vectorless-rag-structured-documents",
+    "title": "PageIndex and Vectorless RAG — A Structural Alternative for Professional Documents",
+    "date": "2026-04-02",
+    "tags": [
+      "llm",
+      "ai",
+      "rag",
+      "pageindex",
+      "retrieval",
+      "compliance",
+      "architecture"
+    ],
+    "description": "Reasoning-based retrieval as an alternative to vector similarity search for structured professional documents — how PageIndex achieves 98.7% on FinanceBench, applied across healthcare, wealth management, banking, and travel with full domain use cases and implementation pathway.",
+    "url": "/blog/posts/2026-04-02-pageindex-vectorless-rag-structured-documents/"
+  },
+  {
     "slug": "2026-04-01-mamba-ssm-rag-generation-backbone",
     "title": "Mamba and SSMs — What the Generation Backbone Change Means for RAG",
     "date": "2026-04-01",

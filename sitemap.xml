@@ -21,6 +21,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://fullstackfusions.com/blog/posts/2026-04-02-pageindex-vectorless-rag-structured-documents/</loc>
+    <lastmod>2026-04-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://fullstackfusions.com/blog/posts/2026-04-01-mamba-ssm-rag-generation-backbone/</loc>
     <lastmod>2026-04-01</lastmod>
     <changefreq>monthly</changefreq>

@@ -7,6 +7,13 @@
     <language>en-us</language>
     <atom:link href="https://fullstackfusions.com/feed.xml" rel="self" type="application/rss+xml" />
   <item>
+    <title>PageIndex and Vectorless RAG — A Structural Alternative for Professional Documents</title>
+    <link>https://fullstackfusions.com/blog/posts/2026-04-02-pageindex-vectorless-rag-structured-documents/</link>
+    <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-04-02-pageindex-vectorless-rag-structured-documents/</guid>
+    <description>Reasoning-based retrieval as an alternative to vector similarity search for structured professional documents — how PageIndex achieves 98.7% on FinanceBench, applied across healthcare, wealth management, banking, and travel with full domain use cases and implementation pathway.</description>
+    <pubDate>Thu, 02 Apr 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
     <title>Mamba and SSMs — What the Generation Backbone Change Means for RAG</title>
     <link>https://fullstackfusions.com/blog/posts/2026-04-01-mamba-ssm-rag-generation-backbone/</link>
     <guid isPermaLink="true">https://fullstackfusions.com/blog/posts/2026-04-01-mamba-ssm-rag-generation-backbone/</guid>
